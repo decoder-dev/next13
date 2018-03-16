@@ -356,6 +356,20 @@ static const char *const rqaf_name[] = {
 };
 #undef RQAF_NAME
 
+static const char *const blk_mq_rq_state_name_array[] = {
+	[MQ_RQ_IDLE]		= "idle",
+	[MQ_RQ_IN_FLIGHT]	= "in_flight",
+	[MQ_RQ_COMPLETE]	= "complete",
+};
+
+static const char *blk_mq_rq_state_name(enum mq_rq_state rq_state)
+{
+	if (WARN_ON_ONCE((unsigned int)rq_state >
+			 ARRAY_SIZE(blk_mq_rq_state_name_array)))
+		return "(?)";
+	return blk_mq_rq_state_name_array[rq_state];
+}
+
 int __blk_mq_debugfs_rq_show(struct seq_file *m, struct request *rq)
 {
 	const struct blk_mq_ops *const mq_ops = rq->q->mq_ops;
@@ -374,6 +388,7 @@ int __blk_mq_debugfs_rq_show(struct seq_file *m, struct request *rq)
 		       ARRAY_SIZE(rqf_name));
 	seq_puts(m, ", .atomic_flags=");
 	blk_flags_show(m, rq->atomic_flags, rqaf_name, ARRAY_SIZE(rqaf_name));
+	seq_printf(m, ", .state=%s", blk_mq_rq_state_name(blk_mq_rq_state(rq)));
 	seq_printf(m, ", .tag=%d, .internal_tag=%d", rq->tag,
 		   rq->internal_tag);
 	if (mq_ops->show_rq)
