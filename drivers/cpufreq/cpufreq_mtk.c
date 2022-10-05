@@ -29,15 +29,19 @@
 static struct kobj_attribute _name##_attr =			\
 __ATTR(_name, 0644, show_##_name, store_##_name)
 
+<<<<<<< HEAD
 /* cpu frequency table from cpufreq dt parse */
 static struct cpufreq_frequency_table* cpuftbl[2];
 
+=======
+>>>>>>> 10cbff730371 (drivers/: cpufreq: Add driver to control MTK sched boosts from userspace)
 static struct ppm_limit_data *current_cpu_freq;
 
 extern int set_sched_boost(unsigned int val);
 
 DEFINE_MUTEX(cpufreq_mtk_mutex);
 
+<<<<<<< HEAD
 struct cpufreq_mtk_topo_config {
     unsigned int ltl_cpu_start;
     unsigned int big_cpu_start;
@@ -81,6 +85,8 @@ out:
     return ret;
 }
 
+=======
+>>>>>>> 10cbff730371 (drivers/: cpufreq: Add driver to control MTK sched boosts from userspace)
 /* Updates CPU frequency for chosen cluster */
 void update_cpu_freq(int cluster)
 {
@@ -98,6 +104,7 @@ void update_cpu_freq(int cluster)
 /* Sets current maximum CPU frequency */
 int set_max_cpu_freq(int cluster, int max)
 {
+<<<<<<< HEAD
     int ret = -EINVAL;
 
     if (unlikely(!is_freq_valid(cluster, max)))
@@ -112,11 +119,21 @@ int set_max_cpu_freq(int cluster, int max)
 
 out:
     return ret;
+=======
+    if (max < current_cpu_freq[cluster].min && current_cpu_freq[cluster].min > 0) {
+        pr_err("[%s] Max freq cannot be lower than min freq!\n", __func__);
+        return -EINVAL;
+    }
+    current_cpu_freq[cluster].max = max > 0 ? max : -1;
+    update_cpu_freq(cluster);
+    return 0;
+>>>>>>> 10cbff730371 (drivers/: cpufreq: Add driver to control MTK sched boosts from userspace)
 }
 
 /* Sets current minimum CPU frequency */
 int set_min_cpu_freq(int cluster, int min)
 {
+<<<<<<< HEAD
     int ret = -EINVAL;
 
     if (unlikely(!is_freq_valid(cluster, min)))
@@ -131,6 +148,15 @@ int set_min_cpu_freq(int cluster, int min)
 
 out:
     return ret;
+=======
+    if (min > current_cpu_freq[cluster].max && current_cpu_freq[cluster].max > 0) {
+        pr_err("[%s] Min freq cannot be higher than max freq!\n", __func__);
+        return -EINVAL;
+    }
+    current_cpu_freq[cluster].min = min > 0 ? min : -1;
+    update_cpu_freq(cluster);
+    return 0;
+>>>>>>> 10cbff730371 (drivers/: cpufreq: Add driver to control MTK sched boosts from userspace)
 }
 
 static ssize_t show_lcluster_min_freq(struct kobject *kobj,
@@ -154,7 +180,11 @@ static ssize_t store_lcluster_min_freq(struct kobject *kobj,
     mutex_unlock(&cpufreq_mtk_mutex);
 
     if (ret < 0)
+<<<<<<< HEAD
         count = ret;
+=======
+        return ret;
+>>>>>>> 10cbff730371 (drivers/: cpufreq: Add driver to control MTK sched boosts from userspace)
 
     return count;
 }
@@ -182,7 +212,11 @@ static ssize_t store_lcluster_max_freq(struct kobject *kobj,
     mutex_unlock(&cpufreq_mtk_mutex);
 
     if (ret < 0)
+<<<<<<< HEAD
         count = ret;
+=======
+        return ret;
+>>>>>>> 10cbff730371 (drivers/: cpufreq: Add driver to control MTK sched boosts from userspace)
 
     return count;
 }
@@ -302,7 +336,7 @@ static void __exit cpufreq_mtk_exit(void)
 }
 
 MODULE_DESCRIPTION("CPU frequencies setting for MTK scheduler");
-MODULE_AUTHOR("bengris32");
+MODULE_AUTHOR("begonia-devs");
 MODULE_LICENSE("GPL");
 
 module_init(cpufreq_mtk_init);
