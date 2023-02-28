@@ -608,14 +608,13 @@ static int mt_i2c_do_transfer(struct mt_i2c *i2c)
 
 	i2c->trans_stop = false;
 	i2c->irq_stat = 0;
-	if ((i2c->total_len > 8 || i2c->msg_aux_len > 8)){
-		if (!i2c->fifo_only){
+	if ((i2c->total_len > 8 || i2c->msg_aux_len > 8))
+		if (!i2c->fifo_only)
 			isDMA = true;
-		} else {
+		else {
 			dev_dbg(i2c->dev, "i2c does not support dma mode\n");
 			return -EINVAL;
 		}
-	}
 
 	if (i2c->ext_data.isEnable && i2c->ext_data.timing)
 		speed_hz = i2c->ext_data.timing;
@@ -1754,6 +1753,12 @@ err_clk_set_main:
 	return 0;
 #endif
 }
+
+
+static struct syscore_ops mtk_i2c_syscore_ops = {
+	.resume = mt_i2c_pll_resume,
+	.suspend = mt_i2c_pll_suspend,
+};
 
 #ifdef CONFIG_PM_SLEEP
 

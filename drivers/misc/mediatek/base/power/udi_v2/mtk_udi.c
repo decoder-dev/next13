@@ -65,11 +65,11 @@ static unsigned int func_lv_mask_udi;
 #define	UDI_TAG	  "[mt_udi] "
 #ifdef __KERNEL__
 #define udi_error(fmt, args...)		pr_err(UDI_TAG fmt,	##args)
-#define udi_info(fmt, args...)		pr_info(UDI_TAG	fmt, ##args)
+#define udi_info(fmt, args...)		pr_debug(UDI_TAG	fmt, ##args)
 #define udi_ver(fmt, args...)	\
 	do {	\
 		if (func_lv_mask_udi)	\
-			pr_info(UDI_TAG	fmt, ##args);	\
+			pr_debug(UDI_TAG	fmt, ##args);	\
 	} while (0)
 
 #else
@@ -475,14 +475,14 @@ static ssize_t udi_jtag_clock_proc_write(struct file *file,
 	memset(DR_byte, 0, sizeof(DR_byte));
 
 	/* input check format */
-	if (sscanf(buf, "%4s %u %u %511s %u %u %511s %u",
+	if (sscanf(buf, "%4s %u %u %512s %u %u %512s %u",
 			&recv_key_word[0], &recv_buf[0],
 			&recv_buf[1], recv_char[0], &recv_buf[3],
 			&recv_buf[2], recv_char[1], &recv_buf[4]) == 8) {
 		/* 6 parameter */
 		IR_pause_count = recv_buf[3];
 		DR_pause_count = recv_buf[4];
-	} else if (sscanf(buf, "%4s %u %u %511s %u %511s",
+	} else if (sscanf(buf, "%4s %u %u %512s %u %512s",
 			&recv_key_word[0], &recv_buf[0],
 			&recv_buf[1], recv_char[0],
 			&recv_buf[2], recv_char[1]) == 6) {

@@ -64,8 +64,7 @@ static void ip6_rcv_finish_core(struct net *net, struct sock *sk,
 				udp_v6_early_demux(skb);
 			break;
 		}
-	}
-
+        }
 	if (!skb_valid_dst(skb))
 		ip6_route_input(skb);
 }

@@ -1834,7 +1834,6 @@ unblock_reqs:
 int ufshcd_hold(struct ufs_hba *hba, bool async)
 {
 	int rc = 0;
-	bool flush_result;
 	unsigned long flags;
 	bool wq;
 	u64 s_time;
@@ -9213,8 +9212,8 @@ static int ufshcd_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
 	int retry = 3;
 
 	/* MTK PATCH: Lock deepidle/SODI @enter UFS resume callback */
-	ufshcd_vops_deepidle_lock(hba, true);
 	enum ufs_dev_pwr_mode old_pwr_mode;
+	ufshcd_vops_deepidle_lock(hba, true);
 
 	hba->pm_op_in_progress = 1;
 	old_link_state = hba->uic_link_state;
@@ -9388,10 +9387,6 @@ out:
 		ktime_to_us(ktime_sub(ktime_get(), start)),
 		hba->curr_dev_pwr_mode, hba->uic_link_state);
 
-	/* MTK PATCH */
-	dev_info(hba->dev, "ss,ret %d,%d us\n", ret,
-		(int)ktime_to_us(ktime_sub(ktime_get(), start)));
-
 	if (!ret)
 		hba->is_sys_suspended = true;
 	return ret;
@@ -9425,10 +9420,6 @@ out:
 	trace_ufshcd_system_resume(dev_name(hba->dev), ret,
 		ktime_to_us(ktime_sub(ktime_get(), start)),
 		hba->curr_dev_pwr_mode, hba->uic_link_state);
-
-	/* MTK PATCH */
-	dev_info(hba->dev, "sr,ret %d,%d us\n", ret,
-		(int)ktime_to_us(ktime_sub(ktime_get(), start)));
 
 	if (!ret)
 		hba->is_sys_suspended = false;
@@ -9465,9 +9456,6 @@ out:
 		ktime_to_us(ktime_sub(ktime_get(), start)),
 		hba->curr_dev_pwr_mode, hba->uic_link_state);
 
-	/* MTK PATCH */
-	dev_info(hba->dev, "rs,ret %d,%d us\n", ret,
-		(int)ktime_to_us(ktime_sub(ktime_get(), start)));
 	return ret;
 }
 EXPORT_SYMBOL(ufshcd_runtime_suspend);
@@ -9514,9 +9502,6 @@ out:
 		ktime_to_us(ktime_sub(ktime_get(), start)),
 		hba->curr_dev_pwr_mode, hba->uic_link_state);
 
-	/* MTK PATCH */
-	dev_info(hba->dev, "rr,ret %d,%d us\n", ret,
-		(int)ktime_to_us(ktime_sub(ktime_get(), start)));
 	return ret;
 }
 EXPORT_SYMBOL(ufshcd_runtime_resume);

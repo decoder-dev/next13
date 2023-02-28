@@ -775,15 +775,11 @@ static int rollback_to_GPU(struct disp_layer_info *info,
 
 	if (is_layer_id_valid(info, disp, info->gles_head[disp]) == false) {
 		dump_disp_info(info, DISP_DEBUG_LEVEL_CRITICAL);
-		disp_aee_print("invalid gles_head:%d, aval:%d\n",
-			info->gles_head[disp], available);
 		WARN_ON(1);
 	}
 
 	if (is_layer_id_valid(info, disp, info->gles_tail[disp]) == false) {
 		dump_disp_info(info, DISP_DEBUG_LEVEL_CRITICAL);
-		disp_aee_print("invalid gles_tail:%d, aval:%d\n",
-			info->gles_tail[disp], available);
 		WARN_ON(1);
 	}
 
@@ -1804,7 +1800,7 @@ static int _copy_layer_info_from_disp(struct disp_layer_info *disp_info_user,
 		if (copy_from_user(l_info->input_config[disp_idx],
 				   disp_info_user->input_config[disp_idx],
 				   layer_size)) {
-			pr_info("[DISP][FB]: copy_to_user failed! line:%d\n",
+			pr_debug("[DISP][FB]: copy_to_user failed! line:%d\n",
 				__LINE__);
 
 			return 0;
@@ -1857,7 +1853,7 @@ static int _copy_layer_info_by_disp(struct disp_layer_info *disp_info_user,
 	} else {
 		if (copy_to_user(disp_info_user->input_config[disp_idx],
 				 l_info->input_config[disp_idx], layer_size)) {
-			pr_info("[DISP][FB]: copy_to_user failed! line:%d\n",
+			pr_debug("[DISP][FB]: copy_to_user failed! line:%d\n",
 				__LINE__);
 			ret = -EFAULT;
 		}

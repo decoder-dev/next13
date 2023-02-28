@@ -1825,10 +1825,6 @@ static void _cmdq_build_trigger_loop(void)
 					   CMDQ_SYNC_TOKEN_STREAM_EOF);
 		ret = cmdqRecSetEventToken(pgc->cmdq_handle_trigger,
 					   CMDQ_SYNC_TOKEN_CABC_EOF);
-		/* RUN forever! */
-		if (ret < 0)
-			disp_aee_db_print("cmdq build trigger fail, ret=%d\n",
-					  ret);
 	}
 
 	/*
@@ -3027,7 +3023,7 @@ static int init_decouple_buffers(void)
 	decouple_wdma_config.dstPitch = width * Bpp;
 	decouple_wdma_config.security = DISP_NORMAL_BUFFER;
 
-	pr_info("%s done\n", __func__);
+	pr_debug("%s done\n", __func__);
 	return 0;
 }
 
@@ -3075,8 +3071,6 @@ static int _convert_disp_input_to_ovl(struct OVL_CONFIG_STRUCT *dst,
 	unsigned int Bpp = 0;
 
 	if (!src || !dst) {
-		disp_aee_print("%s src(0x%p) or dst(0x%p) is null\n",
-			       __func__, src, dst);
 		return -1;
 	}
 
@@ -3744,38 +3738,6 @@ static int _ovl_fence_release_callback(unsigned long userdata)
 				__func__, config_id);
 #endif
 	_primary_path_unlock(__func__);
-
-	/* debug: check last ovl status: should be idle when config */
-	if (primary_display_is_video_mode() &&
-	    !primary_display_is_decouple_mode()) {
-		unsigned int status = 0;
-
-#ifdef DEBUG_OVL_CONFIG_TIME
-		unsigned int time_event = 0;
-		unsigned int time_event1 = 0;
-		unsigned int time_event2 = 0;
-
-		cmdqBackupReadSlot(pgc->ovl_config_time, 0, &time_event);
-		cmdqBackupReadSlot(pgc->ovl_config_time, 1, &time_event1);
-		cmdqBackupReadSlot(pgc->ovl_config_time, 2, &time_event2);
-		DISPMSG(
-			"ovl config time_event %d time_event1 %d time_event2 %d time1_diff  %d  time2_diff %d\n",
-			time_event, time_event1, time_event2,
-			time_event1 - time_event, time_event2 - time_event1);
-#endif
-
-		cmdqBackupReadSlot(pgc->ovl_status_info, 0, &status);
-		if (status & 0x1) {
-			/* ovl is not idle! */
-			DISP_PR_ERR("disp ovl status error! stat=0x%x\n",
-				    status);
-			/* disp_aee_print("ovl_stat 0x%x\n", status); */
-			mmprofile_log_ex(ddp_mmp_get_events()->primary_error,
-					 MMPROFILE_FLAG_PULSE, status, 0);
-			primary_display_diagnose(__func__, __LINE__);
-			ret = -1;
-		}
-	}
 
 	/* fence release */
 	for (i = 0; i < PRIMARY_SESSION_INPUT_LAYER_COUNT; i++) {
@@ -9437,7 +9399,7 @@ unsigned int primary_display_get_option(const char *option)
 		return disp_helper_get_option(DISP_OPT_USE_M4U);
 
 	/* ASSERT(0); */
-	pr_info("%s, invalid option\n", __func__);
+	pr_debug("%s, invalid option\n", __func__);
 	return -1;
 }
 
@@ -10240,7 +10202,7 @@ err0:
 
 int display_exit_tui(void)
 {
-	pr_info("[TUI-HAL] %s() start\n", __func__);
+	pr_debug("[TUI-HAL] %s() start\n", __func__);
 	mmprofile_log_ex(ddp_mmp_get_events()->tui, MMPROFILE_FLAG_PULSE, 1, 1);
 
 	_primary_path_lock(__func__);
@@ -10264,7 +10226,7 @@ int display_exit_tui(void)
 
 	mmprofile_log_ex(ddp_mmp_get_events()->tui, MMPROFILE_FLAG_END, 0, 0);
 	DISPMSG("TDDP: %s\n", __func__);
-	pr_info("[TUI-HAL] %s() done\n", __func__);
+	pr_debug("[TUI-HAL] %s() done\n", __func__);
 	return 0;
 }
 
@@ -10285,7 +10247,6 @@ static int primary_display_enter_self_refresh(void)
 
 	if (primary_display_is_mirror_mode()) {
 		/* we only accept non-mirror mode */
-		disp_aee_print("enter self-refresh mode fail\n");
 		goto out;
 	}
 
@@ -10313,7 +10274,6 @@ static int primary_display_exit_self_refresh(void)
 
 	if (primary_display_is_mirror_mode()) {
 		/* we only accept non-mirror mode */
-		disp_aee_print("enter self-refresh mode fail\n");
 		goto out;
 	}
 

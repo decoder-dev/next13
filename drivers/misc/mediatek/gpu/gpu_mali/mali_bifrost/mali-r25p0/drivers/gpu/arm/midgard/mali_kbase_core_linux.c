@@ -555,7 +555,7 @@ int assign_irqs(struct kbase_device *kbdev)
 		irqtag = i;
 #endif /* CONFIG_OF */
 		kbdev->irqs[irqtag].irq = irq_res->start;
-		kbdev->irqs[irqtag].flags = irq_res->flags & IRQF_TRIGGER_MASK | IRQF_PERF_AFFINE;
+		kbdev->irqs[irqtag].flags = irq_res->flags & (IRQF_TRIGGER_MASK | IRQF_PERF_AFFINE);
 	}
 
 	return 0;
@@ -4375,7 +4375,7 @@ static int kbase_platform_device_remove(struct platform_device *pdev)
 		return -ENODEV;
 
 	if (mtk_common_deinit(pdev, kbdev))
-		pr_info("[MALI] fail to mtk_common_deinit\n");
+		pr_debug("[MALI] fail to mtk_common_deinit\n");
 
 
 	kbase_device_term(kbdev);
