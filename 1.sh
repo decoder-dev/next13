@@ -52,7 +52,7 @@ make  -j$(nproc --all)  O=out ARCH=arm64 SUBARCH=arm64 $Defconfig
 exec 2> >(tee -a out/error.log >&2)
 
 make  -j$(nproc --all)  O=out \
-                        PATH="$clang/clang-r450784e/bin:$gcc64/bin:$gcc/bin:/usr/bin:$PATH" \
+                        PATH="$clang/clang-r487747/bin:$gcc64/bin:$gcc/bin:/usr/bin:$PATH" \
                         LD_LIBRARY_PATH="$clang/lib64:$LD_LIBRABRY_PATH" \
                         CC=clang \
                         LD=ld.lld \
