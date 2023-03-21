@@ -284,12 +284,6 @@ static void sdio_release_func(struct device *dev)
 	 */
 	put_device(&func->card->dev);
 
-	/*
-	 * We have now removed the link to the tuples in the
-	 * card structure, so remove the reference.
-	 */
-	put_device(&func->card->dev);
-
 	kfree(func->info);
 	kfree(func->tmpbuf);
 	kfree(func);
@@ -385,4 +379,3 @@ void sdio_remove_func(struct sdio_func *func)
 	of_node_put(func->dev.of_node);
 	put_device(&func->dev);
 }
-
