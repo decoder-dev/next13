@@ -391,10 +391,10 @@ static int mt6360_fled_set_mode(struct rt_fled_dev *fled,
 		break;
 	}
 
-	dev_info(fi->dev, "%s set %s mutex_lock +\n", __func__,
+	dev_dbg(fi->dev, "%s set %s mutex_lock +\n", __func__,
 		flashlight_mode_str[mode]);
 	mutex_lock(&fled_lock);
-	dev_info(fi->dev, "%s set %s mutex_lock -\n", __func__,
+	dev_dbg(fi->dev, "%s set %s mutex_lock -\n", __func__,
 		flashlight_mode_str[mode]);
 	switch (mode) {
 	case FLASHLIGHT_MODE_TORCH:
