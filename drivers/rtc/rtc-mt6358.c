@@ -208,7 +208,7 @@ module_param(rtc_show_alarm, int, 0644);
 
 void __attribute__((weak)) arch_reset(char mode, const char *cmd)
 {
-	pr_info("arch_reset is not ready\n");
+	pr_debug("arch_reset is not ready\n");
 }
 
 static int rtc_read(unsigned int reg, unsigned int *val)
@@ -375,7 +375,7 @@ bool mtk_rtc_is_pwron_alarm(struct rtc_time *nowtm, struct rtc_time *tm)
 	ret = rtc_read(RTC_PDN1, &pdn1);
 	if (ret < 0)
 		goto exit;
-	pr_notice("pdn1 = 0x%4x\n", pdn1);
+	pr_debug("pdn1 = 0x%4x\n", pdn1);
 
 	if (pdn1 & RTC_PDN1_PWRON_TIME) {	/* power-on time is available */
 
@@ -519,7 +519,7 @@ void rtc_read_pwron_alarm(struct rtc_wkalrm *alm)
 	tm->tm_mon -= 1;
 
 	if (rtc_show_alarm) {
-		pr_notice("power-on = %04d/%02d/%02d %02d:%02d:%02d (%d)(%d)\n",
+		pr_debug("power-on = %04d/%02d/%02d %02d:%02d:%02d (%d)(%d)\n",
 			  tm->tm_year + RTC_BASE_YEAR, tm->tm_mon + 1,
 			  tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec,
 			  alm->enabled, alm->pending);
@@ -536,7 +536,7 @@ exit:
 static int rtc_pm_event(struct notifier_block *notifier, unsigned long pm_event,
 			void *unused)
 {
-	pr_notice("%s = %lu\n", __func__, pm_event);
+	pr_debug("%s = %lu\n", __func__, pm_event);
 
 	switch (pm_event) {
 	case PM_SUSPEND_PREPARE:
@@ -551,7 +551,7 @@ static int rtc_pm_event(struct notifier_block *notifier, unsigned long pm_event,
 	}
 
 	if (kpoc_alarm) {
-		pr_notice("%s trigger reboot\n", __func__);
+		pr_debug("%s trigger reboot\n", __func__);
 		complete(&mt_rtc->comp);
 		kpoc_alarm = false;
 	}
@@ -572,11 +572,11 @@ static void mtk_rtc_work_queue(struct work_struct *work)
 
 	ret = wait_for_completion_timeout(&rtc->comp, msecs_to_jiffies(30000));
 	if (!ret) {
-		pr_notice("%s timeout\n", __func__);
+		pr_debug("%s timeout\n", __func__);
 		BUG_ON(1);
 	} else {
 		msecs = jiffies_to_msecs(ret);
-		pr_notice("%s timeleft= %d\n", __func__, msecs);
+		pr_debug("%s timeleft= %d\n", __func__, msecs);
 		kernel_restart("kpoc");
 	}
 }
@@ -596,11 +596,11 @@ static void mtk_rtc_reboot(void)
 
 	kpoc_alarm = true;
 
-	pr_notice("%s:wait\n", __func__);
+	pr_debug("%s:wait\n", __func__);
 	return;
 
 reboot:
-	pr_notice("%s:trigger\n", __func__);
+	pr_debug("%s:trigger\n", __func__);
 	complete(&mt_rtc->comp);
 }
 
@@ -649,7 +649,7 @@ static int mtk_rtc_is_alarm_irq(void)
 		rtc_write(RTC_BBPU, bbpu);
 		val = rtc_write_trigger();
 		if (val < 0)
-			pr_notice("%s error\n", __func__);
+			pr_debug("%s error\n", __func__);
 		return RTC_ALSTA;
 	}
 
@@ -691,7 +691,7 @@ static void mtk_rtc_reset_bbpu_alarm_status(void)
 
 
 	if (apply_lpsd_solution) {
-		pr_notice("%s:lpsd\n", __func__);
+		pr_debug("%s:lpsd\n", __func__);
 		return;
 	}
 
@@ -716,7 +716,7 @@ static irqreturn_t mtk_rtc_irq_handler(int irq, void *data)
 
 	status = mtk_rtc_is_alarm_irq();
 
-	pr_notice("%s:%d\n", __func__, status);
+	pr_debug("%s:%d\n", __func__, status);
 
 	if (status == RTC_NONE) {
 		spin_unlock_irqrestore(&mt_rtc->lock, flags);
@@ -780,7 +780,7 @@ out:
 		rtc_update_irq(mt_rtc->rtc_dev, 1, RTC_IRQF | RTC_AF);
 
 	if (rtc_show_alarm)
-		pr_notice("%s time is up\n", pwron_alm ? "power-on" : "alarm");
+		pr_debug("%s time is up\n", pwron_alm ? "power-on" : "alarm");
 
 	return IRQ_HANDLED;
 }
@@ -807,7 +807,7 @@ static int rtc_ops_read_time(struct device *dev, struct rtc_time *tm)
 	tm->tm_wday = do_div(time,  7);	/* 1970/01/01 is Thursday */
 
 	if (rtc_show_time) {
-		pr_notice("read tc time = %04d/%02d/%02d (%d) %02d:%02d:%02d\n",
+		pr_debug("read tc time = %04d/%02d/%02d (%d) %02d:%02d:%02d\n",
 			  tm->tm_year + RTC_BASE_YEAR, tm->tm_mon + 1,
 			  tm->tm_mday, tm->tm_wday, tm->tm_hour,
 			  tm->tm_min, tm->tm_sec);
@@ -834,7 +834,7 @@ static int rtc_ops_set_time(struct device *dev, struct rtc_time *tm)
 		return -EINVAL;
 	}
 
-	pr_notice("set tc time = %04d/%02d/%02d %02d:%02d:%02d\n",
+	pr_debug("set tc time = %04d/%02d/%02d %02d:%02d:%02d\n",
 		  tm->tm_year + RTC_BASE_YEAR, tm->tm_mon + 1, tm->tm_mday,
 		  tm->tm_hour, tm->tm_min, tm->tm_sec);
 
@@ -904,7 +904,7 @@ static int rtc_ops_read_alarm(struct device *dev, struct rtc_wkalrm *alm)
 	tm->tm_year += RTC_MIN_YEAR_OFFSET;
 	tm->tm_mon--;
 
-	pr_notice("read al time = %04d/%02d/%02d %02d:%02d:%02d (%d)\n",
+	pr_debug("read al time = %04d/%02d/%02d %02d:%02d:%02d (%d)\n",
 		  tm->tm_year + RTC_BASE_YEAR, tm->tm_mon + 1, tm->tm_mday,
 		  tm->tm_hour, tm->tm_min, tm->tm_sec, alm->enabled);
 
@@ -944,7 +944,7 @@ static int rtc_ops_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
 	tm.tm_year -= RTC_MIN_YEAR_OFFSET;
 	tm.tm_mon++;
 
-	pr_notice("set al time = %04d/%02d/%02d %02d:%02d:%02d (%d)\n",
+	pr_debug("set al time = %04d/%02d/%02d %02d:%02d:%02d (%d)\n",
 		  tm.tm_year + RTC_MIN_YEAR, tm.tm_mon, tm.tm_mday,
 		  tm.tm_hour, tm.tm_min, tm.tm_sec, alm->enabled);
 
@@ -1030,7 +1030,7 @@ static int mtk_rtc_pdrv_probe(struct platform_device *pdev)
 	rtc->irq = platform_get_irq(pdev, 0);
 	if (rtc->irq <= 0)
 		return -EINVAL;
-	pr_notice("%s: rtc->irq = %d(%d)\n", __func__, rtc->irq,
+	pr_debug("%s: rtc->irq = %d(%d)\n", __func__, rtc->irq,
 					platform_get_irq_byname(pdev, "rtc"));
 
 #ifndef IPIMB
@@ -1051,7 +1051,7 @@ static int mtk_rtc_pdrv_probe(struct platform_device *pdev)
 
 	if (of_property_read_u32(pdev->dev.of_node, "base", &rtc->addr_base))
 		rtc->addr_base = RTC_DSN_ID;
-	pr_notice("%s: rtc->addr_base =0x%x\n", __func__, rtc->addr_base);
+	pr_debug("%s: rtc->addr_base =0x%x\n", __func__, rtc->addr_base);
 
 	spin_lock_irqsave(&rtc->lock, flags);
 	mtk_rtc_set_lp_irq();
@@ -1083,12 +1083,12 @@ static int mtk_rtc_pdrv_probe(struct platform_device *pdev)
 
 	if (of_property_read_bool(pdev->dev.of_node, "apply-lpsd-solution")) {
 		apply_lpsd_solution = 1;
-		pr_notice("%s: apply_lpsd_solution\n", __func__);
+		pr_debug("%s: apply_lpsd_solution\n", __func__);
 	}
 
 #ifdef CONFIG_PM
 	if (register_pm_notifier(&rtc_pm_notifier_func))
-		pr_notice("rtc pm failed\n");
+		pr_debug("rtc pm failed\n");
 	else
 		rtc_pm_notifier_registered = true;
 #endif /* CONFIG_PM */
@@ -1128,14 +1128,14 @@ static void mtk_rtc_pdrv_shutdown(struct platform_device *pdev)
 			rtc_time_now.tm_mon--;
 			rtc_time_alarm.tm_year += RTC_MIN_YEAR_OFFSET;
 			rtc_time_alarm.tm_mon--;
-			pr_notice("now = %04d/%02d/%02d %02d:%02d:%02d\n",
+			pr_debug("now = %04d/%02d/%02d %02d:%02d:%02d\n",
 				rtc_time_now.tm_year + 1900,
 				rtc_time_now.tm_mon + 1,
 				rtc_time_now.tm_mday,
 				rtc_time_now.tm_hour,
 				rtc_time_now.tm_min,
 				rtc_time_now.tm_sec);
-			pr_notice("alarm = %04d/%02d/%02d %02d:%02d:%02d\n",
+			pr_debug("alarm = %04d/%02d/%02d %02d:%02d:%02d\n",
 				rtc_time_alarm.tm_year + 1900,
 				rtc_time_alarm.tm_mon + 1,
 				rtc_time_alarm.tm_mday,
@@ -1149,14 +1149,14 @@ static void mtk_rtc_pdrv_shutdown(struct platform_device *pdev)
 				ktime_alarm = ktime_sub_ms(ktime_alarm,
 					MSEC_PER_SEC * 60);
 				if (ktime_after(ktime_alarm, ktime_now))
-					pr_notice("Alarm will happen after 1 minute\n");
+					pr_debug("Alarm will happen after 1 minute\n");
 				else {
 					ktime_alarm = ktime_add_ms(ktime_now,
 						MSEC_PER_SEC * 15);
-					pr_notice("Alarm will happen in 15 seconds\n");
+					pr_debug("Alarm will happen in 15 seconds\n");
 				}
 				rtc_time_alarm = rtc_ktime_to_tm(ktime_alarm);
-				pr_notice("new alarm = %04d/%02d/%02d %02d:%02d:%02d\n",
+				pr_debug("new alarm = %04d/%02d/%02d %02d:%02d:%02d\n",
 					rtc_time_alarm.tm_year + 1900,
 					rtc_time_alarm.tm_mon + 1,
 					rtc_time_alarm.tm_mday,
@@ -1168,9 +1168,9 @@ static void mtk_rtc_pdrv_shutdown(struct platform_device *pdev)
 				mtk_rtc_set_pwron_alarm_time(&rtc_time_alarm);
 				mtk_rtc_set_alarm(&rtc_time_alarm);
 			} else
-				pr_notice("Alarm has happened before\n");
+				pr_debug("Alarm has happened before\n");
 		} else
-			pr_notice("No power-off alarm is set\n");
+			pr_debug("No power-off alarm is set\n");
 	}
 
 }
