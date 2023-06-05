@@ -911,7 +911,7 @@ static int __init smc_probe(struct net_device *dev, int ioaddr)
 	   It might be prudent to check a listing of MAC addresses
 	   against the hardware address, or do some other tests. */
 
-	pr_info_once("%s\n", version);
+	pr_debug_once("%s\n", version);
 
 	/* fill in some of the fields */
 	dev->base_addr = ioaddr;

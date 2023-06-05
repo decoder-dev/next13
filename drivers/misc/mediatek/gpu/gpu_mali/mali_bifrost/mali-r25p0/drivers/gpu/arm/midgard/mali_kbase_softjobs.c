@@ -212,7 +212,7 @@ void kbase_soft_event_wait_callback(struct kbase_jd_atom *katom)
 }
 #endif
 
-static void kbasep_soft_event_complete_job(struct work_struct *work)
+static void kbasep_soft_event_complete_job(struct kthread_work *work)
 {
 	struct kbase_jd_atom *katom = container_of(work, struct kbase_jd_atom,
 			work);
@@ -244,10 +244,10 @@ void kbasep_complete_triggered_soft_events(struct kbase_context *kctx, u64 evt)
 				list_del(&katom->queue);
 
 				katom->event_code = BASE_JD_EVENT_DONE;
-				INIT_WORK(&katom->work,
-					  kbasep_soft_event_complete_job);
-				queue_work(kctx->jctx.job_done_wq,
-					   &katom->work);
+				kthread_init_work(&katom->work,
+					kbasep_soft_event_complete_job);
+				kthread_queue_work(&kctx->kbdev->job_done_worker,
+					&katom->work);
 			} else {
 				/* There are still other waiting jobs, we cannot
 				 * cancel the timer yet.
@@ -343,7 +343,7 @@ struct kbase_fence_debug_work {
 	struct work_struct work;
 };
 
-static void kbase_fence_debug_wait_timeout_worker(struct work_struct *work)
+static void kbase_fence_debug_wait_timeout_worker(struct kthread_work *work)
 {
 	struct kbase_fence_debug_work *w = container_of(work,
 			struct kbase_fence_debug_work, work);
@@ -362,15 +362,15 @@ static void kbase_fence_debug_timeout(struct kbase_jd_atom *katom)
 	struct kbase_fence_debug_work *work;
 	struct kbase_context *kctx = katom->kctx;
 
-	/* Enqueue fence debug worker. Use job_done_wq to get
+	/* Enqueue fence debug worker. Use job_done_worker to get
 	 * debug print ordered with job completion.
 	 */
 	work = kzalloc(sizeof(struct kbase_fence_debug_work), GFP_ATOMIC);
 	/* Ignore allocation failure. */
 	if (work) {
 		work->katom = katom;
-		INIT_WORK(&work->work, kbase_fence_debug_wait_timeout_worker);
-		queue_work(kctx->jctx.job_done_wq, &work->work);
+		kthread_init_work(&work->work, kbase_fence_debug_wait_timeout_worker);
+		kthread_queue_work(&kctx->kbdev->job_done_worker, &work->work);
 	}
 }
 #endif /* CONFIG_MALI_FENCE_DEBUG */
@@ -406,8 +406,8 @@ void kbasep_soft_job_timeout_worker(struct timer_list *timer)
 			list_del(&katom->queue);
 
 			katom->event_code = BASE_JD_EVENT_JOB_CANCELLED;
-			INIT_WORK(&katom->work, kbasep_soft_event_complete_job);
-			queue_work(kctx->jctx.job_done_wq, &katom->work);
+			kthread_init_work(&katom->work, kbasep_soft_event_complete_job);
+			kthread_queue_work(&kctx->kbdev->job_done_worker, &katom->work);
 			break;
 #ifdef CONFIG_MALI_FENCE_DEBUG
 		case BASE_JD_REQ_SOFT_FENCE_WAIT:
@@ -977,7 +977,7 @@ static int kbase_jit_allocate_prepare(struct kbase_jd_atom *katom)
 
 	/* Copy the information for safe access and future storage */
 	info = kmalloc_array(count, sizeof(*info), GFP_KERNEL);
-	if (!info) {
+	if (unlikely(!info)) {
 		ret = -ENOMEM;
 		goto fail;
 	}
@@ -1151,7 +1151,7 @@ static int kbase_jit_allocate_process(struct kbase_jd_atom *katom)
 				}
 			}
 
-			if (!can_block) {
+			if (unlikely(!can_block)) {
 				/* Mark the failed allocation as well as the
 				 * other un-attempted allocations in the set,
 				 * so we know they are in use even if the
@@ -1269,14 +1269,14 @@ static int kbase_jit_free_prepare(struct kbase_jd_atom *katom)
 	int ret;
 
 	/* Sanity checks */
-	if (count > ARRAY_SIZE(kctx->jit_alloc)) {
+	if (unlikely(count > ARRAY_SIZE(kctx->jit_alloc))) {
 		ret = -EINVAL;
 		goto fail;
 	}
 
 	/* Copy the information for safe access and future storage */
 	ids = kmalloc_array(count, sizeof(*ids), GFP_KERNEL);
-	if (!ids) {
+	if (unlikely(!ids)) {
 		ret = -ENOMEM;
 		goto fail;
 	}
@@ -1337,7 +1337,7 @@ static void kbase_jit_free_process(struct kbase_jd_atom *katom)
 	}
 }
 
-static void kbasep_jit_finish_worker(struct work_struct *work)
+static void kbasep_jit_finish_worker(struct kthread_work *work)
 {
 	struct kbase_jd_atom *katom = container_of(work, struct kbase_jd_atom,
 			work);
@@ -1368,9 +1368,9 @@ void kbase_jit_retry_pending_alloc(struct kbase_context *kctx)
 		kbase_kinstr_jm_atom_sw_start(pending_atom);
 		if (kbase_jit_allocate_process(pending_atom) == 0) {
 			/* Atom has completed */
-			INIT_WORK(&pending_atom->work,
+			kthread_init_work(&pending_atom->work,
 					kbasep_jit_finish_worker);
-			queue_work(kctx->jctx.job_done_wq, &pending_atom->work);
+			kthread_queue_work(&kctx->kbdev->job_done_worker, &pending_atom->work);
 		}
 		KBASE_TLSTREAM_TL_EVENT_ATOM_SOFTJOB_END(kctx->kbdev, pending_atom);
 		kbase_kinstr_jm_atom_sw_stop(pending_atom);
@@ -1428,12 +1428,12 @@ static int kbase_ext_res_prepare(struct kbase_jd_atom *katom)
 			(uintptr_t) katom->jc;
 
 	/* Fail the job if there is no info structure */
-	if (!user_ext_res) {
+	if (unlikely(!user_ext_res)) {
 		ret = -EINVAL;
 		goto fail;
 	}
 
-	if (copy_from_user(&count, &user_ext_res->count, sizeof(u64)) != 0) {
+	if (unlikely(copy_from_user(&count, &user_ext_res->count, sizeof(u64))) != 0) {
 		ret = -EINVAL;
 		goto fail;
 	}
@@ -1448,7 +1448,7 @@ static int kbase_ext_res_prepare(struct kbase_jd_atom *katom)
 	copy_size = sizeof(*ext_res);
 	copy_size += sizeof(struct base_external_resource) * (count - 1);
 	ext_res = kzalloc(copy_size, GFP_KERNEL);
-	if (!ext_res) {
+	if (unlikely(!ext_res)) {
 		ret = -ENOMEM;
 		goto fail;
 	}
@@ -1481,7 +1481,7 @@ static void kbase_ext_res_process(struct kbase_jd_atom *katom, bool map)
 	bool failed = false;
 
 	ext_res = katom->softjob_data;
-	if (!ext_res)
+	if (unlikely(!ext_res))
 		goto failed_jc;
 
 	kbase_gpu_vm_lock(katom->kctx);
@@ -1506,7 +1506,7 @@ static void kbase_ext_res_process(struct kbase_jd_atom *katom, bool map)
 	 * case of failure but will always report failure if _any_ unmap
 	 * request fails.
 	 */
-	if (failed)
+	if (unlikely(failed))
 		katom->event_code = BASE_JD_EVENT_JOB_INVALID;
 	else
 		katom->event_code = BASE_JD_EVENT_DONE;

@@ -599,7 +599,7 @@ static int ncp_fill_super(struct super_block *sb, void *raw_data, int silent)
 	   now because of PATH_MAX changes.. */
 	if (server->m.time_out < 1) {
 		server->m.time_out = 10;
-		pr_info("You need to recompile your ncpfs utils..\n");
+		pr_debug("You need to recompile your ncpfs utils..\n");
 	}
 	server->m.time_out = server->m.time_out * HZ / 100;
 	server->m.file_mode = (server->m.file_mode & S_IRWXUGO) | S_IFREG;

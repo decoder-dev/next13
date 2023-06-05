@@ -422,7 +422,7 @@ static int esb_probe(struct pci_dev *pdev,
 
 	cards_found++;
 	if (cards_found == 1)
-		pr_info("Intel 6300ESB WatchDog Timer Driver v%s\n",
+		pr_debug("Intel 6300ESB WatchDog Timer Driver v%s\n",
 			ESB_VERSION);
 
 	if (cards_found > 1) {
@@ -438,7 +438,7 @@ static int esb_probe(struct pci_dev *pdev,
 	   if not reset to the default */
 	if (heartbeat < 0x1 || heartbeat > 2 * 0x03ff) {
 		heartbeat = WATCHDOG_HEARTBEAT;
-		pr_info("heartbeat value must be 1<heartbeat<2046, using %d\n",
+		pr_debug("heartbeat value must be 1<heartbeat<2046, using %d\n",
 			heartbeat);
 	}
 
@@ -452,7 +452,7 @@ static int esb_probe(struct pci_dev *pdev,
 		       WATCHDOG_MINOR, ret);
 		goto err_unmap;
 	}
-	pr_info("initialized (0x%p). heartbeat=%d sec (nowayout=%d)\n",
+	pr_debug("initialized (0x%p). heartbeat=%d sec (nowayout=%d)\n",
 		BASEADDR, heartbeat, nowayout);
 	return 0;
 

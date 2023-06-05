@@ -2141,7 +2141,7 @@ static const struct attribute_group *netiucv_drv_attr_groups[] = {
 
 static void netiucv_banner(void)
 {
-	pr_info("driver initialized\n");
+	pr_debug("driver initialized\n");
 }
 
 static void __exit netiucv_exit(void)
@@ -2168,7 +2168,7 @@ static void __exit netiucv_exit(void)
 	iucv_unregister(&netiucv_handler, 1);
 	iucv_unregister_dbf_views();
 
-	pr_info("driver unloaded\n");
+	pr_debug("driver unloaded\n");
 	return;
 }
 

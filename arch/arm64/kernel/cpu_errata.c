@@ -328,7 +328,7 @@ void __init arm64_enable_wa2_handling(struct alt_instr *alt,
 void arm64_set_ssbd_mitigation(bool state)
 {
 	if (!IS_ENABLED(CONFIG_ARM64_SSBD)) {
-		pr_info_once("SSBD disabled by kernel configuration\n");
+		pr_debug_once("SSBD disabled by kernel configuration\n");
 		return;
 	}
 
@@ -415,7 +415,7 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
 
 	/* machines with mixed mitigation requirements must not return this */
 	case SMCCC_RET_NOT_REQUIRED:
-		pr_info_once("%s mitigation not required\n", entry->desc);
+		pr_debug_once("%s mitigation not required\n", entry->desc);
 		ssbd_state = ARM64_SSBD_MITIGATED;
 		return false;
 
@@ -460,11 +460,11 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
 out_printmsg:
 	switch (ssbd_state) {
 	case ARM64_SSBD_FORCE_DISABLE:
-		pr_info_once("%s disabled from command-line\n", entry->desc);
+		pr_debug_once("%s disabled from command-line\n", entry->desc);
 		break;
 
 	case ARM64_SSBD_FORCE_ENABLE:
-		pr_info_once("%s forced from command-line\n", entry->desc);
+		pr_debug_once("%s forced from command-line\n", entry->desc);
 		break;
 	}
 
@@ -565,7 +565,7 @@ check_branch_predictor(const struct arm64_cpu_capabilities *entry, int scope)
 
 	/* forced off */
 	if (__nospectre_v2 || cpu_mitigations_off()) {
-		pr_info_once("spectrev2 mitigation disabled by command line option\n");
+		pr_debug_once("spectrev2 mitigation disabled by command line option\n");
 		__hardenbp_enab = false;
 		return false;
 	}
@@ -1090,9 +1090,9 @@ void spectre_bhb_enable_mitigation(const struct arm64_cpu_capabilities *entry)
 	if (!__spectrev2_safe &&  !__hardenbp_enab) {
 		/* No point mitigating Spectre-BHB alone. */
 	} else if (!IS_ENABLED(CONFIG_MITIGATE_SPECTRE_BRANCH_HISTORY)) {
-		pr_info_once("spectre-bhb mitigation disabled by compile time option\n");
+		pr_debug_once("spectre-bhb mitigation disabled by compile time option\n");
 	} else if (cpu_mitigations_off()) {
-		pr_info_once("spectre-bhb mitigation disabled by command line option\n");
+		pr_debug_once("spectre-bhb mitigation disabled by command line option\n");
 	} else if (supports_ecbhb(SCOPE_LOCAL_CPU)) {
 		state = SPECTRE_MITIGATED;
 	} else if (supports_clearbhb(SCOPE_LOCAL_CPU)) {

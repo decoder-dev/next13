@@ -369,7 +369,7 @@ void __init paging_init(unsigned long mem_end)
 #ifdef CONFIG_HIGHMEM
 		max_zone_pfns[ZONE_HIGHMEM] = highend_pfn;
 #endif
-		pr_info("Node %u: start_pfn = 0x%lx, low = 0x%lx\n",
+		pr_debug("Node %u: start_pfn = 0x%lx, low = 0x%lx\n",
 			nid, start_pfn, low);
 	}
 

@@ -658,7 +658,7 @@ static int create_trace_kprobe(int argc, char **argv)
 	else if (argv[0][0] == '-')
 		is_delete = true;
 	else {
-		pr_info("Probe definition must be started with 'p', 'r' or"
+		pr_debug("Probe definition must be started with 'p', 'r' or"
 			" '-'.\n");
 		return -EINVAL;
 	}
@@ -671,14 +671,14 @@ static int create_trace_kprobe(int argc, char **argv)
 	if (is_return && isdigit(argv[0][1])) {
 		ret = kstrtouint(&argv[0][1], 0, &maxactive);
 		if (ret) {
-			pr_info("Failed to parse maxactive.\n");
+			pr_debug("Failed to parse maxactive.\n");
 			return ret;
 		}
 		/* kretprobes instances are iterated over via a list. The
 		 * maximum should stay reasonable.
 		 */
 		if (maxactive > KRETPROBE_MAXACTIVE_MAX) {
-			pr_info("Maxactive is too big (%d > %d).\n",
+			pr_debug("Maxactive is too big (%d > %d).\n",
 				maxactive, KRETPROBE_MAXACTIVE_MAX);
 			return -E2BIG;
 		}
@@ -690,12 +690,12 @@ static int create_trace_kprobe(int argc, char **argv)
 			event = strchr(group, '/') + 1;
 			event[-1] = '\0';
 			if (strlen(group) == 0) {
-				pr_info("Group name is not specified\n");
+				pr_debug("Group name is not specified\n");
 				return -EINVAL;
 			}
 		}
 		if (strlen(event) == 0) {
-			pr_info("Event name is not specified\n");
+			pr_debug("Event name is not specified\n");
 			return -EINVAL;
 		}
 	}
@@ -704,14 +704,14 @@ static int create_trace_kprobe(int argc, char **argv)
 
 	if (is_delete) {
 		if (!event) {
-			pr_info("Delete command needs an event name.\n");
+			pr_debug("Delete command needs an event name.\n");
 			return -EINVAL;
 		}
 		mutex_lock(&probe_lock);
 		tk = find_trace_kprobe(event, group);
 		if (!tk) {
 			mutex_unlock(&probe_lock);
-			pr_info("Event %s/%s doesn't exist.\n", group, event);
+			pr_debug("Event %s/%s doesn't exist.\n", group, event);
 			return -ENOENT;
 		}
 		/* delete an event */
@@ -723,7 +723,7 @@ static int create_trace_kprobe(int argc, char **argv)
 	}
 
 	if (argc < 2) {
-		pr_info("Probe point is not specified.\n");
+		pr_debug("Probe point is not specified.\n");
 		return -EINVAL;
 	}
 
@@ -735,12 +735,12 @@ static int create_trace_kprobe(int argc, char **argv)
 		/* TODO: support .init module functions */
 		ret = traceprobe_split_symbol_offset(symbol, &offset);
 		if (ret || offset < 0 || offset > UINT_MAX) {
-			pr_info("Failed to parse either an address or a symbol.\n");
+			pr_debug("Failed to parse either an address or a symbol.\n");
 			return ret;
 		}
 		if (offset && is_return &&
 		    !kprobe_on_func_entry(NULL, symbol, offset)) {
-			pr_info("Given offset is not valid for return probe.\n");
+			pr_debug("Given offset is not valid for return probe.\n");
 			return -EINVAL;
 		}
 	}
@@ -761,7 +761,7 @@ static int create_trace_kprobe(int argc, char **argv)
 	tk = alloc_trace_kprobe(group, event, addr, symbol, offset, maxactive,
 			       argc, is_return);
 	if (IS_ERR(tk)) {
-		pr_info("Failed to allocate trace_probe.(%d)\n",
+		pr_debug("Failed to allocate trace_probe.(%d)\n",
 			(int)PTR_ERR(tk));
 		return PTR_ERR(tk);
 	}
@@ -787,13 +787,13 @@ static int create_trace_kprobe(int argc, char **argv)
 		}
 
 		if (!parg->name) {
-			pr_info("Failed to allocate argument[%d] name.\n", i);
+			pr_debug("Failed to allocate argument[%d] name.\n", i);
 			ret = -ENOMEM;
 			goto error;
 		}
 
 		if (!is_good_name(parg->name)) {
-			pr_info("Invalid argument[%d] name: %s\n",
+			pr_debug("Invalid argument[%d] name: %s\n",
 				i, parg->name);
 			ret = -EINVAL;
 			goto error;
@@ -801,7 +801,7 @@ static int create_trace_kprobe(int argc, char **argv)
 
 		if (traceprobe_conflict_field_name(parg->name,
 							tk->tp.args, i)) {
-			pr_info("Argument[%d] name '%s' conflicts with "
+			pr_debug("Argument[%d] name '%s' conflicts with "
 				"another field.\n", i, argv[i]);
 			ret = -EINVAL;
 			goto error;
@@ -812,7 +812,7 @@ static int create_trace_kprobe(int argc, char **argv)
 						is_return, true,
 						kprobes_fetch_type_table);
 		if (ret) {
-			pr_info("Parse error at argument[%d]. (%d)\n", i, ret);
+			pr_debug("Parse error at argument[%d]. (%d)\n", i, ret);
 			goto error;
 		}
 	}
@@ -1352,7 +1352,7 @@ static int register_kprobe_event(struct trace_kprobe *tk)
 	call->data = tk;
 	ret = trace_add_event_call(call);
 	if (ret) {
-		pr_info("Failed to register kprobe event: %s\n",
+		pr_debug("Failed to register kprobe event: %s\n",
 			trace_event_name(call));
 		kfree(call->print_fmt);
 		unregister_trace_event(&call->event);
@@ -1442,7 +1442,7 @@ static __init int kprobe_trace_self_tests_init(void)
 
 	target = kprobe_trace_selftest_target;
 
-	pr_info("Testing kprobe tracing: ");
+	pr_debug("Testing kprobe tracing: ");
 
 	ret = traceprobe_command("p:testprobe kprobe_trace_selftest_target "
 				  "$stack $stack0 +0($stack)",

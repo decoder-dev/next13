@@ -164,7 +164,7 @@ bool boot_ftrace_check(unsigned long trace_en)
 	boot_complete = boot_finish;
 #endif
 	if (!boot_complete) {
-		pr_info("Capturing boot ftrace,Ignore tracing off.\n");
+		pr_debug("Capturing boot ftrace,Ignore tracing off.\n");
 		return true;
 	}
 	return false;
@@ -287,7 +287,7 @@ static __init int boot_ftrace(void)
 	if (boot_trace) {
 		tr = top_trace_array();
 		if (!tr) {
-			pr_info("[ftrace]Error: Tracer list is empty.\n");
+			pr_debug("[ftrace]Error: Tracer list is empty.\n");
 			return 0;
 		}
 

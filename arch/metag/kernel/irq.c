@@ -145,7 +145,7 @@ void irq_ctx_init(int cpu)
 
 	softirq_ctx[cpu] = irqctx;
 
-	pr_info("CPU %u irqstacks, hard=%p soft=%p\n",
+	pr_debug("CPU %u irqstacks, hard=%p soft=%p\n",
 		cpu, hardirq_ctx[cpu], softirq_ctx[cpu]);
 }
 
@@ -282,7 +282,7 @@ void migrate_irqs(void)
 		newcpu = cpumask_any_and(mask, cpu_online_mask);
 
 		if (newcpu >= nr_cpu_ids) {
-			pr_info_ratelimited("IRQ%u no longer affine to CPU%u\n",
+			pr_debug_ratelimited("IRQ%u no longer affine to CPU%u\n",
 					    i, cpu);
 
 			cpumask_setall(mask);

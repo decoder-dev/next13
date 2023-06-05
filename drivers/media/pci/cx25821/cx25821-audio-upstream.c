@@ -279,7 +279,7 @@ static int cx25821_get_audio_data(struct cx25821_dev *dev,
 	for (i = 0; i < dev->_audio_lines_count; i++) {
 		int n = kernel_read(file, mybuf, AUDIO_LINE_SIZE, &file_offset);
 		if (n < AUDIO_LINE_SIZE) {
-			pr_info("Done: exit %s() since no more bytes to read from Audio file\n",
+			pr_debug("Done: exit %s() since no more bytes to read from Audio file\n",
 				__func__);
 			dev->_audiofile_status = END_OF_FILE;
 			fput(file);
@@ -334,7 +334,7 @@ static int cx25821_openfile_audio(struct cx25821_dev *dev,
 			int n = kernel_read(file, buf, AUDIO_LINE_SIZE, &file_offset);
 
 			if (n < AUDIO_LINE_SIZE) {
-				pr_info("Done: exit %s() since no more bytes to read from Audio file\n",
+				pr_debug("Done: exit %s() since no more bytes to read from Audio file\n",
 					__func__);
 				dev->_audiofile_status = END_OF_FILE;
 				fput(file);

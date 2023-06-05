@@ -234,7 +234,7 @@ static void au0828_rc_work(struct work_struct *work)
 
 	rc = ir->get_key_i2c(ir);
 	if (rc < 0)
-		pr_info("Error while getting RC scancode\n");
+		pr_debug("Error while getting RC scancode\n");
 
 	schedule_delayed_work(&ir->work, msecs_to_jiffies(ir->polling));
 }
@@ -351,7 +351,7 @@ int au0828_rc_register(struct au0828_dev *dev)
 	if (err)
 		goto error;
 
-	pr_info("Remote controller %s initialized\n", ir->name);
+	pr_debug("Remote controller %s initialized\n", ir->name);
 
 	return 0;
 
@@ -384,7 +384,7 @@ int au0828_rc_suspend(struct au0828_dev *dev)
 	if (!ir)
 		return 0;
 
-	pr_info("Stopping RC\n");
+	pr_debug("Stopping RC\n");
 
 	cancel_delayed_work_sync(&ir->work);
 
@@ -401,7 +401,7 @@ int au0828_rc_resume(struct au0828_dev *dev)
 	if (!ir)
 		return 0;
 
-	pr_info("Restarting RC\n");
+	pr_debug("Restarting RC\n");
 
 	/* Enable IR */
 	au8522_rc_set(ir, 0xe0, 1 << 4);

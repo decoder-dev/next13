@@ -3519,7 +3519,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
 		chip->onfi_version = 10;
 
 	if (!chip->onfi_version) {
-		pr_info("unsupported ONFI version: %d\n", val);
+		pr_debug("unsupported ONFI version: %d\n", val);
 		return 0;
 	}
 
@@ -3617,7 +3617,7 @@ static int nand_flash_detect_jedec(struct nand_chip *chip)
 		chip->jedec_version = 1; /* vendor specific version */
 
 	if (!chip->jedec_version) {
-		pr_info("unsupported JEDEC version: %d\n", val);
+		pr_debug("unsupported JEDEC version: %d\n", val);
 		return 0;
 	}
 
@@ -3911,7 +3911,7 @@ static int nand_detect(struct nand_chip *chip, struct nand_flash_dev *type)
 		id_data[i] = chip->read_byte(mtd);
 
 	if (id_data[0] != maf_id || id_data[1] != dev_id) {
-		pr_info("second ID read did not match %02x,%02x against %02x,%02x\n",
+		pr_debug("second ID read did not match %02x,%02x against %02x,%02x\n",
 			maf_id, dev_id, id_data[0], id_data[1]);
 		return -ENODEV;
 	}
@@ -3986,9 +3986,9 @@ ident_done:
 		 * Check, if buswidth is correct. Hardware drivers should set
 		 * chip correct!
 		 */
-		pr_info("device found, Manufacturer ID: 0x%02x, Chip ID: 0x%02x\n",
+		pr_debug("device found, Manufacturer ID: 0x%02x, Chip ID: 0x%02x\n",
 			maf_id, dev_id);
-		pr_info("%s %s\n", nand_manufacturer_name(manufacturer),
+		pr_debug("%s %s\n", nand_manufacturer_name(manufacturer),
 			mtd->name);
 		pr_warn("bus width %d instead of %d bits\n", busw ? 16 : 8,
 			(chip->options & NAND_BUSWIDTH_16) ? 16 : 8);
@@ -4018,20 +4018,20 @@ ident_done:
 	if (mtd->writesize > 512 && chip->cmdfunc == nand_command)
 		chip->cmdfunc = nand_command_lp;
 
-	pr_info("device found, Manufacturer ID: 0x%02x, Chip ID: 0x%02x\n",
+	pr_debug("device found, Manufacturer ID: 0x%02x, Chip ID: 0x%02x\n",
 		maf_id, dev_id);
 
 	if (chip->onfi_version)
-		pr_info("%s %s\n", nand_manufacturer_name(manufacturer),
+		pr_debug("%s %s\n", nand_manufacturer_name(manufacturer),
 			chip->onfi_params.model);
 	else if (chip->jedec_version)
-		pr_info("%s %s\n", nand_manufacturer_name(manufacturer),
+		pr_debug("%s %s\n", nand_manufacturer_name(manufacturer),
 			chip->jedec_params.model);
 	else
-		pr_info("%s %s\n", nand_manufacturer_name(manufacturer),
+		pr_debug("%s %s\n", nand_manufacturer_name(manufacturer),
 			type->name);
 
-	pr_info("%d MiB, %s, erase size: %d KiB, page size: %d, OOB size: %d\n",
+	pr_debug("%d MiB, %s, erase size: %d KiB, page size: %d, OOB size: %d\n",
 		(int)(chip->chipsize >> 20), nand_is_slc(chip) ? "SLC" : "MLC",
 		mtd->erasesize >> 10, mtd->writesize, mtd->oobsize);
 	return 0;
@@ -4247,7 +4247,7 @@ int nand_scan_ident(struct mtd_info *mtd, int maxchips,
 		chip->select_chip(mtd, -1);
 	}
 	if (i > 1)
-		pr_info("%d chips detected\n", i);
+		pr_debug("%d chips detected\n", i);
 
 	/* Store the number of chips and calc total size for mtd */
 	chip->numchips = i;

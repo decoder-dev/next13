@@ -510,7 +510,7 @@ static void __init etherh_banner(void)
 	static int version_printed;
 
 	if ((etherh_msg_enable & NETIF_MSG_DRV) && (version_printed++ == 0))
-		pr_info("%s", version);
+		pr_debug("%s", version);
 }
 
 /*

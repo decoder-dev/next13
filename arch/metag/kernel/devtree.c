@@ -65,7 +65,7 @@ const struct machine_desc * __init setup_machine_fdt(void *dt)
 	mdesc = of_flat_dt_match_machine(NULL, arch_get_next_mach);
 	if (!mdesc)
 		dump_machine_table(); /* does not return */
-	pr_info("Machine name: %s\n", mdesc->name);
+	pr_debug("Machine name: %s\n", mdesc->name);
 
 	return mdesc;
 }

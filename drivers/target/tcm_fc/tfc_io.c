@@ -176,7 +176,7 @@ int ft_queue_data_in(struct se_cmd *se_cmd)
 			       FC_TYPE_FCP, f_ctl, fh_off);
 		error = fc_seq_send(lport, seq, fp);
 		if (error) {
-			pr_info_ratelimited("%s: Failed to send frame %p, "
+			pr_debug_ratelimited("%s: Failed to send frame %p, "
 						"xid <0x%x>, remaining %zu, "
 						"lso_max <0x%x>\n",
 						__func__, fp, ep->xid,

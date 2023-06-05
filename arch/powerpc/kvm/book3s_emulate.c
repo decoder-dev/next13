@@ -503,7 +503,7 @@ int kvmppc_core_emulate_mtspr_pr(struct kvm_vcpu *vcpu, int sprn, ulong spr_val)
 		break;
 unprivileged:
 	default:
-		pr_info_ratelimited("KVM: invalid SPR write: %d\n", sprn);
+		pr_debug_ratelimited("KVM: invalid SPR write: %d\n", sprn);
 		if (sprn & 0x10) {
 			if (kvmppc_get_msr(vcpu) & MSR_PR) {
 				kvmppc_core_queue_program(vcpu, SRR1_PROGPRIV);
@@ -656,7 +656,7 @@ int kvmppc_core_emulate_mfspr_pr(struct kvm_vcpu *vcpu, int sprn, ulong *spr_val
 		break;
 	default:
 unprivileged:
-		pr_info_ratelimited("KVM: invalid SPR read: %d\n", sprn);
+		pr_debug_ratelimited("KVM: invalid SPR read: %d\n", sprn);
 		if (sprn & 0x10) {
 			if (kvmppc_get_msr(vcpu) & MSR_PR) {
 				kvmppc_core_queue_program(vcpu, SRR1_PROGPRIV);

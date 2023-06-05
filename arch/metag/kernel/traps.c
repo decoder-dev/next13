@@ -504,7 +504,7 @@ static void unhandled_fault(struct pt_regs *regs, unsigned long addr,
 		if (show_unhandled_signals && unhandled_signal(current, signo)
 		    && printk_ratelimit()) {
 
-			pr_info("pid %d unhandled fault: pc 0x%08x, addr 0x%08lx, trap %d (%s)\n",
+			pr_debug("pid %d unhandled fault: pc 0x%08x, addr 0x%08lx, trap %d (%s)\n",
 				current->pid, regs->ctx.CurrPC, addr,
 				trapno, trap_name(trapno));
 			print_vma_addr(" in ", regs->ctx.CurrPC);

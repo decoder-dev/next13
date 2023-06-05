@@ -111,7 +111,7 @@ static int get_cache_mode(char *s)
 		version = CACHE_NONE;
 		p9_debug(P9_DEBUG_9P, "Cache mode: none\n");
 	} else
-		pr_info("Unknown Cache mode %s\n", s);
+		pr_debug("Unknown Cache mode %s\n", s);
 	return version;
 }
 
@@ -338,7 +338,7 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
 				uid = simple_strtoul(s, &e, 10);
 				if (*e != '\0') {
 					ret = -EINVAL;
-					pr_info("Unknown access argument %s\n",
+					pr_debug("Unknown access argument %s\n",
 						s);
 					kfree(s);
 					goto free_and_return;
@@ -346,7 +346,7 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
 				v9ses->uid = make_kuid(current_user_ns(), uid);
 				if (!uid_valid(v9ses->uid)) {
 					ret = -EINVAL;
-					pr_info("Uknown uid %s\n", s);
+					pr_debug("Uknown uid %s\n", s);
 					kfree(s);
 					goto free_and_return;
 				}
@@ -701,7 +701,7 @@ static void v9fs_cache_unregister(void)
 static int __init init_v9fs(void)
 {
 	int err;
-	pr_info("Installing v9fs 9p2000 file system support\n");
+	pr_debug("Installing v9fs 9p2000 file system support\n");
 	/* TODO: Setup list of registered trasnport modules */
 
 	err = v9fs_cache_register();

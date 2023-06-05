@@ -237,9 +237,9 @@ static irqreturn_t mtk_stmr_handler(int irq, void *dev_id)
 		if (likely(stmr_handlers[id]))
 			stmr_handlers[id]((unsigned long)dev_id);
 		else
-			pr_info("timer_mtk: no handler for irq %d\n", irq);
+			pr_debug("timer_mtk: no handler for irq %d\n", irq);
 	} else
-		pr_info("timer_mtk: invalid interrupt %d\n", irq);
+		pr_debug("timer_mtk: invalid interrupt %d\n", irq);
 
 #if (defined MTK_TIMER_DBG_AEE_DUMP && defined CONFIG_MTK_RAM_CONSOLE)
 	t_hdl_out = sched_clock();
@@ -276,7 +276,7 @@ static void mtk_stmr_dev_init(void)
 	for (i = 0; i < NR_STMRS; i++) {
 		stmr_devs[i].id = i;
 		stmr_devs[i].base_addr = STMR0_BASE + 0x08 * i;
-		pr_info("stmr%d, base=0x%lx\n",
+		pr_debug("stmr%d, base=0x%lx\n",
 			i, (unsigned long)stmr_devs[i].base_addr);
 	}
 }
@@ -381,7 +381,7 @@ static inline void mtk_stmr_setup_clkevt(u32 freq, int irq)
 
 	mtk_stmr_dev_setup(dev, mtk_stmr_clkevt_handler);
 
-	pr_info("stmr%d, mult=%u, shift=%u, hz=%d, freq=%d\n",
+	pr_debug("stmr%d, mult=%u, shift=%u, hz=%d, freq=%d\n",
 		STMR_CLKEVT_ID, evt->mult, evt->shift, HZ, freq);
 
 	clockevents_register_device(evt);
@@ -394,12 +394,12 @@ static void __init mtk_stmr_init_clkevt(struct device_node *node)
 
 	clk_evt = of_clk_get(node, 0);
 	if (IS_ERR(clk_evt)) {
-		pr_info("can't get timer clk_evt\n");
+		pr_debug("can't get timer clk_evt\n");
 		return;
 	}
 
 	if (clk_prepare_enable(clk_evt)) {
-		pr_info("can't prepare clk_evt\n");
+		pr_debug("can't prepare clk_evt\n");
 		clk_put(clk_evt);
 		return;
 	}
@@ -410,7 +410,7 @@ static void __init mtk_stmr_init_clkevt(struct device_node *node)
 
 	mtk_stmr_setup_clkevt(freq, stmrs.tmr_irq);
 
-	pr_info("clkevt, freq=%d\n", freq);
+	pr_debug("clkevt, freq=%d\n", freq);
 
 }
 
@@ -427,7 +427,7 @@ static int __init mtk_stmr_init(struct device_node *node)
 	/* Setup IO addresses */
 	stmrs.tmr_regs = of_iomap(node, 0);
 
-	pr_info("base=0x%lx, irq=%d\n",
+	pr_debug("base=0x%lx, irq=%d\n",
 		(unsigned long)stmrs.tmr_regs, stmrs.tmr_irq);
 
 	/* setup gpt itself */

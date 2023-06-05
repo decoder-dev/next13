@@ -74,7 +74,7 @@ static void acpi_topstar_notify(struct acpi_device *device, u32 event)
 	}
 
 	if (!sparse_keymap_report_event(hkey->inputdev, event, 1, true))
-		pr_info("unknown event = 0x%02x\n", event);
+		pr_debug("unknown event = 0x%02x\n", event);
 }
 
 static int acpi_topstar_fncx_switch(struct acpi_device *device, bool state)

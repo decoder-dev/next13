@@ -167,7 +167,7 @@ void __init omap_barriers_init(void)
 	iotable_init(dram_io_desc, ARRAY_SIZE(dram_io_desc));
 	dram_sync = (void __iomem *) dram_io_desc[0].virtual;
 
-	pr_info("OMAP4: Map %pa to %p for dram barrier\n",
+	pr_debug("OMAP4: Map %pa to %p for dram barrier\n",
 		&dram_sync_paddr, dram_sync);
 
 	soc_mb = omap4_mb;
@@ -242,7 +242,7 @@ void omap4_l2c310_write_sec(unsigned long val, unsigned reg)
 		break;
 
 	case L310_POWER_CTRL:
-		pr_info_once("OMAP L2C310: ROM does not support power control setting\n");
+		pr_debug_once("OMAP L2C310: ROM does not support power control setting\n");
 		return;
 
 	default:

@@ -332,7 +332,7 @@ static void __init initialize_port(int portnbr)
 	reg_sser_rw_tr_cfg tr_cfg = { 0 };
 	reg_sser_rw_rec_cfg rec_cfg = { 0 };
 
-	DEBUG(pr_info("Init sync serial port %d\n", portnbr));
+	DEBUG(pr_debug("Init sync serial port %d\n", portnbr));
 
 	port->port_nbr = portnbr;
 	port->init_irqs = no_irq_setup;
@@ -440,13 +440,13 @@ static int sync_serial_open(struct inode *inode, struct file *file)
 	DEBUG(pr_debug("Open sync serial port %d\n", dev));
 
 	if (dev < 0 || dev >= NBR_PORTS || !ports[dev].enabled) {
-		DEBUG(pr_info("Invalid minor %d\n", dev));
+		DEBUG(pr_debug("Invalid minor %d\n", dev));
 		return -ENODEV;
 	}
 	port = &ports[dev];
 	/* Allow open this device twice (assuming one reader and one writer) */
 	if (port->busy == 2) {
-		DEBUG(pr_info("syncser%d is busy\n", dev));
+		DEBUG(pr_debug("syncser%d is busy\n", dev));
 		return -EBUSY;
 	}
 
@@ -467,7 +467,7 @@ static int sync_serial_open(struct inode *inode, struct file *file)
 	if (port->use_dma) {
 #ifdef SYNC_SER_DMA
 		const char *tmp;
-		DEBUG(pr_info("Using DMA for syncser%d\n", dev));
+		DEBUG(pr_debug("Using DMA for syncser%d\n", dev));
 
 		tmp = dev == 0 ? "syncser0 tx" : "syncser1 tx";
 		if (request_irq(port->dma_out_intr_vect, tr_interrupt, 0,
@@ -544,7 +544,7 @@ static int sync_serial_release(struct inode *inode, struct file *file)
 	struct sync_port *port;
 
 	if (dev < 0 || dev >= NBR_PORTS || !ports[dev].enabled) {
-		DEBUG(pr_info("Invalid minor %d\n", dev));
+		DEBUG(pr_debug("Invalid minor %d\n", dev));
 		return -ENODEV;
 	}
 	port = &ports[dev];
@@ -588,7 +588,7 @@ static unsigned int sync_serial_poll(struct file *file, poll_table *wait)
 
 	DEBUGPOLL(
 	if (mask != prev_mask)
-		pr_info("sync_serial_poll: mask 0x%08X %s %s\n",
+		pr_debug("sync_serial_poll: mask 0x%08X %s %s\n",
 			mask,
 			mask & POLLOUT ? "POLLOUT" : "",
 			mask & POLLIN ? "POLLIN" : "");
@@ -611,7 +611,7 @@ static ssize_t __sync_serial_read(struct file *file,
 	unsigned char *end;
 
 	if (dev < 0 || dev >= NBR_PORTS || !ports[dev].enabled) {
-		DEBUG(pr_info("Invalid minor %d\n", dev));
+		DEBUG(pr_debug("Invalid minor %d\n", dev));
 		return -ENODEV;
 	}
 	port = &ports[dev];
@@ -642,7 +642,7 @@ static ssize_t __sync_serial_read(struct file *file,
 		spin_unlock_irqrestore(&port->lock, flags);
 	}
 
-	DEBUGREAD(pr_info("R%d c %d ri %u wi %u /%u\n",
+	DEBUGREAD(pr_debug("R%d c %d ri %u wi %u /%u\n",
 			  dev, count,
 			  start - port->flip, end - port->flip,
 			  port->in_buffer_size));
@@ -680,7 +680,7 @@ static ssize_t __sync_serial_read(struct file *file,
 	port->full = 0;
 	spin_unlock_irqrestore(&port->lock, flags);
 
-	DEBUGREAD(pr_info("r %d\n", count));
+	DEBUGREAD(pr_debug("r %d\n", count));
 
 	return count;
 }
@@ -696,7 +696,7 @@ static ssize_t sync_serial_input(struct file *file, unsigned long arg)
 		sizeof(struct ssp_request));
 
 	if (ret) {
-		DEBUG(pr_info("sync_serial_input copy from user failed\n"));
+		DEBUG(pr_debug("sync_serial_input copy from user failed\n"));
 		return -EFAULT;
 	}
 
@@ -704,7 +704,7 @@ static ssize_t sync_serial_input(struct file *file, unsigned long arg)
 	 * is a multiple of IN_DESCR_SIZE.
 	 */
 	if ((req.len % IN_DESCR_SIZE) != 0) {
-		DEBUG(pr_info("sync_serial: req.len %x, IN_DESCR_SIZE %x\n",
+		DEBUG(pr_debug("sync_serial: req.len %x, IN_DESCR_SIZE %x\n",
 			      req.len, IN_DESCR_SIZE));
 		return -EFAULT;
 	}
@@ -715,7 +715,7 @@ static ssize_t sync_serial_input(struct file *file, unsigned long arg)
 				   NULL, &req.ts);
 
 	if (count < 0) {
-		DEBUG(pr_info("sync_serial_input read failed\n"));
+		DEBUG(pr_debug("sync_serial_input read failed\n"));
 		return count;
 	}
 
@@ -724,7 +724,7 @@ static ssize_t sync_serial_input(struct file *file, unsigned long arg)
 		sizeof(struct ssp_request));
 
 	if (ret) {
-		DEBUG(pr_info("syncser input copy2user failed\n"));
+		DEBUG(pr_debug("syncser input copy2user failed\n"));
 		return -EFAULT;
 	}
 
@@ -747,7 +747,7 @@ static int sync_serial_ioctl_unlocked(struct file *file,
 	reg_sser_rw_intr_mask intr_mask;
 
 	if (dev < 0 || dev >= NBR_PORTS || !ports[dev].enabled) {
-		DEBUG(pr_info("Invalid minor %d\n", dev));
+		DEBUG(pr_debug("Invalid minor %d\n", dev));
 		return -1;
 	}
 
@@ -1083,7 +1083,7 @@ static ssize_t sync_serial_write(struct file *file, const char __user *buf,
 	unsigned char *buf_stop_ptr; /* Last byte + 1 */
 
 	if (dev < 0 || dev >= NBR_PORTS || !ports[dev].enabled) {
-		DEBUG(pr_info("Invalid minor %d\n", dev));
+		DEBUG(pr_debug("Invalid minor %d\n", dev));
 		return -ENODEV;
 	}
 	port = &ports[dev];
@@ -1096,7 +1096,7 @@ static ssize_t sync_serial_write(struct file *file, const char __user *buf,
 	 * |_________|___________________|________________________|
 	 *           ^ rd_ptr            ^ wr_ptr
 	 */
-	DEBUGWRITE(pr_info("W d%d c %u a: %p c: %p\n",
+	DEBUGWRITE(pr_debug("W d%d c %u a: %p c: %p\n",
 			   port->port_nbr, count, port->active_tr_descr,
 			   port->catch_tr_descr));
 
@@ -1110,7 +1110,7 @@ static ssize_t sync_serial_write(struct file *file, const char __user *buf,
 	if (port->tr_running &&
 	    ((port->use_dma && port->active_tr_descr == port->catch_tr_descr) ||
 	     out_buf_count >= OUT_BUFFER_SIZE)) {
-		DEBUGWRITE(pr_info("sser%d full\n", dev));
+		DEBUGWRITE(pr_debug("sser%d full\n", dev));
 		return -EAGAIN;
 	}
 
@@ -1133,7 +1133,7 @@ static ssize_t sync_serial_write(struct file *file, const char __user *buf,
 	if (copy_from_user(wr_ptr, buf, trunc_count))
 		return -EFAULT;
 
-	DEBUGOUTBUF(pr_info("%-4d + %-4d = %-4d     %p %p %p\n",
+	DEBUGOUTBUF(pr_debug("%-4d + %-4d = %-4d     %p %p %p\n",
 			    out_buf_count, trunc_count,
 			    port->out_buf_count, port->out_buffer,
 			    wr_ptr, buf_stop_ptr));
@@ -1177,7 +1177,7 @@ static ssize_t sync_serial_write(struct file *file, const char __user *buf,
 
 	/* Exit if non blocking */
 	if (file->f_flags & O_NONBLOCK) {
-		DEBUGWRITE(pr_info("w d%d c %u  %08x\n",
+		DEBUGWRITE(pr_debug("w d%d c %u  %08x\n",
 				   port->port_nbr, trunc_count,
 				   REG_RD_INT(dma, port->regi_dmaout, r_intr)));
 		return trunc_count;
@@ -1189,7 +1189,7 @@ static ssize_t sync_serial_write(struct file *file, const char __user *buf,
 	if (signal_pending(current))
 		return -EINTR;
 
-	DEBUGWRITE(pr_info("w d%d c %u\n", port->port_nbr, trunc_count));
+	DEBUGWRITE(pr_debug("w d%d c %u\n", port->port_nbr, trunc_count));
 	return trunc_count;
 }
 
@@ -1267,7 +1267,7 @@ static void start_dma_out(struct sync_port *port, const char *data, int count)
 	port->active_tr_descr->eol = 1;
 	port->prev_tr_descr->eol = 0;
 
-	DEBUGTRDMA(pr_info("Inserting eolr:%p eol@:%p\n",
+	DEBUGTRDMA(pr_debug("Inserting eolr:%p eol@:%p\n",
 		port->prev_tr_descr, port->active_tr_descr));
 	port->prev_tr_descr = port->active_tr_descr;
 	port->active_tr_descr = phys_to_virt((int)port->active_tr_descr->next);
@@ -1286,10 +1286,10 @@ static void start_dma_out(struct sync_port *port, const char *data, int count)
 
 		tr_cfg.tr_en = regk_sser_yes;
 		REG_WR(sser, port->regi_sser, rw_tr_cfg, tr_cfg);
-		DEBUGTRDMA(pr_info("dma s\n"););
+		DEBUGTRDMA(pr_debug("dma s\n"););
 	} else {
 		DMA_CONTINUE_DATA(port->regi_dmaout);
-		DEBUGTRDMA(pr_info("dma c\n"););
+		DEBUGTRDMA(pr_debug("dma c\n"););
 	}
 
 	port->tr_running = 1;
@@ -1362,7 +1362,7 @@ static irqreturn_t tr_interrupt(int irq, void *dev_id)
 			int sent;
 			sent = port->catch_tr_descr->after -
 				port->catch_tr_descr->buf;
-			DEBUGTXINT(pr_info("%-4d - %-4d = %-4d\t"
+			DEBUGTXINT(pr_debug("%-4d - %-4d = %-4d\t"
 					   "in descr %p (ac: %p)\n",
 					   port->out_buf_count, sent,
 					   port->out_buf_count - sent,
@@ -1387,7 +1387,7 @@ static irqreturn_t tr_interrupt(int irq, void *dev_id)
 			while (!port->catch_tr_descr->eol) {
 				sent = port->catch_tr_descr->after -
 					port->catch_tr_descr->buf;
-				DEBUGOUTBUF(pr_info(
+				DEBUGOUTBUF(pr_debug(
 					"traversing descr %p -%d (%d)\n",
 					port->catch_tr_descr,
 					sent,
@@ -1403,7 +1403,7 @@ static irqreturn_t tr_interrupt(int irq, void *dev_id)
 			}
 			sent = port->catch_tr_descr->after -
 				port->catch_tr_descr->buf;
-			DEBUGOUTBUF(pr_info("eol at descr %p -%d (%d)\n",
+			DEBUGOUTBUF(pr_debug("eol at descr %p -%d (%d)\n",
 				port->catch_tr_descr,
 				sent,
 				port->out_buf_count));
@@ -1419,7 +1419,7 @@ static irqreturn_t tr_interrupt(int irq, void *dev_id)
 				port->out_rd_ptr = port->out_buffer;
 
 			tr_cfg = REG_RD(sser, port->regi_sser, rw_tr_cfg);
-			DEBUGTXINT(pr_info(
+			DEBUGTXINT(pr_debug(
 				"tr_int DMA stop %d, set catch @ %p\n",
 				port->out_buf_count,
 				port->active_tr_descr));
@@ -1443,7 +1443,7 @@ static inline void handle_rx_packet(struct sync_port *port)
 	reg_dma_rw_ack_intr ack_intr = { .data = regk_dma_yes };
 	unsigned long flags;
 
-	DEBUGRXINT(pr_info("!"));
+	DEBUGRXINT(pr_debug("!"));
 	spin_lock_irqsave(&port->lock, flags);
 
 	/* If we overrun the user experience is crap regardless if we
@@ -1491,7 +1491,7 @@ static irqreturn_t rx_interrupt(int irq, void *dev_id)
 	int i;
 	int found = 0;
 
-	DEBUG(pr_info("rx_interrupt\n"));
+	DEBUG(pr_debug("rx_interrupt\n"));
 
 	for (i = 0; i < NBR_PORTS; i++) {
 		struct sync_port *port = &ports[i];
@@ -1673,7 +1673,7 @@ static int __init etrax_sync_serial_init(void)
 	}
 
 
-	pr_info("ARTPEC synchronous serial port (%s: %d, %d)\n",
+	pr_debug("ARTPEC synchronous serial port (%s: %d, %d)\n",
 		SYNCSER_NAME, MAJOR(syncser_first), MINOR(syncser_first));
 
 	return 0;
@@ -1705,7 +1705,7 @@ static void __exit etrax_sync_serial_exit(void)
 		}
 	}
 
-	pr_info("ARTPEC synchronous serial port unregistered\n");
+	pr_debug("ARTPEC synchronous serial port unregistered\n");
 }
 
 module_init(etrax_sync_serial_init);

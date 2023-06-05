@@ -288,7 +288,7 @@ static int mtk_wdt_ping(struct watchdog_device *wdt_dev)
 	}
 #endif
 	iowrite32(WDT_RST_RELOAD, wdt_base + WDT_RST);
-	pr_info("[WDK]: kick Ex WDT\n");
+	pr_debug("[WDK]: kick Ex WDT\n");
 
 	return 0;
 }
@@ -454,7 +454,7 @@ static int mtk_wdt_probe(struct platform_device *pdev)
 	if (IS_ERR(mtk_wdt->wdt_base))
 		return PTR_ERR(mtk_wdt->wdt_base);
 
-	pr_info("MTK_WDT_NONRST_REG(%x)\n",
+	pr_debug("MTK_WDT_NONRST_REG(%x)\n",
 		__raw_readl(mtk_wdt->wdt_base + WDT_NONRST_REG));
 
 #if 0
@@ -689,11 +689,11 @@ static ssize_t wk_proc_cmd_write
 		if (ret < 0)
 			return ret;
 		set_bit(WDOG_ACTIVE, &wdt_dev->status);
-		pr_info("[WDK] enable wdt\n");
+		pr_debug("[WDK] enable wdt\n");
 	} else if (enable == 0) {
 		mtk_wdt_stop(wdt_dev);
 		clear_bit(WDOG_ACTIVE, &wdt_dev->status);
-		pr_info("[WDK] disable wdt\n");
+		pr_debug("[WDK] disable wdt\n");
 	}
 
 	return count;

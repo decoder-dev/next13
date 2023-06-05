@@ -214,7 +214,7 @@ int __init parse_spcr(bool earlycon)
 			 table->serial_port.address, baud_rate);
 	}
 
-	pr_info("console: %s\n", opts);
+	pr_debug("console: %s\n", opts);
 
 	if (earlycon)
 		setup_earlycon(opts);

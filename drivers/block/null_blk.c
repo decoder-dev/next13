@@ -2009,7 +2009,7 @@ static int __init null_init(void)
 		}
 	}
 
-	pr_info("null: module loaded\n");
+	pr_debug("null: module loaded\n");
 	return 0;
 
 err_dev:

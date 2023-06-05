@@ -471,7 +471,7 @@ static int gmin_v1p8_ctrl(struct v4l2_subdev *subdev, int on)
 	if (v1p8_gpio == V1P8_GPIO_UNSET) {
 		v1p8_gpio = gmin_get_var_int(NULL, "V1P8GPIO", V1P8_GPIO_NONE);
 		if (v1p8_gpio != V1P8_GPIO_NONE) {
-			pr_info("atomisp_gmin_platform: 1.8v power on GPIO %d\n",
+			pr_debug("atomisp_gmin_platform: 1.8v power on GPIO %d\n",
 				v1p8_gpio);
 			ret = gpio_request(v1p8_gpio, "camera_v1p8_en");
 			if (!ret)
@@ -507,7 +507,7 @@ static int gmin_v2p8_ctrl(struct v4l2_subdev *subdev, int on)
 	if (v2p8_gpio == V2P8_GPIO_UNSET) {
 		v2p8_gpio = gmin_get_var_int(NULL, "V2P8GPIO", V2P8_GPIO_NONE);
 		if (v2p8_gpio != V2P8_GPIO_NONE) {
-			pr_info("atomisp_gmin_platform: 2.8v power on GPIO %d\n",
+			pr_debug("atomisp_gmin_platform: 2.8v power on GPIO %d\n",
 				v2p8_gpio);
 			ret = gpio_request(v2p8_gpio, "camera_v2p8");
 			if (!ret)

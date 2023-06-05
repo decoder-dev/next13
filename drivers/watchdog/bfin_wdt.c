@@ -367,7 +367,7 @@ static int bfin_wdt_probe(struct platform_device *pdev)
 		return ret;
 	}
 
-	pr_info("initialized: timeout=%d sec (nowayout=%d)\n",
+	pr_debug("initialized: timeout=%d sec (nowayout=%d)\n",
 		timeout, nowayout);
 
 	return 0;

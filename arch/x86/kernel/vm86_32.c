@@ -264,7 +264,7 @@ static long do_sys_vm86(struct vm86plus_struct __user *user_vm86, bool plus)
 		 * tools like vbetool will not fail just because of
 		 * vm.mmap_min_addr.
 		 */
-		pr_info_once("Denied a call to vm86(old) from %s[%d] (uid: %d).  Set the vm.mmap_min_addr sysctl to 0 and/or adjust LSM mmap_min_addr policy to enable vm86 if you are using a vm86-based DOS emulator.\n",
+		pr_debug_once("Denied a call to vm86(old) from %s[%d] (uid: %d).  Set the vm.mmap_min_addr sysctl to 0 and/or adjust LSM mmap_min_addr policy to enable vm86 if you are using a vm86-based DOS emulator.\n",
 			     current->comm, task_pid_nr(current),
 			     from_kuid_munged(&init_user_ns, current_uid()));
 		return -EPERM;

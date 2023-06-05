@@ -193,7 +193,7 @@ static int hotplug_tests(void)
 	 * Of course the last CPU cannot be powered down and cpu_down() should
 	 * refuse doing that.
 	 */
-	pr_info("Trying to turn off and on again all CPUs\n");
+	pr_debug("Trying to turn off and on again all CPUs\n");
 	err += down_and_up_cpus(cpu_online_mask, offlined_cpus);
 
 	/*
@@ -207,7 +207,7 @@ static int hotplug_tests(void)
 						      clusters[i]);
 		/* Remove trailing newline. */
 		page_buf[len - 1] = '\0';
-		pr_info("Trying to turn off and on again cluster %d "
+		pr_debug("Trying to turn off and on again cluster %d "
 			"(CPUs %s)\n", cluster_id, page_buf);
 		err += down_and_up_cpus(clusters[i], offlined_cpus);
 	}
@@ -284,7 +284,7 @@ static int suspend_test_thread(void *arg)
 	dev = this_cpu_read(cpuidle_devices);
 	drv = cpuidle_get_cpu_driver(dev);
 
-	pr_info("CPU %d entering suspend cycles, states 1 through %d\n",
+	pr_debug("CPU %d entering suspend cycles, states 1 through %d\n",
 		cpu, drv->state_count - 1);
 
 	setup_timer_on_stack(&wakeup_timer, dummy_callback, 0);
@@ -359,7 +359,7 @@ static int suspend_test_thread(void *arg)
 		schedule();
 	}
 
-	pr_info("CPU %d suspend test results: success %d, shallow states %d, errors %d\n",
+	pr_debug("CPU %d suspend test results: success %d, shallow states %d, errors %d\n",
 		cpu, nb_suspend, nb_shallow_sleep, nb_err);
 
 	return nb_err;
@@ -454,12 +454,12 @@ static int __init psci_checker(void)
 	if (ret)
 		return ret;
 
-	pr_info("PSCI checker started using %u CPUs\n", nb_available_cpus);
+	pr_debug("PSCI checker started using %u CPUs\n", nb_available_cpus);
 
-	pr_info("Starting hotplug tests\n");
+	pr_debug("Starting hotplug tests\n");
 	ret = hotplug_tests();
 	if (ret == 0)
-		pr_info("Hotplug tests passed OK\n");
+		pr_debug("Hotplug tests passed OK\n");
 	else if (ret > 0)
 		pr_err("%d error(s) encountered in hotplug tests\n", ret);
 	else {
@@ -467,11 +467,11 @@ static int __init psci_checker(void)
 		return ret;
 	}
 
-	pr_info("Starting suspend tests (%d cycles per state)\n",
+	pr_debug("Starting suspend tests (%d cycles per state)\n",
 		NUM_SUSPEND_CYCLE);
 	ret = suspend_tests();
 	if (ret == 0)
-		pr_info("Suspend tests passed OK\n");
+		pr_debug("Suspend tests passed OK\n");
 	else if (ret > 0)
 		pr_err("%d error(s) encountered in suspend tests\n", ret);
 	else {
@@ -485,7 +485,7 @@ static int __init psci_checker(void)
 		}
 	}
 
-	pr_info("PSCI checker completed\n");
+	pr_debug("PSCI checker completed\n");
 	return ret < 0 ? ret : 0;
 }
 late_initcall(psci_checker);

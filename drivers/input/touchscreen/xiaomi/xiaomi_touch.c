@@ -11,7 +11,7 @@ static int xiaomi_touch_dev_open(struct inode *inode, struct file *file)
 	int i = MINOR(inode->i_rdev);
 	struct xiaomi_touch_pdata *touch_pdata;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	dev = xiaomi_touch_dev_get(i);
 	if (!dev) {
 		MI_TOUCH_LOGE(1, "can't get dev!");
@@ -257,7 +257,7 @@ int update_p_sensor_value(int value)
 	dev = touch_pdata->device;
 
 	if (value != touch_pdata->psensor_value) {
-		pr_info("%s value:%d\n", __func__, value);
+		pr_debug("%s value:%d\n", __func__, value);
 		touch_pdata->psensor_value = value;
 		touch_pdata->psensor_changed = true;
 		wake_up(&dev->wait_queue);

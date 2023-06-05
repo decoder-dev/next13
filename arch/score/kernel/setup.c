@@ -79,7 +79,7 @@ static void __init bootmem_init(void)
 	reserve_bootmem(__pa(initrd_start), size, BOOTMEM_DEFAULT);
 	initrd_below_start_ok = 1;
 
-	pr_info("Initial ramdisk at: 0x%lx (%lu bytes)\n",
+	pr_debug("Initial ramdisk at: 0x%lx (%lu bytes)\n",
 		 initrd_start, size);
 	return;
 disable:

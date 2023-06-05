@@ -83,7 +83,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
 	ipc_table.data = &dummy;
 
 	if (write)
-		pr_info_once("writing to auto_msgmni has no effect");
+		pr_debug_once("writing to auto_msgmni has no effect");
 
 	return proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
 }

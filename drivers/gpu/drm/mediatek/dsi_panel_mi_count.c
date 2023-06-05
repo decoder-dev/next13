@@ -82,7 +82,7 @@ void dsi_panel_fps_count(struct drm_panel *panel, u32 fps, u32 enable)
 	if (!panel || (!enable && timming_index == FPS_MAX_NUM))
 		return;
 
-	pr_info("%s fps = %d, cur_fps = %d, enable = %d\n", __func__, fps, cur_fps, enable);
+	pr_debug("%s fps = %d, cur_fps = %d, enable = %d\n", __func__, fps, cur_fps, enable);
 	if (enable && !fps)
 		fps = cur_fps;
 
@@ -134,7 +134,7 @@ void dsi_panel_state_count(struct drm_panel *panel, int enable)
 		struct timespec rtctime;
 
 		off_times++;
-		pr_info("%s: on_times[%llu] off_times[%llu]\n", __func__, on_times, off_times);
+		pr_debug("%s: on_times[%llu] off_times[%llu]\n", __func__, on_times, off_times);
 
 		/* caculate panel active duration */
 		jiffies_time = get_jiffies_64();
@@ -167,7 +167,7 @@ void dsi_panel_state_count(struct drm_panel *panel, int enable)
 				ctx->mi_count.bootRTCtime = rtctime.tv_sec;
 			}
 		} else {
-			pr_info("panel_info.bootRTCtime init!\n");
+			pr_debug("panel_info.bootRTCtime init!\n");
 			ctx->mi_count.bootRTCtime = rtctime.tv_sec;
 		}
 		memset(ch, 0, sizeof(ch));
@@ -194,7 +194,7 @@ void dsi_panel_HBM_count(struct drm_panel *panel, int enable, int off)
 		return;
 	}
 
-	pr_info("hbm_times[%lld],en[%d] off[%d]\n", ctx->mi_count.hbm_times, enable, off);
+	pr_debug("hbm_times[%lld],en[%d] off[%d]\n", ctx->mi_count.hbm_times, enable, off);
 
 	if (off) {
 		if (last_HBM_status == 1)
@@ -274,7 +274,7 @@ int dsi_panel_disp_count_set(struct drm_panel *panel, const char *buf)
 	ssize_t result;
 	struct timespec rtctime;
 
-	pr_info("[LCD] %s: begin\n", __func__);
+	pr_debug("[LCD] %s: begin\n", __func__);
 
 	if (!panel) {
 		pr_err("invalid panel\n");
@@ -301,7 +301,7 @@ int dsi_panel_disp_count_set(struct drm_panel *panel, const char *buf)
 		add_hw_monitor_info(HWMON_CONPONENT_NAME, hwmon_key_fps[i], count_str);
 	}
 
-	pr_info("[LCD] %s: end\n", __func__);
+	pr_debug("[LCD] %s: end\n", __func__);
 
 	return 0;
 }

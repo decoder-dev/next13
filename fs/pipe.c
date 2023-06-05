@@ -294,7 +294,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
 	__pipe_lock(pipe);
 
 	if (strcmp(current->comm, "dnsmasq") == 0)
-		pr_info("[mtk_net][%s]\n", __func__);
+		pr_debug("[mtk_net][%s]\n", __func__);
 
 	for (;;) {
 		int bufs = pipe->nrbufs;
@@ -361,7 +361,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
 		}
 		if (signal_pending(current)) {
 			if (strcmp(current->comm, "dnsmasq") == 0)
-				pr_info("[mtk_net][%d][%s]signal_pending, ret=%zd\n",
+				pr_debug("[mtk_net][%d][%s]signal_pending, ret=%zd\n",
 					__LINE__, __func__,  ret);
 			if (!ret)
 				ret = -ERESTARTSYS;
@@ -371,7 +371,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
 			wake_up_interruptible_sync_poll(&pipe->wait, POLLOUT | POLLWRNORM);
 			kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
 			if (strcmp(current->comm, "dnsmasq") == 0)
-				pr_info("[mtk_net][%d][%s]do_wakeup\n",
+				pr_debug("[mtk_net][%d][%s]do_wakeup\n",
 					__LINE__, __func__);
 		}
 		pipe_wait(pipe);
@@ -383,7 +383,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
 		wake_up_interruptible_sync_poll(&pipe->wait, POLLOUT | POLLWRNORM);
 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
 		if (strcmp(current->comm, "dnsmasq") == 0)
-			pr_info("[mtk_net][%d][%s] do_wakeup\n",
+			pr_debug("[mtk_net][%d][%s] do_wakeup\n",
 				__LINE__, __func__);
 	}
 	if (ret > 0)
@@ -419,7 +419,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
 	}
 
 	if (strcmp(current->comm, "dnsmasq") == 0)
-		pr_info("[mtk_net][%d][%s]\n", __LINE__, __func__);
+		pr_debug("[mtk_net][%d][%s]\n", __LINE__, __func__);
 
 	/* We try to merge small writes */
 	chars = total_len & (PAGE_SIZE-1); /* size of the last buffer */
@@ -509,7 +509,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
 		}
 		if (signal_pending(current)) {
 			if (strcmp(current->comm, "dnsmasq") == 0)
-				pr_info("[mtk_net][%d][%s]signal_pending, ret=%zd\n",
+				pr_debug("[mtk_net][%d][%s]signal_pending, ret=%zd\n",
 					__LINE__, __func__, ret);
 			if (!ret)
 				ret = -ERESTARTSYS;
@@ -520,7 +520,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
 			kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
 			do_wakeup = 0;
 			if (strcmp(current->comm, "dnsmasq") == 0)
-				pr_info("[mtk_net][%d][%s]do_wakeup\n",
+				pr_debug("[mtk_net][%d][%s]do_wakeup\n",
 					__LINE__, __func__);
 		}
 		pipe->waiting_writers++;
@@ -586,7 +586,7 @@ pipe_poll(struct file *filp, poll_table *wait)
 
 	if (strcmp(current->comm, "dnsmasq") == 0) {
 		if (mask)
-			pr_info("[mtk_net][%d][%s]read mask : 0x%04x\n",
+			pr_debug("[mtk_net][%d][%s]read mask : 0x%04x\n",
 				__LINE__, __func__, mask);
 	}
 
@@ -601,7 +601,7 @@ pipe_poll(struct file *filp, poll_table *wait)
 
 		if (strcmp(current->comm, "dnsmasq") == 0) {
 			if (mask)
-				pr_info("[mtk_net][%d][%s]FMODE_WRITE read mask : 0x%04x\n",
+				pr_debug("[mtk_net][%d][%s]FMODE_WRITE read mask : 0x%04x\n",
 					__LINE__, __func__, mask);
 		}
 	}
@@ -609,7 +609,7 @@ pipe_poll(struct file *filp, poll_table *wait)
 	if (((filp->f_mode & FMODE_READ) == 0) &&
 				((filp->f_mode & FMODE_WRITE) == 0)) {
 		if (strcmp(current->comm, "dnsmasq") == 0)
-			pr_info("[mtk_net][%d][%s]mask NULL\n",
+			pr_debug("[mtk_net][%d][%s]mask NULL\n",
 				__LINE__, __func__);
 	}
 	return mask;
@@ -646,7 +646,7 @@ pipe_release(struct inode *inode, struct file *file)
 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
 		if (strcmp(current->comm, "dnsmasq") == 0)
-			pr_info("[mtk_net][%d][%s]\n", __LINE__, __func__);
+			pr_debug("[mtk_net][%d][%s]\n", __LINE__, __func__);
 	}
 	__pipe_unlock(pipe);
 
@@ -956,7 +956,7 @@ static void wake_up_partner(struct pipe_inode_info *pipe)
 	wake_up_interruptible(&pipe->wait);
 
 	if (strcmp(current->comm, "dnsmasq") == 0)
-		pr_info("[mtk_net][%d][%s]pipe->wait\n", __LINE__, __func__);
+		pr_debug("[mtk_net][%d][%s]pipe->wait\n", __LINE__, __func__);
 }
 
 static int fifo_open(struct inode *inode, struct file *filp)
@@ -1070,7 +1070,7 @@ err_rd:
 		wake_up_interruptible(&pipe->wait);
 	ret = -ERESTARTSYS;
 	if (strcmp(current->comm, "dnsmasq") == 0)
-		pr_info("[mtk_net][%d][%s]err_rd: pipe->wait\n",
+		pr_debug("[mtk_net][%d][%s]err_rd: pipe->wait\n",
 			__LINE__, __func__);
 	goto err;
 
@@ -1079,7 +1079,7 @@ err_wr:
 		wake_up_interruptible(&pipe->wait);
 	ret = -ERESTARTSYS;
 	if (strcmp(current->comm, "dnsmasq") == 0)
-		pr_info("[mtk_net][%d][%s]err_wr: pipe->wait\n",
+		pr_debug("[mtk_net][%d][%s]err_wr: pipe->wait\n",
 			__LINE__, __func__);
 	goto err;
 

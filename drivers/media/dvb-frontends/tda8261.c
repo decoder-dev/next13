@@ -192,7 +192,7 @@ struct dvb_frontend *tda8261_attach(struct dvb_frontend *fe,
 
 	fe->ops.tuner_ops.info.frequency_step = div_tab[config->step_size];
 
-	pr_info("%s: Attaching TDA8261 8PSK/QPSK tuner\n", __func__);
+	pr_debug("%s: Attaching TDA8261 8PSK/QPSK tuner\n", __func__);
 
 	return fe;
 

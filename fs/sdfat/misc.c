@@ -137,7 +137,7 @@ EXPORT_SYMBOL(__sdfat_msg);
 
 void sdfat_log_version(void)
 {
-	pr_info("[SDFAT] Filesystem version %s\n", SDFAT_VERSION);
+	pr_debug("[SDFAT] Filesystem version %s\n", SDFAT_VERSION);
 #ifdef CONFIG_SDFAT_SUPPORT_STLOG
 	ST_LOG("[SDFAT] Filesystem version %s\n", SDFAT_VERSION);
 #endif

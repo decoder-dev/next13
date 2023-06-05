@@ -158,7 +158,7 @@ static int __init early_init_on_alloc(char *buf)
 		return -EINVAL;
 	ret = kstrtobool(buf, &bool_result);
 	if (bool_result && page_poisoning_enabled())
-		pr_info("mem auto-init: CONFIG_PAGE_POISONING is on, will take precedence over init_on_alloc\n");
+		pr_debug("mem auto-init: CONFIG_PAGE_POISONING is on, will take precedence over init_on_alloc\n");
 	if (bool_result)
 		static_branch_enable(&init_on_alloc);
 	else
@@ -176,7 +176,7 @@ static int __init early_init_on_free(char *buf)
 		return -EINVAL;
 	ret = kstrtobool(buf, &bool_result);
 	if (bool_result && page_poisoning_enabled())
-		pr_info("mem auto-init: CONFIG_PAGE_POISONING is on, will take precedence over init_on_free\n");
+		pr_debug("mem auto-init: CONFIG_PAGE_POISONING is on, will take precedence over init_on_free\n");
 	if (bool_result)
 		static_branch_enable(&init_on_free);
 	else
@@ -759,7 +759,7 @@ static int __init debug_guardpage_minorder_setup(char *buf)
 		return 0;
 	}
 	_debug_guardpage_minorder = res;
-	pr_info("Setting debug_guardpage_minorder to %lu\n", res);
+	pr_debug("Setting debug_guardpage_minorder to %lu\n", res);
 	return 0;
 }
 early_param("debug_guardpage_minorder", debug_guardpage_minorder_setup);
@@ -1675,7 +1675,7 @@ free_range:
 	/* Sanity check that the next zone really is unpopulated */
 	WARN_ON(++zid < MAX_NR_ZONES && populated_zone(++zone));
 
-	pr_info("node %d initialised, %lu pages in %ums\n", nid, nr_pages,
+	pr_debug("node %d initialised, %lu pages in %ums\n", nid, nr_pages,
 					jiffies_to_msecs(jiffies - start));
 
 	pgdat_init_report_one_done();
@@ -5373,7 +5373,21 @@ static void __build_all_zonelists(void *data)
 	int nid;
 	int __maybe_unused cpu;
 	pg_data_t *self = data;
+	unsigned long flags;
 
+	/*
+	 * Explicitly disable this CPU's interrupts before taking seqlock
+	 * to prevent any IRQ handler from calling into the page allocator
+	 * (e.g. GFP_ATOMIC) that could hit zonelist_iter_begin and livelock.
+	 */
+	local_irq_save(flags);
+	/*
+	 * Explicitly disable this CPU's synchronous printk() before taking
+	 * seqlock to prevent any printk() from trying to hold port->lock, for
+	 * tty_insert_flip_string_and_push_buffer() on other CPU might be
+	 * calling kmalloc(GFP_ATOMIC | __GFP_NOWARN) with port->lock held.
+	 */
+	printk_deferred_enter();
 	write_seqlock(&zonelist_update_seq);
 
 #ifdef CONFIG_NUMA
@@ -5408,6 +5422,8 @@ static void __build_all_zonelists(void *data)
 	}
 
 	write_sequnlock(&zonelist_update_seq);
+	printk_deferred_exit();
+	local_irq_restore(flags);
 }
 
 static noinline void __init
@@ -5464,12 +5480,12 @@ void __ref build_all_zonelists(pg_data_t *pgdat)
 	else
 		page_group_by_mobility_disabled = 0;
 
-	pr_info("Built %i zonelists, mobility grouping %s.  Total pages: %ld\n",
+	pr_debug("Built %i zonelists, mobility grouping %s.  Total pages: %ld\n",
 		nr_online_nodes,
 		page_group_by_mobility_disabled ? "off" : "on",
 		vm_total_pages);
 #ifdef CONFIG_NUMA
-	pr_info("Policy zone: %s\n", zone_names[policy_zone]);
+	pr_debug("Policy zone: %s\n", zone_names[policy_zone]);
 #endif
 }
 
@@ -6382,7 +6398,7 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
 	pgdat->per_cpu_nodestats = NULL;
 #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
 	get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
-	pr_info("Initmem setup node %d [mem %#018Lx-%#018Lx]\n", nid,
+	pr_debug("Initmem setup node %d [mem %#018Lx-%#018Lx]\n", nid,
 		(u64)start_pfn << PAGE_SHIFT,
 		end_pfn ? ((u64)end_pfn << PAGE_SHIFT) - 1 : 0);
 #else
@@ -6788,11 +6804,11 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
 	find_zone_movable_pfns_for_nodes();
 
 	/* Print out the zone ranges */
-	pr_info("Zone ranges:\n");
+	pr_debug("Zone ranges:\n");
 	for (i = 0; i < MAX_NR_ZONES; i++) {
 		if (i == ZONE_MOVABLE)
 			continue;
-		pr_info("  %-8s ", zone_names[i]);
+		pr_debug("  %-8s ", zone_names[i]);
 		if (arch_zone_lowest_possible_pfn[i] ==
 				arch_zone_highest_possible_pfn[i])
 			pr_cont("empty\n");
@@ -6805,17 +6821,17 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
 	}
 
 	/* Print out the PFNs ZONE_MOVABLE begins at in each node */
-	pr_info("Movable zone start for each node\n");
+	pr_debug("Movable zone start for each node\n");
 	for (i = 0; i < MAX_NUMNODES; i++) {
 		if (zone_movable_pfn[i])
-			pr_info("  Node %d: %#018Lx\n", i,
+			pr_debug("  Node %d: %#018Lx\n", i,
 			       (u64)zone_movable_pfn[i] << PAGE_SHIFT);
 	}
 
 	/* Print out the early node map */
-	pr_info("Early memory node ranges\n");
+	pr_debug("Early memory node ranges\n");
 	for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, &nid)
-		pr_info("  node %3d: [mem %#018Lx-%#018Lx]\n", nid,
+		pr_debug("  node %3d: [mem %#018Lx-%#018Lx]\n", nid,
 			(u64)start_pfn << PAGE_SHIFT,
 			((u64)end_pfn << PAGE_SHIFT) - 1);
 
@@ -6905,7 +6921,7 @@ unsigned long free_reserved_area(void *start, void *end, int poison, char *s)
 	}
 
 	if (pages && s)
-		pr_info("Freeing %s memory: %ldK\n",
+		pr_debug("Freeing %s memory: %ldK\n",
 			s, pages << (PAGE_SHIFT - 10));
 
 	return pages;
@@ -6958,7 +6974,7 @@ void __init mem_init_print_info(const char *str)
 
 #undef	adj_init_size
 
-	pr_info("Memory: %luK/%luK available (%luK kernel code, %luK rwdata, %luK rodata, %luK init, %luK bss, %luK reserved, %luK cma-reserved"
+	pr_debug("Memory: %luK/%luK available (%luK kernel code, %luK rwdata, %luK rodata, %luK init, %luK bss, %luK reserved, %luK cma-reserved"
 #ifdef	CONFIG_HIGHMEM
 		", %luK highmem"
 #endif
@@ -7545,7 +7561,7 @@ void *__init alloc_large_system_hash(const char *tablename,
 	if (!table)
 		panic("Failed to allocate %s hash table\n", tablename);
 
-	pr_info("%s hash table entries: %ld (order: %d, %lu bytes)\n",
+	pr_debug("%s hash table entries: %ld (order: %d, %lu bytes)\n",
 		tablename, 1UL << log2qty, ilog2(size) - PAGE_SHIFT, size);
 
 	if (_hash_shift)
@@ -7860,7 +7876,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
 
 	/* Make sure the range is really isolated. */
 	if (test_pages_isolated(outer_start, end, false)) {
-		pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
+		pr_debug_ratelimited("%s: [%lx, %lx) PFNs busy\n",
 			__func__, outer_start, end);
 		ret = -EBUSY;
 		goto done;
@@ -7977,7 +7993,7 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
 		BUG_ON(!PageBuddy(page));
 		order = page_order(page);
 #ifdef CONFIG_DEBUG_VM
-		pr_info("remove from free list %lx %d %lx\n",
+		pr_debug("remove from free list %lx %d %lx\n",
 			pfn, 1 << order, end_pfn);
 #endif
 		list_del(&page->lru);
@@ -8036,7 +8052,7 @@ int free_reserved_memory(phys_addr_t start_phys,
 		free_reserved_page(phys_to_page(pos));
 
 	if (pages)
-		pr_info("Freeing modem memory: %ldK from phys %llx\n",
+		pr_debug("Freeing modem memory: %ldK from phys %llx\n",
 			pages << (PAGE_SHIFT - 10),
 			(unsigned long long)start_phys);
 

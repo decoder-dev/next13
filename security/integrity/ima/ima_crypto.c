@@ -78,7 +78,7 @@ int __init ima_init_crypto(void)
 		       hash_algo_name[ima_hash_algo], rc);
 		return rc;
 	}
-	pr_info("Allocated hash algorithm: %s\n",
+	pr_debug("Allocated hash algorithm: %s\n",
 		hash_algo_name[ima_hash_algo]);
 	return 0;
 }

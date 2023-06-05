@@ -227,7 +227,7 @@ void mtk_drm_crtc_dump(struct drm_crtc *crtc)
 		mutex_dump_reg_mt6873(mtk_crtc->mutex[0]);
 		break;
 	default:
-		pr_info("%s mtk drm not support mmsys id %d\n",
+		pr_debug("%s mtk drm not support mmsys id %d\n",
 			__func__, priv->data->mmsys_id);
 		break;
 	}
@@ -318,7 +318,7 @@ void mtk_drm_crtc_analysis(struct drm_crtc *crtc)
 		mutex_dump_analysis_mt6833(mtk_crtc->mutex[0]);
 		break;
 	default:
-		pr_info("%s mtk drm not support mmsys id %d\n",
+		pr_debug("%s mtk drm not support mmsys id %d\n",
 			__func__, priv->data->mmsys_id);
 		break;
 	}
@@ -1059,7 +1059,7 @@ static int mtk_drm_crtc_hbm_wait1(struct drm_crtc *crtc, bool en, bool pre, bool
 		}
 	}
 
-	pr_info("LCM hbm %s wait %u-TE\n", en ? "enable" : "disable",
+	pr_debug("LCM hbm %s wait %u-TE\n", en ? "enable" : "disable",
 		wait_count);
 
 	if (!icon) {
@@ -1098,7 +1098,7 @@ static int mtk_drm_crtc_hbm_wait2(struct drm_crtc *crtc, bool en, bool aod_en, b
 	    }
 	}
 
-	pr_info("LCM hbm %s wait %u-TE\n", en ? "enable" : "disable",
+	pr_debug("LCM hbm %s wait %u-TE\n", en ? "enable" : "disable",
 		wait_count);
 
 	while (wait_count) {
@@ -1917,7 +1917,7 @@ static void mtk_crtc_disp_mode_switch_begin(struct drm_crtc *crtc,
 		return;
 
 	if (1 == mtk_state->prop_val[CRTC_PROP_DOZE_ACTIVE]) {
-		pr_info("%s mode_switch not allowed in doze active!\n", __func__);
+		pr_debug("%s mode_switch not allowed in doze active!\n", __func__);
 		return;
 	}
 
@@ -2181,7 +2181,7 @@ bool mtk_crtc_is_frame_trigger_mode(struct drm_crtc *crtc)
 	if (comp->id == DDP_COMPONENT_DP_INTF0 ||
 		comp->id == DDP_COMPONENT_DPI0 ||
 		comp->id == DDP_COMPONENT_DPI1) {
-		pr_info("%s(%d-%d) is vdo mode\n", __func__,
+		pr_debug("%s(%d-%d) is vdo mode\n", __func__,
 			comp->id, DDP_COMPONENT_DPI0);
 		return false;
 	}
@@ -5363,7 +5363,7 @@ static void mtk_drm_crtc_notify(struct drm_crtc *crtc,
 		}
 
 		if (connector->fod_ui_ready != fod_flag_last_state) {
-			pr_info("panel sysfs_notify fod_ui_ready=%d", connector->fod_ui_ready);
+			pr_debug("panel sysfs_notify fod_ui_ready=%d", connector->fod_ui_ready);
 			sysfs_notify(&connector->kdev->kobj, NULL, "fod_ui_ready");
 		}
 	}
@@ -5436,7 +5436,7 @@ static void mtk_drm_crtc_hbm_fence(struct drm_crtc *crtc,
 
 			if (!post_flush) {
 				if (hbm_en != hbm_state) {
-					pr_info("panel hbm_en=%d post_flush=%d need_delay=%d", hbm_en, post_flush, need_delay);
+					pr_debug("panel hbm_en=%d post_flush=%d need_delay=%d", hbm_en, post_flush, need_delay);
 					if (hbm_en && need_delay) {
 						*delay_flag = true;
 					} else {
@@ -5448,20 +5448,20 @@ static void mtk_drm_crtc_hbm_fence(struct drm_crtc *crtc,
 
 			if (post_flush) {
 				if (hbm_en != hbm_state && hbm_en && (*delay_flag)) {
-					pr_info("panel hbm_en=%d post_flush=%d need_delay=%d", hbm_en, post_flush, need_delay);
+					pr_debug("panel hbm_en=%d post_flush=%d need_delay=%d", hbm_en, post_flush, need_delay);
 					mtk_drm_crtc_set_panel_hbm(crtc, hbm_en);
 					*hbm_changed = true;
 				}
 
 				if (*hbm_changed) {
-					pr_info("panel wait hbm_en=%d", hbm_en);
+					pr_debug("panel wait hbm_en=%d", hbm_en);
 					mtk_drm_crtc_hbm_wait1(crtc, hbm_en, false, false, (*delay_flag));
 					if (hbm_en)
 						hbm_en_wait = true;
 				}
 
 				if ((icon_en != last_icon_en) && (!hbm_en_wait)) {
-					pr_info("panel wait icon_en=%d", icon_en);
+					pr_debug("panel wait icon_en=%d", icon_en);
 					mtk_drm_crtc_hbm_wait1(crtc, icon_en, false, true, false);
 				}
 				last_icon_en = icon_en;
@@ -5473,12 +5473,12 @@ static void mtk_drm_crtc_hbm_fence(struct drm_crtc *crtc,
 			if (!post_flush) {
 				comp_output->funcs->io_cmd(comp_output, NULL, DSI_HBM_NEED_DELAY, &need_delay);
 				if (hbm_en != hbm_state) {
-					pr_info("panel hbm_en=%d post_flush=%d need_delay=%d", hbm_en, post_flush, need_delay);
+					pr_debug("panel hbm_en=%d post_flush=%d need_delay=%d", hbm_en, post_flush, need_delay);
 					if (need_delay){
 						mtk_drm_crtc_hbm_wait2(crtc, hbm_en, aod_en, true, false);
 						mtk_drm_crtc_set_panel_hbm(crtc, hbm_en);
 					}
-					pr_info("panel wait hbm_en=%d need_delay =%d", hbm_en,need_delay);
+					pr_debug("panel wait hbm_en=%d need_delay =%d", hbm_en,need_delay);
 					if(need_delay) {
 						mtk_drm_crtc_hbm_wait2(crtc, hbm_en, aod_en, false, false);
 						mtk_drm_crtc_set_pcc(crtc, hbm_en);
@@ -5493,7 +5493,7 @@ static void mtk_drm_crtc_hbm_fence(struct drm_crtc *crtc,
 				if (hbm_en != hbm_state) {
 					if(need_delay == false) {
 						mtk_drm_crtc_hbm_wait2(crtc, hbm_en, aod_en, true, false);
-						pr_info("%s panel hbm_en=%d",__FUNCTION__,hbm_en);
+						pr_debug("%s panel hbm_en=%d",__FUNCTION__,hbm_en);
 						mtk_drm_crtc_set_panel_hbm(crtc, hbm_en);
 						mtk_drm_crtc_set_pcc(crtc, hbm_en);
 					}
@@ -5501,7 +5501,7 @@ static void mtk_drm_crtc_hbm_fence(struct drm_crtc *crtc,
 
 				if (hbm_en) {
 					if ((icon_en != last_icon_en) && (!hbm_en_wait)) {
-						pr_info("panel wait icon_en=%d", icon_en);
+						pr_debug("panel wait icon_en=%d", icon_en);
 						mtk_drm_crtc_hbm_wait2(crtc, icon_en,aod_en, false, true);
 					}
 					last_icon_en = icon_en;

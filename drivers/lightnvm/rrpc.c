@@ -1586,7 +1586,7 @@ static void *rrpc_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
 	blk_queue_logical_block_size(tqueue, queue_physical_block_size(bqueue));
 	blk_queue_max_hw_sectors(tqueue, queue_max_hw_sectors(bqueue));
 
-	pr_info("nvm: rrpc initialized with %u luns and %llu pages.\n",
+	pr_debug("nvm: rrpc initialized with %u luns and %llu pages.\n",
 			rrpc->nr_luns, (unsigned long long)rrpc->nr_sects);
 
 	mod_timer(&rrpc->gc_timer, jiffies + msecs_to_jiffies(10));

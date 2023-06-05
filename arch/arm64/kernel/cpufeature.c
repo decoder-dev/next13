@@ -889,13 +889,13 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
 	}
 
 	if (!IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0)) {
-		pr_info_once("kernel page table isolation disabled by kernel configuration\n");
+		pr_debug_once("kernel page table isolation disabled by kernel configuration\n");
 		return false;
 	}
 
 	/* Forced? */
 	if (__kpti_forced) {
-		pr_info_once("kernel page table isolation forced %s by %s\n",
+		pr_debug_once("kernel page table isolation forced %s by %s\n",
 			     __kpti_forced > 0 ? "ON" : "OFF", str);
 		return __kpti_forced > 0;
 	}
@@ -1342,7 +1342,7 @@ static void __update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
 			continue;
 
 		if (!cpus_have_cap(caps->capability) && caps->desc)
-			pr_info("%s %s\n", info, caps->desc);
+			pr_debug("%s %s\n", info, caps->desc);
 		cpus_set_cap(caps->capability);
 	}
 }

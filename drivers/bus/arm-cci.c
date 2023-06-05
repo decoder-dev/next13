@@ -1766,7 +1766,7 @@ static int cci_pmu_probe(struct platform_device *pdev)
 	cpuhp_state_add_instance_nocalls(CPUHP_AP_PERF_ARM_CCI_ONLINE,
 					 &cci_pmu->node);
 	put_cpu();
-	pr_info("ARM %s PMU driver probed", cci_pmu->model->name);
+	pr_debug("ARM %s PMU driver probed", cci_pmu->model->name);
 	return 0;
 }
 
@@ -2255,7 +2255,7 @@ static int cci_probe_ports(struct device_node *np)
 	sync_cache_w(&ports);
 	sync_cache_w(&cpu_port);
 	__sync_cache_range_w(ports, sizeof(*ports) * nb_cci_ports);
-	pr_info("ARM CCI driver probed\n");
+	pr_debug("ARM CCI driver probed\n");
 
 	return 0;
 }

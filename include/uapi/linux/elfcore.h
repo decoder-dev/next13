@@ -41,7 +41,7 @@ struct elf_prstatus
 	short	pr_why;		/* XXX Reason for process halt */
 	short	pr_what;	/* XXX More detailed reason */
 #endif
-	struct elf_siginfo pr_info;	/* Info associated with signal */
+	struct elf_siginfo pr_debug;	/* Info associated with signal */
 	short	pr_cursig;		/* Current signal */
 	unsigned long pr_sigpend;	/* Set of pending signals */
 	unsigned long pr_sighold;	/* Set of held signals */

@@ -184,7 +184,7 @@ static int cpu_pm_suspend(void)
 	int ret;
 #ifdef CONFIG_SUSPEND
 	if (s2idle_state != S2IDLE_STATE_NONE) {
-		pr_info("skip cpu_pm_suspend when s2idle\n");
+		pr_debug("skip cpu_pm_suspend when s2idle\n");
 		return 0;
 	}
 #endif
@@ -201,7 +201,7 @@ static void cpu_pm_resume(void)
 {
 #ifdef CONFIG_SUSPEND
 	if (s2idle_state != S2IDLE_STATE_NONE) {
-		pr_info("skip cpu_pm_resume when s2idle\n");
+		pr_debug("skip cpu_pm_resume when s2idle\n");
 		return;
 	}
 #endif

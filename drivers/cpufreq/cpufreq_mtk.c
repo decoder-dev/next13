@@ -302,7 +302,7 @@ static void __exit cpufreq_mtk_exit(void)
 }
 
 MODULE_DESCRIPTION("CPU frequencies setting for MTK scheduler");
-MODULE_AUTHOR("begonia-dev");
+MODULE_AUTHOR("bengris32");
 MODULE_LICENSE("GPL");
 
 module_init(cpufreq_mtk_init);

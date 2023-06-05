@@ -1074,7 +1074,7 @@ static struct dentry *ceph_mount(struct file_system_type *fs_type,
 
 out_splat:
 	if (!ceph_mdsmap_is_cluster_available(fsc->mdsc->mdsmap)) {
-		pr_info("No mds server is up or the cluster is laggy\n");
+		pr_debug("No mds server is up or the cluster is laggy\n");
 		err = -EHOSTUNREACH;
 	}
 
@@ -1132,7 +1132,7 @@ static int __init init_ceph(void)
 	if (ret)
 		goto out_xattr;
 
-	pr_info("loaded (mds proto %d)\n", CEPH_MDSC_PROTOCOL);
+	pr_debug("loaded (mds proto %d)\n", CEPH_MDSC_PROTOCOL);
 
 	return 0;
 

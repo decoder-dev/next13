@@ -1153,11 +1153,11 @@ void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
 	rcu_read_lock();
 
 	if (p) {
-		pr_info("Task in ");
+		pr_debug("Task in ");
 		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
 		pr_cont(" killed as a result of limit of ");
 	} else {
-		pr_info("Memory limit reached of cgroup ");
+		pr_debug("Memory limit reached of cgroup ");
 	}
 
 	pr_cont_cgroup_path(memcg->css.cgroup);
@@ -1165,18 +1165,18 @@ void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
 
 	rcu_read_unlock();
 
-	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
+	pr_debug("memory: usage %llukB, limit %llukB, failcnt %lu\n",
 		K((u64)page_counter_read(&memcg->memory)),
 		K((u64)memcg->memory.limit), memcg->memory.failcnt);
-	pr_info("memory+swap: usage %llukB, limit %llukB, failcnt %lu\n",
+	pr_debug("memory+swap: usage %llukB, limit %llukB, failcnt %lu\n",
 		K((u64)page_counter_read(&memcg->memsw)),
 		K((u64)memcg->memsw.limit), memcg->memsw.failcnt);
-	pr_info("kmem: usage %llukB, limit %llukB, failcnt %lu\n",
+	pr_debug("kmem: usage %llukB, limit %llukB, failcnt %lu\n",
 		K((u64)page_counter_read(&memcg->kmem)),
 		K((u64)memcg->kmem.limit), memcg->kmem.failcnt);
 
 	for_each_mem_cgroup_tree(iter, memcg) {
-		pr_info("Memory cgroup stats for ");
+		pr_debug("Memory cgroup stats for ");
 		pr_cont_cgroup_path(iter->css.cgroup);
 		pr_cont(":");
 

@@ -685,10 +685,10 @@ s32 mtk_smi_clk_enable(struct mtk_smi_dev *smi)
 	s32 i, j, ret = 0;
 
 	if (!smi) {
-		pr_info("No such device or address\n");
+		pr_debug("No such device or address\n");
 		return -ENXIO;
 	} else if (!smi->dev || !smi->clks) {
-		pr_info("SMI%u no such device or address\n", smi->id);
+		pr_debug("SMI%u no such device or address\n", smi->id);
 		return -ENXIO;
 	}
 	for (i = 1; i < smi->nr_clks; i++) { /* without MTCMOS */
@@ -711,9 +711,9 @@ void mtk_smi_clk_disable(struct mtk_smi_dev *smi)
 	s32 i;
 
 	if (!smi)
-		pr_info("No such device or address\n");
+		pr_debug("No such device or address\n");
 	else if (!smi->dev || !smi->clks)
-		pr_info("SMI%u no such device or address\n", smi->id);
+		pr_debug("SMI%u no such device or address\n", smi->id);
 	else {
 		atomic_dec(&(smi->clk_cnts));
 		for (i = smi->nr_clks - 1; i > 0; i--)
@@ -725,9 +725,9 @@ EXPORT_SYMBOL_GPL(mtk_smi_clk_disable);
 struct mtk_smi_dev *mtk_smi_dev_get(const u32 id)
 {
 	if (id > nr_dev)
-		pr_info("Invalid id: %u, nr_dev=%u\n", id, nr_dev);
+		pr_debug("Invalid id: %u, nr_dev=%u\n", id, nr_dev);
 	else if (!smi_dev[id])
-		pr_info("SMI%u no such device or address\n", id);
+		pr_debug("SMI%u no such device or address\n", id);
 	else
 		return smi_dev[id];
 	return NULL;
@@ -739,10 +739,10 @@ s32 mtk_smi_conf_set(const struct mtk_smi_dev *smi, const u32 scen_id)
 	u32 cnts, i;
 
 	if (!smi) {
-		pr_info("No such device or address\n");
+		pr_debug("No such device or address\n");
 		return -ENXIO;
 	} else if (!smi->dev) {
-		pr_info("SMI%u no such device or address\n", smi->id);
+		pr_debug("SMI%u no such device or address\n", smi->id);
 		return -ENXIO;
 	}
 
@@ -769,10 +769,10 @@ static s32 mtk_smi_clks_get(struct mtk_smi_dev *smi)
 	s32 i = 0, ret;
 
 	if (!smi) {
-		pr_info("No such device or address\n");
+		pr_debug("No such device or address\n");
 		return -ENXIO;
 	} else if (!smi->dev) {
-		pr_info("SMI%u no such device or address\n", smi->id);
+		pr_debug("SMI%u no such device or address\n", smi->id);
 		return -ENXIO;
 	}
 

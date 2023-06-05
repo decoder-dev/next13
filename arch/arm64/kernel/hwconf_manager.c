@@ -67,7 +67,7 @@ hw_item *hw_item_get_child(hw_item *root, const char *name)
 void hw_item_add_child(hw_item *root, const char *name, const char *value)
 {
 	hw_item *child, *it;
-	pr_info("hw_item_add_child: %s:%s\n", name, value);
+	pr_debug("hw_item_add_child: %s:%s\n", name, value);
 
 	it = kmalloc(sizeof(hw_item), GFP_KERNEL);
 	if (!it) {

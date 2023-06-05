@@ -153,7 +153,7 @@ static void __init exynos5440_clk_init(struct device_node *np)
 	if (register_restart_handler(&exynos5440_clk_restart_handler))
 		pr_warn("exynos5440 clock can't register restart handler\n");
 
-	pr_info("Exynos5440: arm_clk = %ldHz\n", _get_rate("arm_clk"));
-	pr_info("exynos5440 clock initialization complete\n");
+	pr_debug("Exynos5440: arm_clk = %ldHz\n", _get_rate("arm_clk"));
+	pr_debug("exynos5440 clock initialization complete\n");
 }
 CLK_OF_DECLARE(exynos5440_clk, "samsung,exynos5440-clock", exynos5440_clk_init);

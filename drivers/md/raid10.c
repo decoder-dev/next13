@@ -2234,11 +2234,22 @@ static void recovery_request_write(struct mddev *mddev, struct r10bio *r10_bio)
 {
 	struct r10conf *conf = mddev->private;
 	int d;
-	struct bio *wbio, *wbio2;
+	struct bio *wbio = r10_bio->devs[1].bio;
+	struct bio *wbio2 = r10_bio->devs[1].repl_bio;
+
+	/* Need to test wbio2->bi_end_io before we call
+	 * generic_make_request as if the former is NULL,
+	 * the latter is free to free wbio2.
+	 */
+	if (wbio2 && !wbio2->bi_end_io)
+		wbio2 = NULL;
 
 	if (!test_bit(R10BIO_Uptodate, &r10_bio->state)) {
 		fix_recovery_read_error(r10_bio);
-		end_sync_request(r10_bio);
+		if (wbio->bi_end_io)
+			end_sync_request(r10_bio);
+		if (wbio2)
+			end_sync_request(r10_bio);
 		return;
 	}
 
@@ -2247,14 +2258,6 @@ static void recovery_request_write(struct mddev *mddev, struct r10bio *r10_bio)
 	 * and submit the write request
 	 */
 	d = r10_bio->devs[1].devnum;
-	wbio = r10_bio->devs[1].bio;
-	wbio2 = r10_bio->devs[1].repl_bio;
-	/* Need to test wbio2->bi_end_io before we call
-	 * generic_make_request as if the former is NULL,
-	 * the latter is free to free wbio2.
-	 */
-	if (wbio2 && !wbio2->bi_end_io)
-		wbio2 = NULL;
 	if (wbio->bi_end_io) {
 		atomic_inc(&conf->mirrors[d].rdev->nr_pending);
 		md_sync_acct(conf->mirrors[d].rdev->bdev, bio_sectors(wbio));
@@ -2502,7 +2505,7 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
 				       bdevname(rdev->bdev, b));
 				break;
 			case 1:
-				pr_info("md/raid10:%s: read error corrected (%d sectors at %llu on %s)\n",
+				pr_debug("md/raid10:%s: read error corrected (%d sectors at %llu on %s)\n",
 				       mdname(mddev), s,
 				       (unsigned long long)(
 					       sect +
@@ -3776,7 +3779,7 @@ static int raid10_run(struct mddev *mddev)
 	if (mddev->recovery_cp != MaxSector)
 		pr_notice("md/raid10:%s: not clean -- starting background reconstruction\n",
 			  mdname(mddev));
-	pr_info("md/raid10:%s: active with %d out of %d devices\n",
+	pr_debug("md/raid10:%s: active with %d out of %d devices\n",
 		mdname(mddev), conf->geo.raid_disks - mddev->degraded,
 		conf->geo.raid_disks);
 	/*

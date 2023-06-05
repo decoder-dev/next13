@@ -861,7 +861,7 @@ static int __init init_exfat_fs(void)
 {
 	int err;
 
-	pr_info("exFAT: file-system version %s\n", EXFAT_VERSION);
+	pr_debug("exFAT: file-system version %s\n", EXFAT_VERSION);
 
 	err = exfat_cache_init();
 	if (err)

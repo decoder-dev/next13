@@ -1715,7 +1715,7 @@ int tpd_local_init(void)
 static void tpd_suspend(struct device *h)
 {
 	if (tpd_halt == 1) {
-		pr_info("gslX680 already in suspended status\n");
+		pr_debug("gslX680 already in suspended status\n");
 		return;
 	}
 	GSL_LOGF();
@@ -1737,7 +1737,7 @@ static void tpd_suspend(struct device *h)
 static void tpd_resume(struct device *h)
 {
 	if (tpd_halt == 0) {
-		pr_info("gslX680 already in resumed status\n");
+		pr_debug("gslX680 already in resumed status\n");
 		return;
 	}
 	GSL_LOGF();

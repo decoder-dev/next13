@@ -167,7 +167,7 @@ static void nvmet_execute_admin_connect(struct nvmet_req *req)
 		goto out;
 	}
 
-	pr_info("creating controller %d for subsystem %s for NQN %s.\n",
+	pr_debug("creating controller %d for subsystem %s for NQN %s.\n",
 		ctrl->cntlid, ctrl->subsys->subsysnqn, ctrl->hostnqn);
 	req->rsp->result.u16 = cpu_to_le16(ctrl->cntlid);
 
@@ -225,7 +225,7 @@ static void nvmet_execute_io_connect(struct nvmet_req *req)
 		goto out_ctrl_put;
 	}
 
-	pr_info("adding queue %d to ctrl %d.\n", qid, ctrl->cntlid);
+	pr_debug("adding queue %d to ctrl %d.\n", qid, ctrl->cntlid);
 
 out:
 	kfree(d);

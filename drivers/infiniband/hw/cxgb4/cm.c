@@ -2276,12 +2276,12 @@ static int act_open_rpl(struct c4iw_dev *dev, struct sk_buff *skb)
 		break;
 	default:
 		if (ep->com.local_addr.ss_family == AF_INET) {
-			pr_info("Active open failure - atid %u status %u errno %d %pI4:%u->%pI4:%u\n",
+			pr_debug("Active open failure - atid %u status %u errno %d %pI4:%u->%pI4:%u\n",
 				atid, status, status2errno(status),
 				&la->sin_addr.s_addr, ntohs(la->sin_port),
 				&ra->sin_addr.s_addr, ntohs(ra->sin_port));
 		} else {
-			pr_info("Active open failure - atid %u status %u errno %d %pI6:%u->%pI6:%u\n",
+			pr_debug("Active open failure - atid %u status %u errno %d %pI6:%u->%pI6:%u\n",
 				atid, status, status2errno(status),
 				la6->sin6_addr.s6_addr, ntohs(la6->sin6_port),
 				ra6->sin6_addr.s6_addr, ntohs(ra6->sin6_port));
@@ -3650,7 +3650,7 @@ static void active_ofld_conn_reply(struct c4iw_dev *dev, struct sk_buff *skb,
 		}
 		break;
 	default:
-		pr_info("%s unexpected ofld conn wr retval %d\n",
+		pr_debug("%s unexpected ofld conn wr retval %d\n",
 		       __func__, req->retval);
 		break;
 	}

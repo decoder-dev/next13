@@ -148,7 +148,7 @@ int __init metag_generic_timer_init(void)
 #ifdef CONFIG_METAG_META21
 	hwtimer_freq = get_coreclock() / (metag_in32(EXPAND_TIMER_DIV) + 1);
 #endif
-	pr_info("Timer frequency: %u Hz\n", hwtimer_freq);
+	pr_debug("Timer frequency: %u Hz\n", hwtimer_freq);
 
 	clocksource_register_hz(&clocksource_metag, hwtimer_freq);
 

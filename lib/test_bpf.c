@@ -6504,7 +6504,7 @@ static __init int test_bpf(void)
 		if (exclude_test(i))
 			continue;
 
-		pr_info("#%d %s ", i, tests[i].descr);
+		pr_debug("#%d %s ", i, tests[i].descr);
 
 		fp = generate_filter(i, &err);
 		if (fp == NULL) {
@@ -6534,7 +6534,7 @@ static __init int test_bpf(void)
 		}
 	}
 
-	pr_info("Summary: %d PASSED, %d FAILED, [%d/%d JIT'ed]\n",
+	pr_debug("Summary: %d PASSED, %d FAILED, [%d/%d JIT'ed]\n",
 		pass_cnt, err_cnt, jit_cnt, run_cnt);
 
 	return err_cnt ? -EINVAL : 0;

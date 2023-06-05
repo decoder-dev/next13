@@ -123,7 +123,7 @@ isac_empty_fifo(struct isac_hw *isac, int count)
 	if (!isac->dch.rx_skb) {
 		isac->dch.rx_skb = mI_alloc_skb(isac->dch.maxlen, GFP_ATOMIC);
 		if (!isac->dch.rx_skb) {
-			pr_info("%s: D receive out of memory\n", isac->name);
+			pr_debug("%s: D receive out of memory\n", isac->name);
 			WriteISAC(isac, ISAC_CMDR, 0x80);
 			return;
 		}
@@ -241,12 +241,12 @@ isac_retransmit(struct isac_hw *isac)
 		isac->dch.tx_idx = 0;
 		isac_fill_fifo(isac);
 	} else if (isac->dch.tx_skb) { /* should not happen */
-		pr_info("%s: tx_skb exist but not busy\n", isac->name);
+		pr_debug("%s: tx_skb exist but not busy\n", isac->name);
 		test_and_set_bit(FLG_TX_BUSY, &isac->dch.Flags);
 		isac->dch.tx_idx = 0;
 		isac_fill_fifo(isac);
 	} else {
-		pr_info("%s: ISAC XDU no TX_BUSY\n", isac->name);
+		pr_debug("%s: ISAC XDU no TX_BUSY\n", isac->name);
 		if (get_next_dframe(&isac->dch))
 			isac_fill_fifo(isac);
 	}
@@ -265,7 +265,7 @@ isac_mos_irq(struct isac_hw *isac)
 		if (!isac->mon_rx) {
 			isac->mon_rx = kmalloc(MAX_MON_FRAME, GFP_ATOMIC);
 			if (!isac->mon_rx) {
-				pr_info("%s: ISAC MON RX out of memory!\n",
+				pr_debug("%s: ISAC MON RX out of memory!\n",
 					isac->name);
 				isac->mocr &= 0xf0;
 				isac->mocr |= 0x0a;
@@ -295,7 +295,7 @@ afterMONR0:
 		if (!isac->mon_rx) {
 			isac->mon_rx = kmalloc(MAX_MON_FRAME, GFP_ATOMIC);
 			if (!isac->mon_rx) {
-				pr_info("%s: ISAC MON RX out of memory!\n",
+				pr_debug("%s: ISAC MON RX out of memory!\n",
 					isac->name);
 				isac->mocr &= 0x0f;
 				isac->mocr |= 0xa0;
@@ -330,7 +330,7 @@ afterMONR1:
 			if (ret)
 				kfree(isac->mon_rx);
 		} else {
-			pr_info("%s: MONITOR 0 received %d but no user\n",
+			pr_debug("%s: MONITOR 0 received %d but no user\n",
 				isac->name, isac->mon_rxp);
 			kfree(isac->mon_rx);
 		}
@@ -348,7 +348,7 @@ afterMONR1:
 			if (ret)
 				kfree(isac->mon_rx);
 		} else {
-			pr_info("%s: MONITOR 1 received %d but no user\n",
+			pr_debug("%s: MONITOR 1 received %d but no user\n",
 				isac->name, isac->mon_rxp);
 			kfree(isac->mon_rx);
 		}
@@ -746,7 +746,7 @@ dbusy_timer_handler(struct isac_hw *isac)
 			if (isac->dch.tx_idx)
 				isac->dch.tx_idx = 0;
 			else
-				pr_info("%s: ISAC D-Channel Busy no tx_idx\n",
+				pr_debug("%s: ISAC D-Channel Busy no tx_idx\n",
 					isac->name);
 			/* Transmitter reset */
 			WriteISAC(isac, ISAC_CMDR, 0x01);
@@ -848,7 +848,7 @@ isac_init(struct isac_hw *isac)
 		if (!isac->adf2)
 			isac->adf2 = 0x80;
 		if (!(isac->adf2 & 0x80)) { /* only IOM 2 Mode */
-			pr_info("%s: only support IOM2 mode but adf2=%02x\n",
+			pr_debug("%s: only support IOM2 mode but adf2=%02x\n",
 				isac->name, isac->adf2);
 			isac_release(isac);
 			return -EINVAL;
@@ -902,7 +902,7 @@ waitforCEC(struct hscx_hw *hx)
 		pr_debug("%s: B%1d CEC %d us\n", hx->ip->name, hx->bch.nr,
 			 50 - to);
 	if (!to)
-		pr_info("%s: B%1d CEC timeout\n", hx->ip->name, hx->bch.nr);
+		pr_debug("%s: B%1d CEC timeout\n", hx->ip->name, hx->bch.nr);
 }
 
 
@@ -922,7 +922,7 @@ waitforXFW(struct hscx_hw *hx)
 		pr_debug("%s: B%1d XFW %d us\n", hx->ip->name, hx->bch.nr,
 			 50 - to);
 	if (!to)
-		pr_info("%s: B%1d XFW timeout\n", hx->ip->name, hx->bch.nr);
+		pr_debug("%s: B%1d XFW timeout\n", hx->ip->name, hx->bch.nr);
 }
 
 static void
@@ -1263,7 +1263,7 @@ hscx_mode(struct hscx_hw *hscx, u32 bprotocol)
 			test_and_set_bit(FLG_HDLC, &hscx->bch.Flags);
 			break;
 		default:
-			pr_info("%s: protocol not known %x\n", hscx->ip->name,
+			pr_debug("%s: protocol not known %x\n", hscx->ip->name,
 				bprotocol);
 			return -ENOPROTOOPT;
 		}
@@ -1299,7 +1299,7 @@ hscx_mode(struct hscx_hw *hscx, u32 bprotocol)
 			test_and_set_bit(FLG_HDLC, &hscx->bch.Flags);
 			break;
 		default:
-			pr_info("%s: protocol not known %x\n", hscx->ip->name,
+			pr_debug("%s: protocol not known %x\n", hscx->ip->name,
 				bprotocol);
 			return -ENOPROTOOPT;
 		}
@@ -1335,7 +1335,7 @@ hscx_mode(struct hscx_hw *hscx, u32 bprotocol)
 			test_and_set_bit(FLG_HDLC, &hscx->bch.Flags);
 			break;
 		default:
-			pr_info("%s: protocol not known %x\n", hscx->ip->name,
+			pr_debug("%s: protocol not known %x\n", hscx->ip->name,
 				bprotocol);
 			return -ENOPROTOOPT;
 		}
@@ -1385,7 +1385,7 @@ hscx_l2l1(struct mISDNchannel *ch, struct sk_buff *skb)
 		ret = 0;
 		break;
 	default:
-		pr_info("%s: %s unknown prim(%x,%x)\n",
+		pr_debug("%s: %s unknown prim(%x,%x)\n",
 			hx->ip->name, __func__, hh->prim, hh->id);
 		ret = -EINVAL;
 	}
@@ -1426,7 +1426,7 @@ hscx_bctrl(struct mISDNchannel *ch, u32 cmd, void *arg)
 		ret = channel_bctrl(bch, arg);
 		break;
 	default:
-		pr_info("%s: %s unknown prim(%x)\n",
+		pr_debug("%s: %s unknown prim(%x)\n",
 			hx->ip->name, __func__, cmd);
 	}
 	return ret;
@@ -1532,7 +1532,7 @@ channel_ctrl(struct ipac_hw *ipac, struct mISDN_ctrl_req *cq)
 		ret = ipac->isac.ctrl(&ipac->isac, HW_TIMER3_VALUE, cq->p1);
 		break;
 	default:
-		pr_info("%s: unknown CTRL OP %x\n", ipac->name, cq->op);
+		pr_debug("%s: unknown CTRL OP %x\n", ipac->name, cq->op);
 		ret = -EINVAL;
 		break;
 	}
@@ -1560,7 +1560,7 @@ ipac_dctrl(struct mISDNchannel *ch, u32 cmd, void *arg)
 		if (err)
 			break;
 		if (!try_module_get(ipac->owner))
-			pr_info("%s: cannot get module\n", ipac->name);
+			pr_debug("%s: cannot get module\n", ipac->name);
 		break;
 	case CLOSE_CHANNEL:
 		pr_debug("%s: dev(%d) close from %p\n", ipac->name,

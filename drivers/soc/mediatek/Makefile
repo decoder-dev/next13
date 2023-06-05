@@ -1,4 +1,4 @@
-EXTRA_CFLAGS += -Wno-int-conversion
+/*ccflags-y += -Wno-int-conversion*/
 
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/include
 

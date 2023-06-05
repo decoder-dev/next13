@@ -208,7 +208,7 @@ static void link_report(struct net_device *dev)
 			s = "100Gbps";
 			break;
 		default:
-			pr_info("%s: unsupported speed: %d\n",
+			pr_debug("%s: unsupported speed: %d\n",
 				dev->name, p->link_cfg.speed);
 			return;
 		}
@@ -4702,7 +4702,7 @@ static int config_mgmt_dev(struct pci_dev *pdev)
 
 	err = register_netdev(adap->port[0]);
 	if (err) {
-		pr_info("Unable to register VF mgmt netdev %s\n", name);
+		pr_debug("Unable to register VF mgmt netdev %s\n", name);
 		free_netdev(adap->port[0]);
 		adap->port[0] = NULL;
 		return err;

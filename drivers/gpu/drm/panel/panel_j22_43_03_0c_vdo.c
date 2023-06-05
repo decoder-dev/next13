@@ -268,7 +268,7 @@ int get_lockdown_info_for_ft8720(unsigned char* p_lockdown_info) {
 	cmd_msg->tx_buf[4] = cmd5;
 	cmd_msg->tx_len[4] = 2;
 
-	pr_info("%s begin +\n", __func__);
+	pr_debug("%s begin +\n", __func__);
 
 	ret = mtk_ddic_dsi_send_cmd(cmd_msg, true, false);
 	if (ret != 0) {
@@ -302,10 +302,10 @@ int get_lockdown_info_for_ft8720(unsigned char* p_lockdown_info) {
 		goto DONE1;
 	}
 
-	pr_info("%s read lcm addr:0x%x--dlen:%d\n", __func__,
+	pr_debug("%s read lcm addr:0x%x--dlen:%d\n", __func__,
 		*(unsigned char *)(cmd_msg->tx_buf[0]), cmd_msg->rx_len[0]);
 	for (i = 0; i < 8; i++) {
-		pr_info("%s read lcm addr:0x%x--byte:%d,val:0x%x\n", __func__,
+		pr_debug("%s read lcm addr:0x%x--byte:%d,val:0x%x\n", __func__,
 			*(unsigned char *)(cmd_msg->tx_buf[0]), i,
 			*(unsigned char *)(cmd_msg->rx_buf[0] + i));
 		p_lockdown_info[i] = *(unsigned char *)(cmd_msg->rx_buf[0] + i);
@@ -316,7 +316,7 @@ DONE1:
 DONE2:
 	kfree(cmd_msg);
 
-	pr_info("%s end -\n", __func__);
+	pr_debug("%s end -\n", __func__);
 
 	return ret;
 
@@ -372,7 +372,7 @@ static int lcm_unprepare(struct drm_panel *panel)
 {
 	struct lcm *ctx = panel_to_lcm(panel);
 
-	pr_info("[%s] 0c begin+\n", __func__);
+	pr_debug("[%s] 0c begin+\n", __func__);
 	if (!ctx->prepared)
 		return 0;
 
@@ -394,7 +394,7 @@ static int lcm_unprepare(struct drm_panel *panel)
 	if (is_tp_doubleclick_enable() == false || get_panel_dead_flag())
 		lm36273_bias_enable(0, 0);
 
-	pr_info("[%s] 0c end-\n", __func__);
+	pr_debug("[%s] 0c end-\n", __func__);
 
 	return 0;
 }
@@ -404,7 +404,7 @@ static int lcm_prepare(struct drm_panel *panel)
 	struct lcm *ctx = panel_to_lcm(panel);
 	int ret;
 
-	pr_info("[%s] 0c begin+\n", __func__);
+	pr_debug("[%s] 0c begin+\n", __func__);
 	if (ctx->prepared)
 		return 0;
 
@@ -430,7 +430,7 @@ static int lcm_prepare(struct drm_panel *panel)
 #ifdef PANEL_SUPPORT_READBACK
 	lcm_panel_get_data(ctx);
 #endif
-	pr_info("[%s] 0c end-\n", __func__);
+	pr_debug("[%s] 0c end-\n", __func__);
 
 	return ret;
 }
@@ -505,7 +505,7 @@ static void handle_dsi_read_data(struct drm_panel *panel, unsigned char *pbuf)
 		write_len = scnprintf(pTemp, 8, "p%d=%d", i%2, *(pbuf + i));
 		pTemp += write_len;
 	}
-	pr_info("dsi read %s from panel\n", panel->connector->panel_read_data);
+	pr_debug("dsi read %s from panel\n", panel->connector->panel_read_data);
 }
 
 static int lcm_whitepoint_xylv_get(struct drm_panel *panel) {
@@ -547,7 +547,7 @@ static int lcm_whitepoint_xylv_get(struct drm_panel *panel) {
 	cmd_msg->tx_buf[4] = cmd5;
 	cmd_msg->tx_len[4] = 2;
 
-	pr_info("%s begin +\n", __func__);
+	pr_debug("%s begin +\n", __func__);
 
 	ret = mtk_ddic_dsi_send_cmd(cmd_msg, true, false);
 	if (ret != 0) {
@@ -588,7 +588,7 @@ DONE1:
 DONE2:
 	kfree(cmd_msg);
 
-	pr_info("%s end -\n", __func__);
+	pr_debug("%s end -\n", __func__);
 
 	return ret;
 
@@ -731,7 +731,7 @@ static int lcm_probe(struct mipi_dsi_device *dsi)
 		return ret;
 #endif
 
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 
 	return ret;
 }

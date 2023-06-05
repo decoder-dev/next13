@@ -72,7 +72,7 @@ static int testing_mode_probe(struct platform_device *pdev)
 	struct device_node *np = dev->of_node;
 	struct testing_mode_data *data;
 
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	data = devm_kzalloc(dev, sizeof(struct testing_mode_data), GFP_KERNEL);
 	if (!data)

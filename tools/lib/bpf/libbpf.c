@@ -67,7 +67,7 @@ static int __base_pr(const char *format, ...)
 }
 
 static __printf(1, 2) libbpf_print_fn_t __pr_warning = __base_pr;
-static __printf(1, 2) libbpf_print_fn_t __pr_info = __base_pr;
+static __printf(1, 2) libbpf_print_fn_t __pr_debug = __base_pr;
 static __printf(1, 2) libbpf_print_fn_t __pr_debug;
 
 #define __pr(func, fmt, ...)	\
@@ -77,7 +77,7 @@ do {				\
 } while (0)
 
 #define pr_warning(fmt, ...)	__pr(__pr_warning, fmt, ##__VA_ARGS__)
-#define pr_info(fmt, ...)	__pr(__pr_info, fmt, ##__VA_ARGS__)
+#define pr_debug(fmt, ...)	__pr(__pr_debug, fmt, ##__VA_ARGS__)
 #define pr_debug(fmt, ...)	__pr(__pr_debug, fmt, ##__VA_ARGS__)
 
 void libbpf_set_print(libbpf_print_fn_t warn,
@@ -85,7 +85,7 @@ void libbpf_set_print(libbpf_print_fn_t warn,
 		      libbpf_print_fn_t debug)
 {
 	__pr_warning = warn;
-	__pr_info = info;
+	__pr_debug = info;
 	__pr_debug = debug;
 }
 

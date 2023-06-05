@@ -250,7 +250,7 @@ static int hexium_probe(struct saa7146_dev *dev)
 
 	/* detect newer Hexium Orion cards by subsystem ids */
 	if (0x17c8 == dev->pci->subsystem_vendor && 0x0101 == dev->pci->subsystem_device) {
-		pr_info("device is a Hexium Orion w/ 1 SVHS + 3 BNC inputs\n");
+		pr_debug("device is a Hexium Orion w/ 1 SVHS + 3 BNC inputs\n");
 		/* we store the pointer in our private data field */
 		dev->ext_priv = hexium;
 		hexium->type = HEXIUM_ORION_1SVHS_3BNC;
@@ -258,7 +258,7 @@ static int hexium_probe(struct saa7146_dev *dev)
 	}
 
 	if (0x17c8 == dev->pci->subsystem_vendor && 0x2101 == dev->pci->subsystem_device) {
-		pr_info("device is a Hexium Orion w/ 4 BNC inputs\n");
+		pr_debug("device is a Hexium Orion w/ 4 BNC inputs\n");
 		/* we store the pointer in our private data field */
 		dev->ext_priv = hexium;
 		hexium->type = HEXIUM_ORION_4BNC;
@@ -268,7 +268,7 @@ static int hexium_probe(struct saa7146_dev *dev)
 	/* check if this is an old hexium Orion card by looking at
 	   a saa7110 at address 0x4e */
 	if (0 == (err = i2c_smbus_xfer(&hexium->i2c_adapter, 0x4e, 0, I2C_SMBUS_READ, 0x00, I2C_SMBUS_BYTE_DATA, &data))) {
-		pr_info("device is a Hexium HV-PCI6/Orion (old)\n");
+		pr_debug("device is a Hexium HV-PCI6/Orion (old)\n");
 		/* we store the pointer in our private data field */
 		dev->ext_priv = hexium;
 		hexium->type = HEXIUM_HV_PCI6_ORION;

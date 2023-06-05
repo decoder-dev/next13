@@ -755,7 +755,7 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
 
 #ifdef CONFIG_MTK_IOMMU_V2
 		if (!sg_page(s)) {
-			pr_info("%s, page is null\n", __func__);
+			pr_debug("%s, page is null\n", __func__);
 			s_iova_off = 0;
 		}
 #endif
@@ -791,14 +791,14 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
 			cur_len = 0;
 
 		if (s_iova_off)
-			pr_info("[M4U] %s warning, 0x%x--0x%x, offset:%u, count:%d\n",
+			pr_debug("[M4U] %s warning, 0x%x--0x%x, offset:%u, count:%d\n",
 				__func__, s_iova_len,
 				s_length, s_iova_off, count);
 	}
 
 	/* avoid sg don'tbe deal fully */
 	if (i != nents)
-		pr_info("hc3 %s maybe error, i:%d--%d, count:%d\n", __func__, i, nents, count);
+		pr_debug("hc3 %s maybe error, i:%d--%d, count:%d\n", __func__, i, nents, count);
 
 	return count;
 }
@@ -863,7 +863,7 @@ int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
 			s->length = s_length;
 			iova_len += s_length;
 			prev = s;
-			pr_info("%s, page is error\n", __func__);
+			pr_debug("%s, page is error\n", __func__);
 			continue;
 		}
 #endif
@@ -873,7 +873,7 @@ int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
 		s_length = iova_align(iovad, s_length + s_iova_off);
 		s->length = s_length;
 		if (s->length != sg_dma_len(s))
-			pr_info("%s, length is not equal dma_length, 0x%x--0x%x\n",
+			pr_debug("%s, length is not equal dma_length, 0x%x--0x%x\n",
 				__func__, s->length,
 				(unsigned int)sg_dma_len(s));
 #else

@@ -521,7 +521,7 @@ void __init cec_init(void)
 	setup_timer(&cec_timer, cec_timer_fn, (unsigned long)&ce_arr);
 	cec_mod_timer(&cec_timer, CEC_TIMER_DEFAULT_INTERVAL);
 
-	pr_info("Correctable Errors collector initialized.\n");
+	pr_debug("Correctable Errors collector initialized.\n");
 }
 
 int __init parse_cec_param(char *str)

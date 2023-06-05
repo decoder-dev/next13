@@ -19,7 +19,7 @@ struct compat_elf_siginfo
 
 struct compat_elf_prstatus
 {
-	struct compat_elf_siginfo	pr_info;
+	struct compat_elf_siginfo	pr_debug;
 	short				pr_cursig;
 	compat_ulong_t			pr_sigpend;
 	compat_ulong_t			pr_sighold;

@@ -1544,6 +1544,21 @@ static enum hrtimer_restart hrtimer_wakeup(struct hrtimer *timer)
 	return HRTIMER_NORESTART;
 }
 
+/**
+ * hrtimer_sleeper_start_expires - Start a hrtimer sleeper timer
+ * @sl:		sleeper to be started
+ * @mode:	timer mode abs/rel
+ *
+ * Wrapper around hrtimer_start_expires() for hrtimer_sleeper based timers
+ * to allow PREEMPT_RT to tweak the delivery mode (soft/hardirq context)
+ */
+void hrtimer_sleeper_start_expires(struct hrtimer_sleeper *sl,
+				   enum hrtimer_mode mode)
+{
+	hrtimer_start_expires(&sl->timer, mode);
+}
+EXPORT_SYMBOL_GPL(hrtimer_sleeper_start_expires);
+
 void hrtimer_init_sleeper(struct hrtimer_sleeper *sl, struct task_struct *task)
 {
 	sl->timer.function = hrtimer_wakeup;
@@ -1578,7 +1593,7 @@ static int __sched do_nanosleep(struct hrtimer_sleeper *t, enum hrtimer_mode mod
 
 	do {
 		set_current_state(TASK_INTERRUPTIBLE);
-		hrtimer_start_expires(&t->timer, mode);
+		hrtimer_sleeper_start_expires(t, mode);
 
 		if (likely(t->task))
 			freezable_schedule();
@@ -1849,7 +1864,7 @@ schedule_hrtimeout_range_clock(ktime_t *expires, u64 delta,
 
 	hrtimer_init_sleeper(&t, current);
 
-	hrtimer_start_expires(&t.timer, mode);
+	hrtimer_sleeper_start_expires(&t, mode);
 
 	if (likely(t.task))
 		schedule();

@@ -382,7 +382,7 @@ static int smi_debug_set(void *data, u64 val)
 	struct device *larbdev;
 	int ret = 0;
 
-	pr_info("%s:val=%llx, case%d larb %d, port %d\n",
+	pr_debug("%s:val=%llx, case%d larb %d, port %d\n",
 		__func__, val, testcase, larbid, portid);
 
 	if (larbid >= MTK_LARB_NR_MAX)
@@ -391,7 +391,7 @@ static int smi_debug_set(void *data, u64 val)
 	if (!dbgmng->res_init) {
 		ret = mtk_smi_debug_res_init(dbgmng);
 		if (ret) {
-			pr_info("smi debug res init fail\n");
+			pr_debug("smi debug res init fail\n");
 			return ret;
 		}
 	}
@@ -402,7 +402,7 @@ static int smi_debug_set(void *data, u64 val)
 	m4u = larb->m4u;
 
 	if (!smi_common || !larbdev) {
-		pr_info("smi dev is null\n");
+		pr_debug("smi dev is null\n");
 		return -EINVAL;
 	}
 
@@ -469,13 +469,13 @@ static int smi_debug_set(void *data, u64 val)
 		unsigned int time_ms = val & 0xfff;
 
 		dbgmng->mon_timeout = time_ms * 1000000ULL;
-		pr_info("monitor timeout is %d ms\n", time_ms);
+		pr_debug("monitor timeout is %d ms\n", time_ms);
 	}
 	break;
 
 	case 5:
 		dbgmng->larb_power_disable = !dbgmng->larb_power_disable;
-		pr_info("larb_power_disable %d.\n", dbgmng->larb_power_disable);
+		pr_debug("larb_power_disable %d.\n", dbgmng->larb_power_disable);
 		break;
 
 	default:
@@ -487,7 +487,7 @@ static int smi_debug_set(void *data, u64 val)
 
 static int smi_debug_get(void *data, u64 *val)
 {
-	pr_info("help smi larb debug.\n");
+	pr_debug("help smi larb debug.\n");
 	*val = 0;
 	return 0;
 }

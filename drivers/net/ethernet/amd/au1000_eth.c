@@ -1332,7 +1332,7 @@ static int au1000_probe(struct platform_device *pdev)
 	netdev_info(dev, "Au1xx0 Ethernet found at 0x%lx, irq %d\n",
 			(unsigned long)base->start, irq);
 
-	pr_info_once("%s version %s %s\n", DRV_NAME, DRV_VERSION, DRV_AUTHOR);
+	pr_debug_once("%s version %s %s\n", DRV_NAME, DRV_VERSION, DRV_AUTHOR);
 
 	return 0;
 

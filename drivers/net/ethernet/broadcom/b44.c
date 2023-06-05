@@ -2350,7 +2350,7 @@ static int b44_init_one(struct ssb_device *sdev,
 
 	instance++;
 
-	pr_info_once("%s version %s\n", DRV_DESCRIPTION, DRV_MODULE_VERSION);
+	pr_debug_once("%s version %s\n", DRV_DESCRIPTION, DRV_MODULE_VERSION);
 
 	dev = alloc_etherdev(sizeof(*bp));
 	if (!dev) {

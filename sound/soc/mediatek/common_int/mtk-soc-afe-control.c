@@ -1408,7 +1408,7 @@ bool SetModemPcmEnable(int modem_index, bool modem_pcm_on)
 		mAudioMEMIF[Soc_Aud_Digital_Block_MODEM_PCM_2_O]->mState =
 			modem_pcm_on;
 	else
-		pr_info("%s(), no such modem_index: %d!!", __func__,
+		pr_debug("%s(), no such modem_index: %d!!", __func__,
 			modem_index);
 
 	return ret;
@@ -1585,7 +1585,7 @@ bool SetI2SDacEnable(bool bEnable)
 		/* should delayed 1/fs(smallest is 8k) = 125us before afe off */
 		usleep_range(125, 150);
 #ifdef CONFIG_FPGA_EARLY_PORTING
-		pr_info("%s(), disable fpga clock divide by 4", __func__);
+		pr_debug("%s(), disable fpga clock divide by 4", __func__);
 		Afe_Set_Reg(FPGA_CFG0, 0x0 << 1, 0x1 << 1);
 #endif
 	}
@@ -1875,7 +1875,7 @@ int AudDrv_Allocate_DL1_Buffer(struct device *pDev, kal_uint32 Afe_Buf_Length,
 
 	/* check 32 bytes align */
 	if ((pblock->pucPhysBufAddr & 0x1f) != 0) {
-		pr_info("[Auddrv] %s() is not aligned (0x%x)\n",
+		pr_debug("[Auddrv] %s() is not aligned (0x%x)\n",
 			__func__, pblock->pucPhysBufAddr);
 	}
 
@@ -3343,7 +3343,7 @@ bool CheckSramAvail(unsigned int mSramLength, unsigned int *mSramBlockidx,
 		}
 	}
 
-	pr_info("%s MaxSramSize = %d mSramLength = %d mSramBlockidx = %d mSramBlocknum= %d\n",
+	pr_debug("%s MaxSramSize = %d mSramLength = %d mSramBlockidx = %d mSramBlocknum= %d\n",
 		__func__, MaxSramSize, mSramLength, *mSramBlockidx,
 		*mSramBlocknum);
 
@@ -3489,13 +3489,13 @@ static void dump_irq_manager(void)
 	int i;
 
 	for (i = 0; i < Soc_Aud_IRQ_MCU_MODE_NUM; i++) {
-		pr_info("irq_managers[%d], is_on %d, rate %d, count %d, selected_user %p\n",
+		pr_debug("irq_managers[%d], is_on %d, rate %d, count %d, selected_user %p\n",
 			i, irq_managers[i].is_on, irq_managers[i].rate,
 			irq_managers[i].count,
 			(void *)irq_managers[i].selected_user);
 
 		list_for_each_entry(ptr, &irq_managers[i].users, list) {
-			pr_info("\tirq_user: user %p, rate %d, count %d\n",
+			pr_debug("\tirq_user: user %p, rate %d, count %d\n",
 				ptr->user, ptr->request_rate,
 				ptr->request_count);
 		}
@@ -3557,7 +3557,7 @@ get_min_period_user(enum Soc_Aud_IRQ_MCU_MODE _irq)
 	unsigned int cur_count;
 
 	if (list_empty(&irq_managers[_irq].users)) {
-		pr_info("error, irq_managers[%d].users is empty\n", _irq);
+		pr_debug("error, irq_managers[%d].users is empty\n", _irq);
 		dump_irq_manager();
 		AUDIO_AEE("error, irq_managers[].users is empty\n");
 	}
@@ -3578,13 +3578,13 @@ static int check_and_update_irq(const struct irq_user *_irq_user,
 				enum Soc_Aud_IRQ_MCU_MODE _irq)
 {
 	if (_irq_user == NULL) {
-		pr_info("error, irq_user is empty\n");
+		pr_debug("error, irq_user is empty\n");
 		return -EINVAL;
 	}
 	if (!is_tgt_rate_ok(_irq_user->request_rate, _irq_user->request_count,
 			    irq_managers[_irq].rate)) {
 		/* if you got here, you should reconsider your irq usage */
-		pr_info("error, irq not updated, irq %d, irq rate %d, rate %d, count %d\n",
+		pr_debug("error, irq not updated, irq %d, irq rate %d, rate %d, count %d\n",
 			_irq, irq_managers[_irq].rate, _irq_user->request_rate,
 			_irq_user->request_count);
 		dump_irq_manager();
@@ -3633,7 +3633,7 @@ int irq_add_user(const void *_user, enum Soc_Aud_IRQ_MCU_MODE _irq,
 	spin_lock_irqsave(&afe_control_lock, flags);
 	list_for_each_entry(ptr, &irq_managers[_irq].users, list) {
 		if (ptr->user == _user) {
-			pr_info("error, _user %p already exist\n", _user);
+			pr_debug("error, _user %p already exist\n", _user);
 			dump_irq_manager();
 			AUDIO_AEE("error, _user already exist\n");
 		}
@@ -3680,7 +3680,7 @@ int irq_remove_user(const void *_user, enum Soc_Aud_IRQ_MCU_MODE _irq)
 		}
 	}
 	if (corr_user == NULL) {
-		pr_info("%s(), error, _user not found\n", __func__);
+		pr_debug("%s(), error, _user not found\n", __func__);
 		dump_irq_manager();
 		AUDIO_AEE("error, _user not found\n");
 		spin_unlock_irqrestore(&afe_control_lock, flags);
@@ -4234,7 +4234,7 @@ get_dlmem_frame_index(struct snd_pcm_substream *substream,
 		case Soc_Aud_Digital_Block_MEM_DL3:
 			break;
 		default:
-			pr_info("%s err mem_block = %d", __func__, mem_block);
+			pr_debug("%s err mem_block = %d", __func__, mem_block);
 		}
 		if (HW_Cur_ReadIdx == 0) {
 			pr_warn("[Auddrv] HW_Cur_ReadIdx ==0\n");
@@ -4363,7 +4363,7 @@ get_ulmem_frame_index(struct snd_pcm_substream *substream,
 			if (UL1_Block->u4DataRemained >
 			    UL1_Block->u4BufferSize) {
 				bIsOverflow = true;
-				pr_info("%s buffer overflow u4DMAReadIdx:%x, u4WriteIdx:%x, DataRemained:%x, BufferSize:%x\n",
+				pr_debug("%s buffer overflow u4DMAReadIdx:%x, u4WriteIdx:%x, DataRemained:%x, BufferSize:%x\n",
 					__func__, UL1_Block->u4DMAReadIdx,
 					UL1_Block->u4WriteIdx,
 					UL1_Block->u4DataRemained,
@@ -4701,7 +4701,7 @@ static int mtk_mem_dlblk_copy(struct snd_pcm_substream *substream, int channel,
 static bool CheckNullPointer(void *pointer)
 {
 	if (pointer == NULL) {
-		pr_info("%s(), pointer = NULL", __func__);
+		pr_debug("%s(), pointer = NULL", __func__);
 		return true;
 	}
 	return false;
@@ -4905,7 +4905,7 @@ int mtk_memblk_copy(struct snd_pcm_substream *substream, int channel,
 				   pMemControl, mem_blk);
 		break;
 	default:
-		pr_info("%s not support", __func__);
+		pr_debug("%s not support", __func__);
 	}
 	return 0;
 }

@@ -1016,7 +1016,7 @@ static void hot_add_req(struct work_struct *dummy)
 		resp.result = 0;
 
 	if (!do_hot_add || (resp.page_count == 0))
-		pr_info("Memory hot add failed\n");
+		pr_debug("Memory hot add failed\n");
 
 	dm->state = DM_INITIALIZED;
 	resp.hdr.trans_id = atomic_inc_return(&trans_id);
@@ -1037,13 +1037,13 @@ static void process_info(struct hv_dynmem_device *dm, struct dm_info_msg *msg)
 		if (info_hdr->data_size == sizeof(__u64)) {
 			__u64 *max_page_count = (__u64 *)&info_hdr[1];
 
-			pr_info("Max. dynamic memory size: %llu MB\n",
+			pr_debug("Max. dynamic memory size: %llu MB\n",
 				(*max_page_count) >> (20 - PAGE_SHIFT));
 		}
 
 		break;
 	default:
-		pr_info("Received Unknown type: %d\n", info_hdr->type);
+		pr_debug("Received Unknown type: %d\n", info_hdr->type);
 	}
 }
 
@@ -1230,7 +1230,7 @@ static void balloon_up(struct work_struct *dummy)
 
 	/* Refuse to balloon below the floor. */
 	if (avail_pages < num_pages || avail_pages - num_pages < floor) {
-		pr_info("Balloon request will be partially fulfilled. %s\n",
+		pr_debug("Balloon request will be partially fulfilled. %s\n",
 			avail_pages < num_pages ? "Not enough memory." :
 			"Balloon floor reached.");
 
@@ -1285,7 +1285,7 @@ static void balloon_up(struct work_struct *dummy)
 			/*
 			 * Free up the memory we allocatted.
 			 */
-			pr_info("Balloon response failed\n");
+			pr_debug("Balloon response failed\n");
 
 			for (i = 0; i < bl_resp->range_count; i++)
 				free_balloon_pages(&dm_device,
@@ -1416,7 +1416,7 @@ static void cap_resp(struct hv_dynmem_device *dm,
 			struct dm_capabilities_resp_msg *cap_resp)
 {
 	if (!cap_resp->is_accepted) {
-		pr_info("Capabilities not accepted by host\n");
+		pr_debug("Capabilities not accepted by host\n");
 		dm->state = DM_INIT_ERROR;
 	}
 	complete(&dm->host_event);
@@ -1598,7 +1598,7 @@ static int balloon_probe(struct hv_device *dev,
 		goto probe_error2;
 	}
 
-	pr_info("Using Dynamic Memory protocol version %u.%u\n",
+	pr_debug("Using Dynamic Memory protocol version %u.%u\n",
 		DYNMEM_MAJOR_VERSION(dm_device.version),
 		DYNMEM_MINOR_VERSION(dm_device.version));
 

@@ -279,7 +279,7 @@ void bfin_pm_end(void)
 	if (usec == 0)
 		usec = 1;
 
-	pr_info("PM: resume of kernel completes after  %ld msec %03ld usec\n",
+	pr_debug("PM: resume of kernel completes after  %ld msec %03ld usec\n",
 		usec / USEC_PER_MSEC, usec % USEC_PER_MSEC);
 }
 #endif

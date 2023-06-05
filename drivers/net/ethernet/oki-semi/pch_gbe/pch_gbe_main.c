@@ -2788,13 +2788,13 @@ static int __init pch_gbe_init_module(void)
 {
 	int ret;
 
-	pr_info("EG20T PCH Gigabit Ethernet Driver - version %s\n",DRV_VERSION);
+	pr_debug("EG20T PCH Gigabit Ethernet Driver - version %s\n",DRV_VERSION);
 	ret = pci_register_driver(&pch_gbe_driver);
 	if (copybreak != PCH_GBE_COPYBREAK_DEFAULT) {
 		if (copybreak == 0) {
-			pr_info("copybreak disabled\n");
+			pr_debug("copybreak disabled\n");
 		} else {
-			pr_info("copybreak enabled for packets <= %u bytes\n",
+			pr_debug("copybreak enabled for packets <= %u bytes\n",
 				copybreak);
 		}
 	}

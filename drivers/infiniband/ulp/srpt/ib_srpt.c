@@ -173,7 +173,7 @@ static void srpt_event_handler(struct ib_event_handler *handler,
  */
 static void srpt_srq_event(struct ib_event *event, void *ctx)
 {
-	pr_info("SRQ event %d\n", event->event);
+	pr_debug("SRQ event %d\n", event->event);
 }
 
 static const char *get_ch_state_name(enum rdma_ch_state s)
@@ -1213,7 +1213,7 @@ static void srpt_rdma_read_done(struct ib_cq *cq, struct ib_wc *wc)
 	ioctx->n_rdma = 0;
 
 	if (unlikely(wc->status != IB_WC_SUCCESS)) {
-		pr_info("RDMA_READ for ioctx 0x%p failed with status %d\n",
+		pr_debug("RDMA_READ for ioctx 0x%p failed with status %d\n",
 			ioctx, wc->status);
 		srpt_abort_cmd(ioctx);
 		return;
@@ -1565,7 +1565,7 @@ static void srpt_recv_done(struct ib_cq *cq, struct ib_wc *wc)
 			pr_err("req_lim = %d < 0\n", req_lim);
 		srpt_handle_new_iu(ch, ioctx, NULL);
 	} else {
-		pr_info("receiving failed for ioctx %p with status %d\n",
+		pr_debug("receiving failed for ioctx %p with status %d\n",
 			ioctx, wc->status);
 	}
 }
@@ -1620,7 +1620,7 @@ static void srpt_send_done(struct ib_cq *cq, struct ib_wc *wc)
 	atomic_add(1 + ioctx->n_rdma, &ch->sq_wr_avail);
 
 	if (wc->status != IB_WC_SUCCESS)
-		pr_info("sending response for ioctx 0x%p failed"
+		pr_debug("sending response for ioctx 0x%p failed"
 			" with status %d\n", ioctx, wc->status);
 
 	if (state != SRPT_STATE_DONE) {
@@ -1799,7 +1799,7 @@ static void __srpt_close_all_ch(struct srpt_device *sdev)
 
 	list_for_each_entry(ch, &sdev->rch_list, list) {
 		if (srpt_disconnect_ch(ch) >= 0)
-			pr_info("Closing channel %s because target %s has been disabled\n",
+			pr_debug("Closing channel %s because target %s has been disabled\n",
 				ch->sess_name,
 				sdev->device->name);
 		srpt_close_ch(ch);
@@ -1885,7 +1885,7 @@ static int srpt_cm_req_recv(struct ib_cm_id *cm_id,
 
 	it_iu_len = be32_to_cpu(req->req_it_iu_len);
 
-	pr_info("Received SRP_LOGIN_REQ with i_port_id 0x%llx:0x%llx,"
+	pr_debug("Received SRP_LOGIN_REQ with i_port_id 0x%llx:0x%llx,"
 		" t_port_id 0x%llx:0x%llx and it_iu_len %d on port %d"
 		" (guid=0x%llx:0x%llx)\n",
 		be64_to_cpu(*(__be64 *)&req->initiator_port_id[0]),
@@ -1938,7 +1938,7 @@ static int srpt_cm_req_recv(struct ib_cm_id *cm_id,
 			    && ch->cm_id) {
 				if (srpt_disconnect_ch(ch) < 0)
 					continue;
-				pr_info("Relogin - closed existing channel %s\n",
+				pr_debug("Relogin - closed existing channel %s\n",
 					ch->sess_name);
 				rsp->rsp_flags =
 					SRP_LOGIN_RSP_MULTICHAN_TERMINATED;
@@ -2042,7 +2042,7 @@ static int srpt_cm_req_recv(struct ib_cm_id *cm_id,
 						TARGET_PROT_NORMAL,
 						ch->sess_name + 2, ch, NULL);
 	if (IS_ERR_OR_NULL(ch->sess)) {
-		pr_info("Rejected login because no ACL has been configured yet for initiator %s.\n",
+		pr_debug("Rejected login because no ACL has been configured yet for initiator %s.\n",
 			ch->sess_name);
 		rej->reason = cpu_to_be32((PTR_ERR(ch->sess) == -ENOMEM) ?
 				SRP_LOGIN_REJ_INSUFFICIENT_RESOURCES :
@@ -2135,7 +2135,7 @@ static void srpt_cm_rej_recv(struct srpt_rdma_ch *ch,
 		for (i = 0; i < private_data_len; i++)
 			sprintf(priv + 3 * i, " %02x", private_data[i]);
 	}
-	pr_info("Received CM REJ for ch %s-%d; reason %d%s%s.\n",
+	pr_debug("Received CM REJ for ch %s-%d; reason %d%s%s.\n",
 		ch->sess_name, ch->qp->qp_num, reason, private_data_len ?
 		"; private data" : "", priv ? priv : " (?)");
 	kfree(priv);
@@ -2198,24 +2198,24 @@ static int srpt_cm_handler(struct ib_cm_id *cm_id, struct ib_cm_event *event)
 		srpt_disconnect_ch(ch);
 		break;
 	case IB_CM_DREP_RECEIVED:
-		pr_info("Received CM DREP message for ch %s-%d.\n",
+		pr_debug("Received CM DREP message for ch %s-%d.\n",
 			ch->sess_name, ch->qp->qp_num);
 		srpt_close_ch(ch);
 		break;
 	case IB_CM_TIMEWAIT_EXIT:
-		pr_info("Received CM TimeWait exit for ch %s-%d.\n",
+		pr_debug("Received CM TimeWait exit for ch %s-%d.\n",
 			ch->sess_name, ch->qp->qp_num);
 		srpt_close_ch(ch);
 		break;
 	case IB_CM_REP_ERROR:
-		pr_info("Received CM REP error for ch %s-%d.\n", ch->sess_name,
+		pr_debug("Received CM REP error for ch %s-%d.\n", ch->sess_name,
 			ch->qp->qp_num);
 		break;
 	case IB_CM_DREQ_ERROR:
-		pr_info("Received CM DREQ ERROR event.\n");
+		pr_debug("Received CM DREQ ERROR event.\n");
 		break;
 	case IB_CM_MRA_RECEIVED:
-		pr_info("Received CM MRA event\n");
+		pr_debug("Received CM MRA event\n");
 		break;
 	default:
 		pr_err("received unrecognized CM event %d\n", event->event);
@@ -2622,7 +2622,7 @@ free_dev:
 	kfree(sdev);
 err:
 	sdev = NULL;
-	pr_info("%s(%s) failed.\n", __func__, device->name);
+	pr_debug("%s(%s) failed.\n", __func__, device->name);
 	goto out;
 }
 
@@ -2635,7 +2635,7 @@ static void srpt_remove_one(struct ib_device *device, void *client_data)
 	int i;
 
 	if (!sdev) {
-		pr_info("%s(%s): nothing to do.\n", __func__, device->name);
+		pr_debug("%s(%s): nothing to do.\n", __func__, device->name);
 		return;
 	}
 
@@ -2762,7 +2762,7 @@ static void srpt_close_session(struct se_session *se_sess)
 		return;
 
 	while (wait_for_completion_timeout(&release_done, 180 * HZ) == 0)
-		pr_info("%s(%s-%d state %d): still waiting ...\n", __func__,
+		pr_debug("%s(%s-%d state %d): still waiting ...\n", __func__,
 			ch->sess_name, ch->qp->qp_num, ch->state);
 }
 

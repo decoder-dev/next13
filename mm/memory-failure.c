@@ -208,7 +208,7 @@ static int kill_proc(struct task_struct *t, unsigned long addr, int trapno,
 		ret = send_sig_info(SIGBUS, &si, t);  /* synchronous? */
 	}
 	if (ret < 0)
-		pr_info("Memory failure: Error sending signal to %s:%d: %d\n",
+		pr_debug("Memory failure: Error sending signal to %s:%d: %d\n",
 			t->comm, t->pid, ret);
 	return ret;
 }
@@ -306,7 +306,7 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
 	 * a SIGKILL because the error is not contained anymore.
 	 */
 	if (tk->addr == -EFAULT) {
-		pr_info("Memory failure: Unable to find user space address %lx in %s\n",
+		pr_debug("Memory failure: Unable to find user space address %lx in %s\n",
 			page_to_pfn(p), tsk->comm);
 		tk->addr_valid = 0;
 	}
@@ -565,11 +565,11 @@ static int truncate_error_page(struct page *p, unsigned long pfn,
 		int err = mapping->a_ops->error_remove_page(mapping, p);
 
 		if (err != 0) {
-			pr_info("Memory failure: %#lx: Failed to punch page: %d\n",
+			pr_debug("Memory failure: %#lx: Failed to punch page: %d\n",
 				pfn, err);
 		} else if (page_has_private(p) &&
 			   !try_to_release_page(p, GFP_NOIO)) {
-			pr_info("Memory failure: %#lx: failed to release buffers\n",
+			pr_debug("Memory failure: %#lx: failed to release buffers\n",
 				pfn);
 		} else {
 			ret = MF_RECOVERED;
@@ -582,7 +582,7 @@ static int truncate_error_page(struct page *p, unsigned long pfn,
 		if (invalidate_inode_page(p))
 			ret = MF_RECOVERED;
 		else
-			pr_info("Memory failure: %#lx: Failed to invalidate\n",
+			pr_debug("Memory failure: %#lx: Failed to invalidate\n",
 				pfn);
 	}
 
@@ -915,7 +915,7 @@ int get_hwpoison_page(struct page *page)
 		if (head == compound_head(page))
 			return 1;
 
-		pr_info("Memory failure: %#lx cannot catch tail\n",
+		pr_debug("Memory failure: %#lx cannot catch tail\n",
 			page_to_pfn(page));
 		put_page(head);
 	}
@@ -980,7 +980,7 @@ static bool hwpoison_user_mappings(struct page *p, unsigned long pfn,
 		} else {
 			kill = 0;
 			ttu |= TTU_IGNORE_HWPOISON;
-			pr_info("Memory failure: %#lx: corrupted page was clean: dropped without side effects\n",
+			pr_debug("Memory failure: %#lx: corrupted page was clean: dropped without side effects\n",
 				pfn);
 		}
 	}
@@ -1405,10 +1405,10 @@ static int __init memory_failure_init(void)
 }
 core_initcall(memory_failure_init);
 
-#define unpoison_pr_info(fmt, pfn, rs)			\
+#define unpoison_pr_debug(fmt, pfn, rs)			\
 ({							\
 	if (__ratelimit(rs))				\
-		pr_info(fmt, pfn);			\
+		pr_debug(fmt, pfn);			\
 })
 
 /**
@@ -1438,25 +1438,25 @@ int unpoison_memory(unsigned long pfn)
 	page = compound_head(p);
 
 	if (!PageHWPoison(p)) {
-		unpoison_pr_info("Unpoison: Page was already unpoisoned %#lx\n",
+		unpoison_pr_debug("Unpoison: Page was already unpoisoned %#lx\n",
 				 pfn, &unpoison_rs);
 		return 0;
 	}
 
 	if (page_count(page) > 1) {
-		unpoison_pr_info("Unpoison: Someone grabs the hwpoison page %#lx\n",
+		unpoison_pr_debug("Unpoison: Someone grabs the hwpoison page %#lx\n",
 				 pfn, &unpoison_rs);
 		return 0;
 	}
 
 	if (page_mapped(page)) {
-		unpoison_pr_info("Unpoison: Someone maps the hwpoison page %#lx\n",
+		unpoison_pr_debug("Unpoison: Someone maps the hwpoison page %#lx\n",
 				 pfn, &unpoison_rs);
 		return 0;
 	}
 
 	if (page_mapping(page)) {
-		unpoison_pr_info("Unpoison: the hwpoison page has non-NULL mapping %#lx\n",
+		unpoison_pr_debug("Unpoison: the hwpoison page has non-NULL mapping %#lx\n",
 				 pfn, &unpoison_rs);
 		return 0;
 	}
@@ -1467,7 +1467,7 @@ int unpoison_memory(unsigned long pfn)
 	 * In such case, we yield to memory_failure() and make unpoison fail.
 	 */
 	if (!PageHuge(page) && PageTransHuge(page)) {
-		unpoison_pr_info("Unpoison: Memory failure is now running on %#lx\n",
+		unpoison_pr_debug("Unpoison: Memory failure is now running on %#lx\n",
 				 pfn, &unpoison_rs);
 		return 0;
 	}
@@ -1475,7 +1475,7 @@ int unpoison_memory(unsigned long pfn)
 	if (!get_hwpoison_page(p)) {
 		if (TestClearPageHWPoison(p))
 			num_poisoned_pages_dec();
-		unpoison_pr_info("Unpoison: Software-unpoisoned free page %#lx\n",
+		unpoison_pr_debug("Unpoison: Software-unpoisoned free page %#lx\n",
 				 pfn, &unpoison_rs);
 		return 0;
 	}
@@ -1488,7 +1488,7 @@ int unpoison_memory(unsigned long pfn)
 	 * the free buddy page pool.
 	 */
 	if (TestClearPageHWPoison(page)) {
-		unpoison_pr_info("Unpoison: Software-unpoisoned page %#lx\n",
+		unpoison_pr_debug("Unpoison: Software-unpoisoned page %#lx\n",
 				 pfn, &unpoison_rs);
 		num_poisoned_pages_dec();
 		freeit = 1;
@@ -1529,13 +1529,13 @@ static int __get_any_page(struct page *p, unsigned long pfn, int flags)
 	 */
 	if (!get_hwpoison_page(p)) {
 		if (PageHuge(p)) {
-			pr_info("%s: %#lx free huge page\n", __func__, pfn);
+			pr_debug("%s: %#lx free huge page\n", __func__, pfn);
 			ret = 0;
 		} else if (is_free_buddy_page(p)) {
-			pr_info("%s: %#lx free buddy page\n", __func__, pfn);
+			pr_debug("%s: %#lx free buddy page\n", __func__, pfn);
 			ret = 0;
 		} else {
-			pr_info("%s: %#lx: unknown zero refcount page type %lx\n",
+			pr_debug("%s: %#lx: unknown zero refcount page type %lx\n",
 				__func__, pfn, p->flags);
 			ret = -EIO;
 		}
@@ -1565,7 +1565,7 @@ static int get_any_page(struct page *page, unsigned long pfn, int flags)
 		if (ret == 1 && !PageLRU(page)) {
 			/* Drop page reference which is from __get_any_page() */
 			put_hwpoison_page(page);
-			pr_info("soft_offline: %#lx: unknown non LRU page type %lx (%pGp)\n",
+			pr_debug("soft_offline: %#lx: unknown non LRU page type %lx (%pGp)\n",
 				pfn, page->flags, &page->flags);
 			return -EIO;
 		}
@@ -1588,7 +1588,7 @@ static int soft_offline_huge_page(struct page *page, int flags)
 	if (PageHWPoison(hpage)) {
 		unlock_page(hpage);
 		put_hwpoison_page(hpage);
-		pr_info("soft offline: %#lx hugepage already poisoned\n", pfn);
+		pr_debug("soft offline: %#lx hugepage already poisoned\n", pfn);
 		return -EBUSY;
 	}
 	unlock_page(hpage);
@@ -1600,14 +1600,14 @@ static int soft_offline_huge_page(struct page *page, int flags)
 	 */
 	put_hwpoison_page(hpage);
 	if (!ret) {
-		pr_info("soft offline: %#lx hugepage failed to isolate\n", pfn);
+		pr_debug("soft offline: %#lx hugepage failed to isolate\n", pfn);
 		return -EBUSY;
 	}
 
 	ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
 				MIGRATE_SYNC, MR_MEMORY_FAILURE);
 	if (ret) {
-		pr_info("soft offline: %#lx: migration failed %d, type %lx (%pGp)\n",
+		pr_debug("soft offline: %#lx: migration failed %d, type %lx (%pGp)\n",
 			pfn, ret, page->flags, &page->flags);
 		if (!list_empty(&pagelist))
 			putback_movable_pages(&pagelist);
@@ -1636,7 +1636,7 @@ static int __soft_offline_page(struct page *page, int flags)
 	if (PageHWPoison(page)) {
 		unlock_page(page);
 		put_hwpoison_page(page);
-		pr_info("soft offline: %#lx page already poisoned\n", pfn);
+		pr_debug("soft offline: %#lx page already poisoned\n", pfn);
 		return -EBUSY;
 	}
 	/*
@@ -1651,7 +1651,7 @@ static int __soft_offline_page(struct page *page, int flags)
 	 */
 	if (ret == 1) {
 		put_hwpoison_page(page);
-		pr_info("soft_offline: %#lx: invalidated\n", pfn);
+		pr_debug("soft_offline: %#lx: invalidated\n", pfn);
 		SetPageHWPoison(page);
 		num_poisoned_pages_inc();
 		return 0;
@@ -1688,13 +1688,13 @@ static int __soft_offline_page(struct page *page, int flags)
 			if (!list_empty(&pagelist))
 				putback_movable_pages(&pagelist);
 
-			pr_info("soft offline: %#lx: migration failed %d, type %lx (%pGp)\n",
+			pr_debug("soft offline: %#lx: migration failed %d, type %lx (%pGp)\n",
 				pfn, ret, page->flags, &page->flags);
 			if (ret > 0)
 				ret = -EIO;
 		}
 	} else {
-		pr_info("soft offline: %#lx: isolation failed: %d, page count %d, type %lx (%pGp)\n",
+		pr_debug("soft offline: %#lx: isolation failed: %d, page count %d, type %lx (%pGp)\n",
 			pfn, ret, page_count(page), page->flags, &page->flags);
 	}
 	return ret;
@@ -1710,9 +1710,9 @@ static int soft_offline_in_use_page(struct page *page, int flags)
 		if (!PageAnon(page) || unlikely(split_huge_page(page))) {
 			unlock_page(page);
 			if (!PageAnon(page))
-				pr_info("soft offline: %#lx: non anonymous thp\n", page_to_pfn(page));
+				pr_debug("soft offline: %#lx: non anonymous thp\n", page_to_pfn(page));
 			else
-				pr_info("soft offline: %#lx: thp split failed\n", page_to_pfn(page));
+				pr_debug("soft offline: %#lx: thp split failed\n", page_to_pfn(page));
 			put_hwpoison_page(page);
 			return -EBUSY;
 		}
@@ -1766,7 +1766,7 @@ int soft_offline_page(struct page *page, int flags)
 	unsigned long pfn = page_to_pfn(page);
 
 	if (PageHWPoison(page)) {
-		pr_info("soft offline: %#lx page already poisoned\n", pfn);
+		pr_debug("soft offline: %#lx page already poisoned\n", pfn);
 		if (flags & MF_COUNT_INCREASED)
 			put_hwpoison_page(page);
 		return -EBUSY;

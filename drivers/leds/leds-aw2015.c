@@ -204,7 +204,7 @@ static void aw2015_led_breath_set(struct aw2015_led *led, unsigned long breathin
 {
 	u8 val = 0;
 
-	pr_info("%s: breathing = %d\n", __func__, breathing);
+	pr_debug("%s: breathing = %d\n", __func__, breathing);
 
 	/* enable regulators if they are disabled */
 	/* enable aw2015 if disabled */
@@ -286,7 +286,7 @@ static void aw2015_set_brightness(struct led_classdev *cdev,
 	struct aw2015_led *led = container_of(cdev, struct aw2015_led, cdev);
 	u8 val = 0;
 
-	pr_info("%s: %d\n", __func__, brightness);
+	pr_debug("%s: %d\n", __func__, brightness);
 
 	mutex_lock(&led->pdata->led->lock);
 
@@ -676,7 +676,7 @@ static int aw2015_led_set_blink(struct led_classdev *led_cdev,
 	u8 val = 0;
 	bool blink = *on_ms > 0;
 
-	pr_info("%s: %s\n", __func__, blink ? "enable" : "disable");
+	pr_debug("%s: %s\n", __func__, blink ? "enable" : "disable");
 
 	mutex_lock(&led->pdata->led->lock);
 	/* enable regulators if they are disabled */

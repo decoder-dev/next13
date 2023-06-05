@@ -325,7 +325,7 @@ static int __init setup_ktext(char *str)
 	/* If you have a leading "nocache", turn off ktext caching */
 	if (strncmp(str, "nocache", 7) == 0) {
 		ktext_nocache = 1;
-		pr_info("ktext: disabling local caching of kernel text\n");
+		pr_debug("ktext: disabling local caching of kernel text\n");
 		str += 7;
 		if (*str == ',')
 			++str;
@@ -337,20 +337,20 @@ static int __init setup_ktext(char *str)
 
 	/* Default setting: use a huge page */
 	if (strcmp(str, "huge") == 0)
-		pr_info("ktext: using one huge locally cached page\n");
+		pr_debug("ktext: using one huge locally cached page\n");
 
 	/* Pay TLB cost but get no cache benefit: cache small pages locally */
 	else if (strcmp(str, "local") == 0) {
 		ktext_small = 1;
 		ktext_local = 1;
-		pr_info("ktext: using small pages with local caching\n");
+		pr_debug("ktext: using small pages with local caching\n");
 	}
 
 	/* Neighborhood cache ktext pages on all cpus. */
 	else if (strcmp(str, "all") == 0) {
 		ktext_small = 1;
 		ktext_all = 1;
-		pr_info("ktext: using maximal caching neighborhood\n");
+		pr_debug("ktext: using maximal caching neighborhood\n");
 	}
 
 
@@ -358,10 +358,10 @@ static int __init setup_ktext(char *str)
 	else if (cpulist_parse(str, &ktext_mask) == 0) {
 		if (cpumask_weight(&ktext_mask) > 1) {
 			ktext_small = 1;
-			pr_info("ktext: using caching neighborhood %*pbl with small pages\n",
+			pr_debug("ktext: using caching neighborhood %*pbl with small pages\n",
 				cpumask_pr_args(&ktext_mask));
 		} else {
-			pr_info("ktext: caching on cpu %*pbl with one huge page\n",
+			pr_debug("ktext: caching on cpu %*pbl with one huge page\n",
 				cpumask_pr_args(&ktext_mask));
 		}
 	}
@@ -494,7 +494,7 @@ static void __init kernel_physical_mapping_init(pgd_t *pgd_base)
 		cpumask_andnot(&bad, &ktext_mask, cpu_possible_mask);
 		cpumask_and(&ktext_mask, &ktext_mask, cpu_possible_mask);
 		if (!cpumask_empty(&bad))
-			pr_info("ktext: not using unavailable cpus %*pbl\n",
+			pr_debug("ktext: not using unavailable cpus %*pbl\n",
 				cpumask_pr_args(&bad));
 		if (cpumask_empty(&ktext_mask)) {
 			pr_warn("ktext: no valid cpus; caching on %d\n",
@@ -876,7 +876,7 @@ static int __init set_initfree(char *str)
 	if (kstrtol(str, 0, &val) == 0) {
 		set_initfree_done = true;
 		initfree = val;
-		pr_info("initfree: %s free init pages\n",
+		pr_debug("initfree: %s free init pages\n",
 			initfree ? "will" : "won't");
 	}
 	return 1;
@@ -926,7 +926,7 @@ static void free_init_pages(char *what, unsigned long begin, unsigned long end)
 		memset((void *)addr, POISON_FREE_INITMEM, PAGE_SIZE);
 		free_reserved_page(page);
 	}
-	pr_info("Freeing %s: %ldk freed\n", what, (end - begin) >> 10);
+	pr_debug("Freeing %s: %ldk freed\n", what, (end - begin) >> 10);
 }
 
 void free_initmem(void)

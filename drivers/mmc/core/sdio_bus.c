@@ -379,3 +379,4 @@ void sdio_remove_func(struct sdio_func *func)
 	of_node_put(func->dev.of_node);
 	put_device(&func->dev);
 }
+

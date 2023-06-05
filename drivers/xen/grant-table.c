@@ -323,7 +323,7 @@ static void gnttab_handle_deferred(unsigned long unused)
 			entry = NULL;
 		} else {
 			if (!--entry->warn_delay)
-				pr_info("g.e. %#x still pending\n", entry->ref);
+				pr_debug("g.e. %#x still pending\n", entry->ref);
 			if (!first)
 				first = entry;
 		}
@@ -1036,7 +1036,7 @@ static void gnttab_request_version(void)
 	grefs_per_grant_frame = XEN_PAGE_SIZE / sizeof(struct grant_entry_v1);
 	gnttab_interface = &gnttab_v1_ops;
 
-	pr_info("Grant tables using version %d layout\n", grant_table_version);
+	pr_debug("Grant tables using version %d layout\n", grant_table_version);
 }
 
 static int gnttab_setup(void)

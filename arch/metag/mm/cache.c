@@ -84,7 +84,7 @@ static void __init metag_lnkget_probe(void)
 #if defined(CONFIG_METAG_LNKGET_AROUND_CACHE)
 	/* if the cache is right, LNKGET_AROUND_CACHE is unnecessary */
 	if (temp == LNKGET_CONSTANT)
-		pr_info("LNKGET/SET go through cache but CONFIG_METAG_LNKGET_AROUND_CACHE=y\n");
+		pr_debug("LNKGET/SET go through cache but CONFIG_METAG_LNKGET_AROUND_CACHE=y\n");
 #elif defined(CONFIG_METAG_ATOMICITY_LNKGET)
 	/*
 	 * if the cache is wrong, LNKGET_AROUND_CACHE is really necessary

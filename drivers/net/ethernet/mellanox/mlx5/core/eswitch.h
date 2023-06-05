@@ -289,7 +289,7 @@ int __mlx5_eswitch_set_vport_vlan(struct mlx5_eswitch *esw,
 #define MLX5_DEBUG_ESWITCH_MASK BIT(3)
 
 #define esw_info(dev, format, ...)				\
-	pr_info("(%s): E-Switch: " format, (dev)->priv.name, ##__VA_ARGS__)
+	pr_debug("(%s): E-Switch: " format, (dev)->priv.name, ##__VA_ARGS__)
 
 #define esw_warn(dev, format, ...)				\
 	pr_warn("(%s): E-Switch: " format, (dev)->priv.name, ##__VA_ARGS__)

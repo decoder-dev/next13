@@ -472,7 +472,7 @@ static int ovl_parse_opt(char *opt, struct ovl_config *config)
 
 	/* Workdir is useless in non-upper mount */
 	if (!config->upperdir && config->workdir) {
-		pr_info("overlayfs: option \"workdir=%s\" is useless in a non-upper mount, ignore\n",
+		pr_debug("overlayfs: option \"workdir=%s\" is useless in a non-upper mount, ignore\n",
 			config->workdir);
 		kfree(config->workdir);
 		config->workdir = NULL;

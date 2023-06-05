@@ -168,7 +168,7 @@ static int mpc8xxx_wdt_probe(struct platform_device *ofdev)
 
 	enabled = in_be32(&ddata->base->swcrr) & SWCRR_SWEN;
 	if (!enabled && wdt_type->hw_enabled) {
-		pr_info("could not be enabled in software\n");
+		pr_debug("could not be enabled in software\n");
 		return -ENODEV;
 	}
 
@@ -192,7 +192,7 @@ static int mpc8xxx_wdt_probe(struct platform_device *ofdev)
 		return ret;
 	}
 
-	pr_info("WDT driver for MPC8xxx initialized. mode:%s timeout=%d (%d seconds)\n",
+	pr_debug("WDT driver for MPC8xxx initialized. mode:%s timeout=%d (%d seconds)\n",
 		reset ? "reset" : "interrupt", timeout, timeout_sec);
 
 	/*

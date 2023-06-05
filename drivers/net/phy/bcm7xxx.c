@@ -223,7 +223,7 @@ static int bcm7xxx_28nm_config_init(struct phy_device *phydev)
 	if (rev == 0)
 		rev = phydev->phy_id & ~phydev->drv->phy_id_mask;
 
-	pr_info_once("%s: %s PHY revision: 0x%02x, patch: %d\n",
+	pr_debug_once("%s: %s PHY revision: 0x%02x, patch: %d\n",
 		     phydev_name(phydev), phydev->drv->name, rev, patch);
 
 	/* Dummy read to a register to workaround an issue upon reset where the
@@ -443,7 +443,7 @@ static int bcm7xxx_28nm_ephy_config_init(struct phy_device *phydev)
 	u8 rev = phydev->phy_id & ~phydev->drv->phy_id_mask;
 	int ret = 0;
 
-	pr_info_once("%s: %s PHY revision: 0x%02x\n",
+	pr_debug_once("%s: %s PHY revision: 0x%02x\n",
 		     phydev_name(phydev), phydev->drv->name, rev);
 
 	/* Dummy read to a register to workaround a possible issue upon reset

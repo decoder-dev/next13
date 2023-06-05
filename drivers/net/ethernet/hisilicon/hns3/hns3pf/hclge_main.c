@@ -4201,7 +4201,7 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
 	set_bit(HCLGE_STATE_SERVICE_INITED, &hdev->state);
 	set_bit(HCLGE_STATE_DOWN, &hdev->state);
 
-	pr_info("%s driver initialization finished.\n", HCLGE_DRIVER_NAME);
+	pr_debug("%s driver initialization finished.\n", HCLGE_DRIVER_NAME);
 	return 0;
 
 err_cmd_init:
@@ -4285,7 +4285,7 @@ static struct hnae3_ae_algo ae_algo = {
 
 static int hclge_init(void)
 {
-	pr_info("%s is initializing\n", HCLGE_NAME);
+	pr_debug("%s is initializing\n", HCLGE_NAME);
 
 	return hnae3_register_ae_algo(&ae_algo);
 }

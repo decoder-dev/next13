@@ -148,7 +148,7 @@ static int aw87359_i2c_write_bits(struct aw87359 *aw87359,
 ************************************************************************/
 unsigned int aw87359_hw_on(struct aw87359 *aw87359)
 {
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	aw87359->hwen_flag = 1;
 
@@ -157,7 +157,7 @@ unsigned int aw87359_hw_on(struct aw87359 *aw87359)
 
 unsigned int aw87359_hw_off(struct aw87359 *aw87359)
 {
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	aw87359->hwen_flag = 0;
 
@@ -170,7 +170,7 @@ unsigned int aw87359_hw_off(struct aw87359 *aw87359)
 static void aw87359_AGC_config(void)
 {
 	if (aw87359->AGC_bypass_flag) {
-		pr_info("%s AGC_bypass_flag = true!\n", __func__);
+		pr_debug("%s AGC_bypass_flag = true!\n", __func__);
 		aw87359_i2c_write_bits(aw87359, REG_AGC3PO,
 				       AW87359_BIT_AGC3PO_PD_AGC3_MASK,
 				       AW87359_BIT_AGC3PO_AGC3_DISABLE);
@@ -181,7 +181,7 @@ static void aw87359_AGC_config(void)
 				       AW87359_BIT_AGC1PA_PD_AGC1_MASK,
 				       AW87359_BIT_AGC1PA_AGC1_DISABLE);
 	} else {
-		pr_info("%s AGC_bypass_flag = false!\n", __func__);
+		pr_debug("%s AGC_bypass_flag = false!\n", __func__);
 	}
 }
 
@@ -193,7 +193,7 @@ unsigned char aw87359_audio_dspk(void)
 	unsigned int i;
 	unsigned int length;
 
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	if (aw87359 == NULL)
 		return 2;
@@ -228,7 +228,7 @@ unsigned char aw87359_audio_drcv(void)
 	unsigned int i;
 	unsigned int length;
 
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	if (aw87359 == NULL)
 		return 2;
@@ -262,7 +262,7 @@ unsigned char aw87359_audio_abspk(void)
 	unsigned int i;
 	unsigned int length;
 
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	if (aw87359 == NULL)
 		return 2;
@@ -298,7 +298,7 @@ unsigned char aw87359_audio_abrcv(void)
 	unsigned int i;
 	unsigned int length;
 
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	if (aw87359 == NULL)
 		return 2;
@@ -361,7 +361,7 @@ static void aw87359_abrcv_cfg_loaded(const struct firmware *cont,
 	int i = 0;
 	int ram_timer_val = 2000;
 
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	abrcv_load_cont++;
 	if (!cont) {
@@ -369,19 +369,19 @@ static void aw87359_abrcv_cfg_loaded(const struct firmware *cont,
 		aw87359_abrcv_name);
 		release_firmware(cont);
 		if (abrcv_load_cont <= 2) {
-			schedule_delayed_work(&aw87359->ram_work,
-					msecs_to_jiffies(ram_timer_val));
-			pr_info("%s:restart hrtimer to load firmware\n",
+			queue_delayed_work(system_power_efficient_wq, 
+				&aw87359->ram_work, msecs_to_jiffies(ram_timer_val));
+			pr_debug("%s:restart hrtimer to load firmware\n",
 			__func__);
 		}
 		return;
 	}
 
-	pr_info("%s: loaded %s - size: %zu\n", __func__, aw87359_abrcv_name,
+	pr_debug("%s: loaded %s - size: %zu\n", __func__, aw87359_abrcv_name,
 					cont ? cont->size : 0);
 
 	for (i = 0; i < cont->size; i = i+2) {
-		pr_info("%s: addr:0x%04x, data:0x%02x\n",
+		pr_debug("%s: addr:0x%04x, data:0x%02x\n",
 		__func__, *(cont->data+i), *(cont->data+i+1));
 	}
 
@@ -397,12 +397,12 @@ static void aw87359_abrcv_cfg_loaded(const struct firmware *cont,
 	release_firmware(cont);
 	aw87359->abrcv_cfg_update_flag = 1;
 
-	pr_info("%s: fw update complete\n", __func__);
+	pr_debug("%s: fw update complete\n", __func__);
 }
 
 static int aw87359_abrcv_update(struct aw87359 *aw87359)
 {
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 	return request_firmware_nowait(THIS_MODULE,
 					FW_ACTION_HOTPLUG,
 					aw87359_abrcv_name,
@@ -418,7 +418,7 @@ static void aw87359_abspk_cfg_loaded(const struct firmware *cont,
 	int i = 0;
 	int ram_timer_val = 2000;
 
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	abspk_load_cont++;
 	if (!cont) {
@@ -426,19 +426,19 @@ static void aw87359_abspk_cfg_loaded(const struct firmware *cont,
 				aw87359_abspk_name);
 		release_firmware(cont);
 		if (abspk_load_cont <= 2) {
-			schedule_delayed_work(&aw87359->ram_work,
-					msecs_to_jiffies(ram_timer_val));
-			pr_info("%s:restart hrtimer to load firmware\n",
+			queue_delayed_work(system_power_efficient_wq,
+				&aw87359->ram_work, msecs_to_jiffies(ram_timer_val));
+			pr_debug("%s:restart hrtimer to load firmware\n",
 			__func__);
 		}
 		return;
 	}
 
-	pr_info("%s: loaded %s - size: %zu\n", __func__, aw87359_abspk_name,
+	pr_debug("%s: loaded %s - size: %zu\n", __func__, aw87359_abspk_name,
 					cont ? cont->size : 0);
 
 	for (i = 0; i < cont->size; i = i+2) {
-		pr_info("%s: addr:0x%04x, data:0x%02x\n",
+		pr_debug("%s: addr:0x%04x, data:0x%02x\n",
 		__func__, *(cont->data+i), *(cont->data+i+1));
 	}
 
@@ -454,12 +454,12 @@ static void aw87359_abspk_cfg_loaded(const struct firmware *cont,
 	release_firmware(cont);
 	aw87359->abspk_cfg_update_flag = 1;
 
-	pr_info("%s: fw update complete\n", __func__);
+	pr_debug("%s: fw update complete\n", __func__);
 }
 
 static int aw87359_abspk_update(struct aw87359 *aw87359)
 {
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 	return request_firmware_nowait(THIS_MODULE,
 					FW_ACTION_HOTPLUG,
 					aw87359_abspk_name,
@@ -474,26 +474,26 @@ static void aw87359_drcv_cfg_loaded(const struct firmware *cont, void *context)
 	int i = 0;
 	int ram_timer_val = 2000;
 
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	drcv_load_cont++;
 	if (!cont) {
 		pr_err("%s: failed to read %s\n", __func__, aw87359_drcv_name);
 		release_firmware(cont);
 		if (drcv_load_cont <= 2) {
-			schedule_delayed_work(&aw87359->ram_work,
-					msecs_to_jiffies(ram_timer_val));
-			pr_info("%s:restart hrtimer to load firmware\n",
+			queue_delayed_work(system_power_efficient_wq,
+				&aw87359->ram_work, msecs_to_jiffies(ram_timer_val));
+			pr_debug("%s:restart hrtimer to load firmware\n",
 				__func__);
 		}
 		return;
 	}
 
-	pr_info("%s: loaded %s - size: %zu\n", __func__, aw87359_drcv_name,
+	pr_debug("%s: loaded %s - size: %zu\n", __func__, aw87359_drcv_name,
 					cont ? cont->size : 0);
 
 	for (i = 0; i < cont->size; i = i+2) {
-		pr_info("%s: addr:0x%04x, data:0x%02x\n",
+		pr_debug("%s: addr:0x%04x, data:0x%02x\n",
 		__func__, *(cont->data+i), *(cont->data+i+1));
 	}
 
@@ -512,12 +512,12 @@ static void aw87359_drcv_cfg_loaded(const struct firmware *cont, void *context)
 	release_firmware(cont);
 	aw87359->drcv_cfg_update_flag = 1;
 
-	pr_info("%s: fw update complete\n", __func__);
+	pr_debug("%s: fw update complete\n", __func__);
 }
 
 static int aw87359_drcv_update(struct aw87359 *aw87359)
 {
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 	return request_firmware_nowait(THIS_MODULE,
 					FW_ACTION_HOTPLUG,
 					aw87359_drcv_name,
@@ -532,25 +532,25 @@ static void aw87359_dspk_cfg_loaded(const struct firmware *cont, void *context)
 	int i = 0;
 	int ram_timer_val = 2000;
 
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 	dspk_load_cont++;
 	if (!cont) {
 		pr_err("%s: failed to read %s\n", __func__, aw87359_dspk_name);
 		release_firmware(cont);
 		if (dspk_load_cont <= 2) {
-			schedule_delayed_work(&aw87359->ram_work,
-					msecs_to_jiffies(ram_timer_val));
-			pr_info("%s:restart hrtimer to load firmware\n",
+			queue_delayed_work(system_power_efficient_wq,
+				&aw87359->ram_work, msecs_to_jiffies(ram_timer_val));
+			pr_debug("%s:restart hrtimer to load firmware\n",
 			__func__);
 		}
 	return;
 	}
 
-	pr_info("%s: loaded %s - size: %zu\n", __func__, aw87359_dspk_name,
+	pr_debug("%s: loaded %s - size: %zu\n", __func__, aw87359_dspk_name,
 				cont ? cont->size : 0);
 
 	for (i = 0; i < cont->size; i = i+2) {
-		pr_info("%s: addr:0x%02x, data:0x%02x\n",
+		pr_debug("%s: addr:0x%02x, data:0x%02x\n",
 				__func__, *(cont->data+i), *(cont->data+i+1));
 	}
 
@@ -569,7 +569,7 @@ static void aw87359_dspk_cfg_loaded(const struct firmware *cont, void *context)
 	release_firmware(cont);
 	aw87359->dspk_cfg_update_flag = 1;
 
-	pr_info("%s: fw update complete\n", __func__);
+	pr_debug("%s: fw update complete\n", __func__);
 }
 
 
@@ -577,7 +577,7 @@ static void aw87359_dspk_cfg_loaded(const struct firmware *cont, void *context)
 #ifdef AWINIC_CFG_UPDATE_DELAY
 static int aw87359_dspk_update(struct aw87359 *aw87359)
 {
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 
 	return request_firmware_nowait(THIS_MODULE,
 					FW_ACTION_HOTPLUG,
@@ -590,7 +590,7 @@ static int aw87359_dspk_update(struct aw87359 *aw87359)
 
 static void aw87359_cfg_work_routine(struct work_struct *work)
 {
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 	if (aw87359->dspk_cfg_update_flag == 0)
 		aw87359_dspk_update(aw87359);
 	if (aw87359->drcv_cfg_update_flag == 0)
@@ -608,13 +608,13 @@ static int aw87359_cfg_init(struct aw87359 *aw87359)
 	int cfg_timer_val = 5000;
 
 	INIT_DELAYED_WORK(&aw87359->ram_work, aw87359_cfg_work_routine);
-	schedule_delayed_work(&aw87359->ram_work,
+	queue_delayed_work(system_power_efficient_wq, &aw87359->ram_work,
 		msecs_to_jiffies(cfg_timer_val));
 #else
 	int cfg_timer_val = 0;
 
 	INIT_DELAYED_WORK(&aw87359->ram_work, aw87359_cfg_work_routine);
-	schedule_delayed_work(&aw87359->ram_work,
+	queue_delayed_work(system_power_efficient_wq, &aw87359->ram_work,
 		msecs_to_jiffies(cfg_timer_val));
 
 #endif
@@ -717,8 +717,8 @@ static ssize_t aw87359_set_update(struct device *dev,
 		aw87359->drcv_cfg_update_flag = 1;
 		aw87359->abspk_cfg_update_flag = 1;
 		aw87359->abrcv_cfg_update_flag = 1;
-		schedule_delayed_work(&aw87359->ram_work,
-				msecs_to_jiffies(cfg_timer_val));
+		queue_delayed_work(system_power_efficient_wq, 
+			&aw87359->ram_work, msecs_to_jiffies(cfg_timer_val));
 	}
 
 	if (ret < 0)
@@ -815,7 +815,7 @@ int aw87359_read_chipid(struct aw87359 *aw87359)
 	while (cnt < AW_READ_CHIPID_RETRIES) {
 		ret = aw87359_i2c_read(aw87359, REG_CHIPID, &reg_val);
 		if (reg_val == AW87359_CHIPID) {
-			pr_info("%s: This Chip is aw87359 chipid=0x%x\n",
+			pr_debug("%s: This Chip is aw87359 chipid=0x%x\n",
 					__func__, reg_val);
 			return 0;
 		}
@@ -823,7 +823,7 @@ int aw87359_read_chipid(struct aw87359 *aw87359)
 
 		mdelay(AW_READ_CHIPID_RETRY_DELAY);
 	}
-	pr_info("%s: aw87359 chipid=0x%x error\n", __func__, reg_val);
+	pr_debug("%s: aw87359 chipid=0x%x error\n", __func__, reg_val);
 	return -EINVAL;
 }
 
@@ -837,7 +837,7 @@ aw87359_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
 {
 	int ret = -1;
 
-	pr_info("%s Enter\n", __func__);
+	pr_debug("%s Enter\n", __func__);
 
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
 		dev_err(&client->dev, "%s: check_functionality failed\n",
@@ -872,7 +872,7 @@ aw87359_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	}
 	/* AGC enabled by default */
 	aw87359->AGC_bypass_flag = false;
-	pr_info("%s aw87359->AGC_bypass_flag = %d\n", __func__,
+	pr_debug("%s aw87359->AGC_bypass_flag = %d\n", __func__,
 		 aw87359->AGC_bypass_flag);
 	
 	/* aw87359 cfg update */
@@ -930,12 +930,12 @@ static int __init aw87359_pa_init(void)
 {
 	int ret;
 
-	pr_info("%s enter\n", __func__);
-	pr_info("%s: driver version: %s\n", __func__, AW87359_DRIVER_VERSION);
+	pr_debug("%s enter\n", __func__);
+	pr_debug("%s: driver version: %s\n", __func__, AW87359_DRIVER_VERSION);
 
 	ret = i2c_add_driver(&aw87359_i2c_driver);
 	if (ret) {
-		pr_info("****[%s] Unable to register driver (%d)\n",
+		pr_debug("****[%s] Unable to register driver (%d)\n",
 				__func__, ret);
 		return ret;
 	}
@@ -944,7 +944,7 @@ static int __init aw87359_pa_init(void)
 
 static void __exit aw87359_pa_exit(void)
 {
-	pr_info("%s enter\n", __func__);
+	pr_debug("%s enter\n", __func__);
 	i2c_del_driver(&aw87359_i2c_driver);
 }
 

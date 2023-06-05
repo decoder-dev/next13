@@ -442,7 +442,7 @@ static int pstore_decompress(void *in, void *out, size_t inlen, size_t outlen)
 static void allocate_buf_for_compression(void)
 {
 	if (zbackend) {
-		pr_info("using %s compression\n", zbackend->name);
+		pr_debug("using %s compression\n", zbackend->name);
 		zbackend->allocate();
 	} else {
 		pr_err("allocate compression buffer error!\n");
@@ -784,7 +784,7 @@ int pstore_register(struct pstore_info *psi)
 	 */
 	backend = psi->name;
 
-	pr_info("Registered %s as persistent store backend\n", psi->name);
+	pr_debug("Registered %s as persistent store backend\n", psi->name);
 
 	module_put(owner);
 

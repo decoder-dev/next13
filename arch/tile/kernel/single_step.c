@@ -222,13 +222,13 @@ static tilepro_bundle_bits rewrite_load_store_unaligned(
 	}
 
 	if (unaligned_printk || unaligned_fixup_count == 0) {
-		pr_info("Process %d/%s: PC %#lx: Fixup of unaligned %s at %#lx\n",
+		pr_debug("Process %d/%s: PC %#lx: Fixup of unaligned %s at %#lx\n",
 			current->pid, current->comm, regs->pc,
 			mem_op == MEMOP_LOAD || mem_op == MEMOP_LOAD_POSTINCR ?
 			"load" : "store",
 			(unsigned long)addr);
 		if (!unaligned_printk) {
-#define P pr_info
+#define P pr_debug
 P("\n");
 P("Unaligned fixups in the kernel will slow your application considerably.\n");
 P("To find them, write a \"1\" to /proc/sys/tile/unaligned_fixup/printk,\n");

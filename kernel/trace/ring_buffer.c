@@ -1270,6 +1270,8 @@ static void rb_free_cpu_buffer(struct ring_buffer_per_cpu *cpu_buffer)
 	struct list_head *head = cpu_buffer->pages;
 	struct buffer_page *bpage, *tmp;
 
+	irq_work_sync(&cpu_buffer->irq_work.work);
+
 	free_buffer_page(cpu_buffer->reader_page);
 
 	if (head) {
@@ -1374,6 +1376,8 @@ ring_buffer_free(struct ring_buffer *buffer)
 	int cpu;
 
 	cpuhp_state_remove_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
+
+	irq_work_sync(&buffer->irq_work.work);
 
 	for_each_buffer_cpu(buffer, cpu)
 		rb_free_cpu_buffer(buffer->buffers[cpu]);
@@ -5010,7 +5014,7 @@ static __init int test_ringbuffer(void)
 	int cpu;
 	int ret = 0;
 
-	pr_info("Running ring buffer tests...\n");
+	pr_debug("Running ring buffer tests...\n");
 
 	buffer = ring_buffer_alloc(RB_TEST_BUFFER_SIZE, RB_FL_OVERWRITE);
 	if (WARN_ON(!buffer))
@@ -5074,7 +5078,7 @@ static __init int test_ringbuffer(void)
 	}
 
 	/* Report! */
-	pr_info("finished\n");
+	pr_debug("finished\n");
 	for_each_online_cpu(cpu) {
 		struct ring_buffer_event *event;
 		struct rb_test_data *data = &rb_data[cpu];
@@ -5101,13 +5105,13 @@ static __init int test_ringbuffer(void)
 		big_event_size = data->max_size + data->max_size_nested;
 		small_event_size = data->min_size + data->min_size_nested;
 
-		pr_info("CPU %d:\n", cpu);
-		pr_info("              events:    %ld\n", total_events);
-		pr_info("       dropped bytes:    %ld\n", total_dropped);
-		pr_info("       alloced bytes:    %ld\n", total_alloc);
-		pr_info("       written bytes:    %ld\n", total_written);
-		pr_info("       biggest event:    %d\n", big_event_size);
-		pr_info("      smallest event:    %d\n", small_event_size);
+		pr_debug("CPU %d:\n", cpu);
+		pr_debug("              events:    %ld\n", total_events);
+		pr_debug("       dropped bytes:    %ld\n", total_dropped);
+		pr_debug("       alloced bytes:    %ld\n", total_alloc);
+		pr_debug("       written bytes:    %ld\n", total_written);
+		pr_debug("       biggest event:    %d\n", big_event_size);
+		pr_debug("      smallest event:    %d\n", small_event_size);
 
 		if (RB_WARN_ON(buffer, total_dropped))
 			break;
@@ -5120,9 +5124,9 @@ static __init int test_ringbuffer(void)
 			total_len += ring_buffer_event_length(event);
 			total_size += item->size + sizeof(struct rb_item);
 			if (memcmp(&item->str[0], rb_string, item->size) != 0) {
-				pr_info("FAILED!\n");
-				pr_info("buffer had: %.*s\n", item->size, item->str);
-				pr_info("expected:   %.*s\n", item->size, rb_string);
+				pr_debug("FAILED!\n");
+				pr_debug("buffer had: %.*s\n", item->size, item->str);
+				pr_debug("expected:   %.*s\n", item->size, rb_string);
 				RB_WARN_ON(buffer, 1);
 				ret = -1;
 				break;
@@ -5134,13 +5138,13 @@ static __init int test_ringbuffer(void)
 
 		ret = -1;
 
-		pr_info("         read events:   %ld\n", total_read);
-		pr_info("         lost events:   %ld\n", total_lost);
-		pr_info("        total events:   %ld\n", total_lost + total_read);
-		pr_info("  recorded len bytes:   %ld\n", total_len);
-		pr_info(" recorded size bytes:   %ld\n", total_size);
+		pr_debug("         read events:   %ld\n", total_read);
+		pr_debug("         lost events:   %ld\n", total_lost);
+		pr_debug("        total events:   %ld\n", total_lost + total_read);
+		pr_debug("  recorded len bytes:   %ld\n", total_len);
+		pr_debug(" recorded size bytes:   %ld\n", total_size);
 		if (total_lost)
-			pr_info(" With dropped events, record len and size may not match\n"
+			pr_debug(" With dropped events, record len and size may not match\n"
 				" alloced and written from above\n");
 		if (!total_lost) {
 			if (RB_WARN_ON(buffer, total_len != total_alloc ||
@@ -5153,7 +5157,7 @@ static __init int test_ringbuffer(void)
 		ret = 0;
 	}
 	if (!ret)
-		pr_info("Ring buffer PASSED!\n");
+		pr_debug("Ring buffer PASSED!\n");
 
 	ring_buffer_free(buffer);
 	return 0;

@@ -386,7 +386,7 @@ int libcfs_debug_vmsg2(struct libcfs_debug_msg_data *msgdata,
 	}
 
 	if (*(string_buf + needed - 1) != '\n')
-		pr_info("format at %s:%d:%s doesn't end in newline\n", file,
+		pr_debug("format at %s:%d:%s doesn't end in newline\n", file,
 			msgdata->msg_line, msgdata->msg_fn);
 
 	header.ph_len = known_size + needed;
@@ -890,7 +890,7 @@ int cfs_trace_daemon_command(char *str)
 	} else {
 		strcpy(cfs_tracefile, str);
 
-		pr_info("debug daemon will attempt to start writing to %s (%lukB max)\n",
+		pr_debug("debug daemon will attempt to start writing to %s (%lukB max)\n",
 			cfs_tracefile,
 			(long)(cfs_tracefile_size >> 10));
 
@@ -1111,7 +1111,7 @@ void cfs_trace_stop_thread(void)
 
 	mutex_lock(&cfs_trace_thread_mutex);
 	if (thread_running) {
-		pr_info("shutting down debug daemon thread...\n");
+		pr_debug("shutting down debug daemon thread...\n");
 		atomic_set(&tctl->tctl_shutdown, 1);
 		wait_for_completion(&tctl->tctl_stop);
 		thread_running = 0;

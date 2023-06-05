@@ -101,22 +101,22 @@ static void panel_bridge_detach(struct drm_bridge *bridge)
 
 static void panel_bridge_pre_enable(struct drm_bridge *bridge)
 {
-	pr_info("panel_bridge_pre_enable begin");
+	pr_debug("panel_bridge_pre_enable begin");
 	struct panel_bridge *panel_bridge = drm_bridge_to_panel_bridge(bridge);
 	struct drm_device *dev = bridge->dev;
 	if (dev->doze_state == DRM_BLANK_POWERDOWN) {
 		dev->doze_state = DRM_BLANK_UNBLANK;
-		pr_info("%s power on from power off\n", __func__);
+		pr_debug("%s power on from power off\n", __func__);
 	}
 
 	g_notify_data.data = &dev->doze_state;
 	drm_notifier_call_chain(DRM_EARLY_EVENT_BLANK, &g_notify_data);
 
-	pr_info("drm_panel_enable begin");
+	pr_debug("drm_panel_enable begin");
 	drm_panel_prepare(panel_bridge->panel);
-	pr_info("drm_panel_enable end");
+	pr_debug("drm_panel_enable end");
 	drm_notifier_call_chain(DRM_EVENT_BLANK, &g_notify_data);
-	pr_info("panel_bridge_pre_enable end");
+	pr_debug("panel_bridge_pre_enable end");
 }
 
 static void panel_bridge_enable(struct drm_bridge *bridge)
@@ -138,19 +138,19 @@ static void panel_bridge_post_disable(struct drm_bridge *bridge)
 {
 	struct panel_bridge *panel_bridge = drm_bridge_to_panel_bridge(bridge);
 	struct drm_device *dev = bridge->dev;
-	pr_info("panel_bridge_post_disable begin");
+	pr_debug("panel_bridge_post_disable begin");
 	if (dev->doze_state == DRM_BLANK_UNBLANK) {
 		dev->doze_state = DRM_BLANK_POWERDOWN;
-		pr_info("%s wrong doze state\n", __func__);
+		pr_debug("%s wrong doze state\n", __func__);
 	}
 
 	g_notify_data.data = &dev->doze_state;
 	drm_notifier_call_chain(DRM_EARLY_EVENT_BLANK, &g_notify_data);
-	pr_info("drm_panel_disable begin");
+	pr_debug("drm_panel_disable begin");
 	drm_panel_unprepare(panel_bridge->panel);
-	pr_info("drm_panel_disable end");
+	pr_debug("drm_panel_disable end");
 	drm_notifier_call_chain(DRM_EVENT_BLANK, &g_notify_data);
-	pr_info("panel_bridge_post_disable end");
+	pr_debug("panel_bridge_post_disable end");
 }
 
 static const struct drm_bridge_funcs panel_bridge_bridge_funcs = {

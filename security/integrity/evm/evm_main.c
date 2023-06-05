@@ -70,7 +70,7 @@ static void __init evm_init_config(void)
 #ifdef CONFIG_EVM_ATTR_FSUUID
 	evm_hmac_attrs |= EVM_ATTR_FSUUID;
 #endif
-	pr_info("HMAC attrs: 0x%x\n", evm_hmac_attrs);
+	pr_debug("HMAC attrs: 0x%x\n", evm_hmac_attrs);
 }
 
 static int evm_find_protected_xattrs(struct dentry *dentry)
@@ -524,7 +524,7 @@ static int __init init_evm(void)
 
 	error = evm_init_secfs();
 	if (error < 0) {
-		pr_info("Error registering secfs\n");
+		pr_debug("Error registering secfs\n");
 		return error;
 	}
 
@@ -539,7 +539,7 @@ static int __init evm_display_config(void)
 	char **xattrname;
 
 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++)
-		pr_info("%s\n", *xattrname);
+		pr_debug("%s\n", *xattrname);
 	return 0;
 }
 

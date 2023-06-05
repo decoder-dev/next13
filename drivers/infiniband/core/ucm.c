@@ -303,7 +303,7 @@ static int ib_ucm_event_process(struct ib_cm_event *evt,
 		uvt->resp.u.apr_resp.status = evt->param.apr_rcvd.ap_status;
 		uvt->data_len = IB_CM_APR_PRIVATE_DATA_SIZE;
 		uvt->info_len = evt->param.apr_rcvd.info_len;
-		info	      = evt->param.apr_rcvd.apr_info;
+		info	      = evt->param.apr_rcvd.apr_debug;
 		break;
 	case IB_CM_SIDR_REQ_RECEIVED:
 		uvt->resp.u.sidr_req_resp.pkey =

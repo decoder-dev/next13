@@ -5216,7 +5216,7 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
 		goto out;
 	if (pci_has_flag(PCI_PROBE_ONLY)) {
 		align = 0;
-		pr_info_once("PCI: Ignoring requested alignments (PCI_PROBE_ONLY)\n");
+		pr_debug_once("PCI: Ignoring requested alignments (PCI_PROBE_ONLY)\n");
 		goto out;
 	}
 

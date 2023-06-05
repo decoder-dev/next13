@@ -104,7 +104,7 @@ static int is_db_ok(struct mtu3_ep *mep)
 		if (!f)
 			break;
 
-		pr_info("Ifc name=%s\n", f->name);
+		pr_debug("Ifc name=%s\n", f->name);
 
 		switch (gadget->speed) {
 		case USB_SPEED_SUPER:
@@ -588,7 +588,7 @@ static int usb_rdy;		/* default value 0 */
 
 void set_usb_rdy(void)
 {
-	pr_info("set usb_rdy, wake up bat\n");
+	pr_debug("set usb_rdy, wake up bat\n");
 	usb_rdy = 1;
 }
 
@@ -739,7 +739,7 @@ static void mtu3_state_reset(struct mtu3 *mtu)
 
 	mep = mtu->ep0;
 	if (!list_empty(&mep->req_list)) {
-		pr_info("%s reinit EP[0] req_list\n", __func__);
+		pr_debug("%s reinit EP[0] req_list\n", __func__);
 		INIT_LIST_HEAD(&mep->req_list);
 	}
 }

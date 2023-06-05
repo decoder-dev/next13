@@ -27,6 +27,7 @@
 #include <linux/irq_work.h>
 #include <linux/posix-timers.h>
 #include <linux/context_tracking.h>
+#include <linux/mm.h>
 
 #include <asm/irq_regs.h>
 
@@ -479,7 +480,7 @@ void __init tick_nohz_init(void)
 					"kernel/nohz:predown", NULL,
 					tick_nohz_cpu_down);
 	WARN_ON(ret < 0);
-	pr_info("NO_HZ: Full dynticks CPUs: %*pbl.\n",
+	pr_debug("NO_HZ: Full dynticks CPUs: %*pbl.\n",
 		cpumask_pr_args(tick_nohz_full_mask));
 
 	/*
@@ -817,6 +818,7 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
 	if (!ts->tick_stopped) {
 		calc_load_nohz_start();
 		cpu_load_update_nohz_start();
+		quiet_vmstat();
 
 		ts->last_tick = hrtimer_get_expires(&ts->sched_timer);
 		ts->tick_stopped = 1;

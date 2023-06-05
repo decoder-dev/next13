@@ -324,7 +324,7 @@ static enum Tfa98xx_Error tfa9912_specific(struct tfa_device *tfa)
 		/* PLMA5505: MTP key open makes vulanable for MTP corruption */
 		tfa9912_faim_protect(tfa, 0);
 	} else {
-		pr_info("Warning: Optimal settings not found for device with revid = 0x%x\n",
+		pr_debug("Warning: Optimal settings not found for device with revid = 0x%x\n",
 			tfa->rev);
 	}
 
@@ -601,7 +601,7 @@ static enum Tfa98xx_Error tfa9872_specific(struct tfa_device *tfa)
 		/* ----- generated code end   ----- */
 		break;
 	default:
-		pr_info("\nWarning: Optimal settings not found for device with revid = 0x%x\n",
+		pr_debug("\nWarning: Optimal settings not found for device with revid = 0x%x\n",
 			tfa->rev);
 		break;
 	}
@@ -765,7 +765,7 @@ static enum Tfa98xx_Error tfa9874_specific(struct tfa_device *tfa)
 		/* ----- generated code end   ----- */
 		break;
 	default:
-		pr_info("\nWarning: Optimal settings not found for device with revid = 0x%x\n",
+		pr_debug("\nWarning: Optimal settings not found for device with revid = 0x%x\n",
 			tfa->rev);
 		break;
 	}
@@ -886,7 +886,7 @@ static enum Tfa98xx_Error tfa9888_specific(struct tfa_device *tfa)
 		tfa_reg_write(tfa, 0x83, 0x0014); // POR=0x0013
 		/* ----- generated code end   ----- */
 	} else {
-		pr_info("Warning: Optimal settings not found for device with revid = 0x%x\n",
+		pr_debug("Warning: Optimal settings not found for device with revid = 0x%x\n",
 			tfa->rev);
 	}
 

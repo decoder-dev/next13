@@ -88,7 +88,7 @@ do {\
 #define bm_info(fmt, args...)   \
 do {\
 	if (bat_get_debug_level() >= BMLOG_INFO_LEVEL) {\
-		pr_info(fmt, ##args); \
+		pr_debug(fmt, ##args); \
 	}								   \
 } while (0)
 

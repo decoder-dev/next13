@@ -412,7 +412,7 @@ void __init vmem_map_init(void)
 	__set_memory((unsigned long) _sinittext,
 		     (_einittext - _sinittext) >> PAGE_SHIFT,
 		     SET_MEMORY_RO | SET_MEMORY_X);
-	pr_info("Write protected kernel read-only data: %luk\n",
+	pr_debug("Write protected kernel read-only data: %luk\n",
 		(_eshared - _stext) >> 10);
 }
 

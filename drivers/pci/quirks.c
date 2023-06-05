@@ -1704,7 +1704,7 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ATI, 0x6741, quirk_radeon_pm);
 static int dmi_disable_ioapicreroute(const struct dmi_system_id *d)
 {
 	noioapicreroute = 1;
-	pr_info("%s detected: disable boot interrupt reroute\n", d->ident);
+	pr_debug("%s detected: disable boot interrupt reroute\n", d->ident);
 
 	return 0;
 }
@@ -3079,7 +3079,7 @@ static void quirk_intel_mc_errata(struct pci_dev *dev)
 		return;
 	}
 
-	pr_info_once("Read completion coalescing disabled due to hardware errata relating to 256B MPS\n");
+	pr_debug_once("Read completion coalescing disabled due to hardware errata relating to 256B MPS\n");
 }
 /* Intel 5000 series memory controllers and ports 2-7 */
 DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x25c0, quirk_intel_mc_errata);

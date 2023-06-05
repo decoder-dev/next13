@@ -8754,7 +8754,7 @@ static bool nested_vmx_exit_reflected(struct kvm_vcpu *vcpu, u32 exit_reason)
 		return false;
 
 	if (unlikely(vmx->fail)) {
-		pr_info_ratelimited("%s failed vm entry %x\n", __func__,
+		pr_debug_ratelimited("%s failed vm entry %x\n", __func__,
 				    vmcs_read32(VM_INSTRUCTION_ERROR));
 		return true;
 	}

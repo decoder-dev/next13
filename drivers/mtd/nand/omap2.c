@@ -2129,7 +2129,7 @@ static int omap_nand_probe(struct platform_device *pdev)
 	/* populate MTD interface based on ECC scheme */
 	switch (info->ecc_opt) {
 	case OMAP_ECC_HAM1_CODE_HW:
-		pr_info("nand: using OMAP_ECC_HAM1_CODE_HW\n");
+		pr_debug("nand: using OMAP_ECC_HAM1_CODE_HW\n");
 		nand_chip->ecc.mode             = NAND_ECC_HW;
 		nand_chip->ecc.bytes            = 3;
 		nand_chip->ecc.size             = 512;
@@ -2146,7 +2146,7 @@ static int omap_nand_probe(struct platform_device *pdev)
 		break;
 
 	case OMAP_ECC_BCH4_CODE_HW_DETECTION_SW:
-		pr_info("nand: using OMAP_ECC_BCH4_CODE_HW_DETECTION_SW\n");
+		pr_debug("nand: using OMAP_ECC_BCH4_CODE_HW_DETECTION_SW\n");
 		nand_chip->ecc.mode		= NAND_ECC_HW;
 		nand_chip->ecc.size		= 512;
 		nand_chip->ecc.bytes		= 7;
@@ -2167,7 +2167,7 @@ static int omap_nand_probe(struct platform_device *pdev)
 		break;
 
 	case OMAP_ECC_BCH4_CODE_HW:
-		pr_info("nand: using OMAP_ECC_BCH4_CODE_HW ECC scheme\n");
+		pr_debug("nand: using OMAP_ECC_BCH4_CODE_HW ECC scheme\n");
 		nand_chip->ecc.mode		= NAND_ECC_HW;
 		nand_chip->ecc.size		= 512;
 		/* 14th bit is kept reserved for ROM-code compatibility */
@@ -2189,7 +2189,7 @@ static int omap_nand_probe(struct platform_device *pdev)
 		break;
 
 	case OMAP_ECC_BCH8_CODE_HW_DETECTION_SW:
-		pr_info("nand: using OMAP_ECC_BCH8_CODE_HW_DETECTION_SW\n");
+		pr_debug("nand: using OMAP_ECC_BCH8_CODE_HW_DETECTION_SW\n");
 		nand_chip->ecc.mode		= NAND_ECC_HW;
 		nand_chip->ecc.size		= 512;
 		nand_chip->ecc.bytes		= 13;
@@ -2210,7 +2210,7 @@ static int omap_nand_probe(struct platform_device *pdev)
 		break;
 
 	case OMAP_ECC_BCH8_CODE_HW:
-		pr_info("nand: using OMAP_ECC_BCH8_CODE_HW ECC scheme\n");
+		pr_debug("nand: using OMAP_ECC_BCH8_CODE_HW ECC scheme\n");
 		nand_chip->ecc.mode		= NAND_ECC_HW;
 		nand_chip->ecc.size		= 512;
 		/* 14th bit is kept reserved for ROM-code compatibility */
@@ -2233,7 +2233,7 @@ static int omap_nand_probe(struct platform_device *pdev)
 		break;
 
 	case OMAP_ECC_BCH16_CODE_HW:
-		pr_info("using OMAP_ECC_BCH16_CODE_HW ECC scheme\n");
+		pr_debug("using OMAP_ECC_BCH16_CODE_HW ECC scheme\n");
 		nand_chip->ecc.mode		= NAND_ECC_HW;
 		nand_chip->ecc.size		= 512;
 		nand_chip->ecc.bytes		= 26;

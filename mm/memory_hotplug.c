@@ -1680,7 +1680,7 @@ repeat:
 		ret = -EBUSY;
 		goto failed_removal;
 	}
-	pr_info("Offlined Pages %ld\n", offlined_pages);
+	pr_debug("Offlined Pages %ld\n", offlined_pages);
 	/* Ok, all of our target is isolated.
 	   We cannot do rollback at this point. */
 	offline_isolated_pages(start_pfn, end_pfn);

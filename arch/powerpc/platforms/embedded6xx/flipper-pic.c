@@ -139,7 +139,6 @@ struct irq_domain * __init flipper_pic_init(struct device_node *np)
 	struct resource res;
 	void __iomem *io_base;
 	int retval;
-
 	pi = of_get_parent(np);
 	if (!pi) {
 		pr_err("no parent found\n");
@@ -149,25 +148,20 @@ struct irq_domain * __init flipper_pic_init(struct device_node *np)
 		pr_err("unexpected parent compatible\n");
 		goto out;
 	}
-
 	retval = of_address_to_resource(pi, 0, &res);
 	if (retval) {
 		pr_err("no io memory range found\n");
 		goto out;
 	}
 	io_base = ioremap(res.start, resource_size(&res));
-
-	pr_info("controller at 0x%08x mapped to 0x%p\n", res.start, io_base);
-
+	pr_info("controller at 0x%pa mapped to 0x%p\n", &res.start, io_base);
 	__flipper_quiesce(io_base);
-
 	irq_domain = irq_domain_add_linear(np, FLIPPER_NR_IRQS,
 				  &flipper_irq_domain_ops, io_base);
 	if (!irq_domain) {
 		pr_err("failed to allocate irq_domain\n");
 		return NULL;
 	}
-
 out:
 	return irq_domain;
 }

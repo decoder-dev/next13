@@ -588,7 +588,7 @@ void __init smp_init(void)
 	idle_threads_init();
 	cpuhp_threads_init();
 
-	pr_info("Bringing up secondary CPUs ...\n");
+	pr_debug("Bringing up secondary CPUs ...\n");
 
 	/* FIXME: This should be done in userspace --RR */
 	for_each_present_cpu(cpu) {
@@ -600,7 +600,7 @@ void __init smp_init(void)
 			smp_method = of_get_property(dn, "smp-method", NULL);
 			if (smp_method != NULL) {
 				if (!strcmp("disabled", smp_method)) {
-					pr_info("CPU_%d SMP disabled!\n", cpu);
+					pr_debug("CPU_%d SMP disabled!\n", cpu);
 					/*set_cpu_possible(cpu, false);*/
 					continue;
 				}
@@ -612,7 +612,7 @@ void __init smp_init(void)
 
 	num_nodes = num_online_nodes();
 	num_cpus  = num_online_cpus();
-	pr_info("Brought up %d node%s, %d CPU%s\n",
+	pr_debug("Brought up %d node%s, %d CPU%s\n",
 		num_nodes, (num_nodes > 1 ? "s" : ""),
 		num_cpus,  (num_cpus  > 1 ? "s" : ""));
 

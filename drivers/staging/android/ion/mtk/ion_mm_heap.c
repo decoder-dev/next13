@@ -294,7 +294,8 @@ int ion_get_domain_id(int from_kernel, int *port)
 static int ion_mm_heap_phys(struct ion_heap *heap, struct ion_buffer *buffer,
 			    ion_phys_addr_t *addr, size_t *len);
 
-#if defined(CONFIG_MTK_IOMMU_PGTABLE_EXT) && (CONFIG_MTK_IOMMU_PGTABLE_EXT > 32)
+#if defined(CONFIG_MTK_IOMMU_PGTABLE_EXT) && \
+	(CONFIG_MTK_IOMMU_PGTABLE_EXT > 32)
 static int ion_mm_heap_init_domain(struct ion_mm_buffer_info *buffer_info,
 				   unsigned int domain)
 {
@@ -984,7 +985,7 @@ static int ion_mm_heap_phys(struct ion_heap *heap, struct ion_buffer *buffer,
 
 	ts_end = sched_clock();
 	if (ts_end - ts_start > 1000000) //1ms
-		pr_info("hc3 %s new check sg_table time:%llu, nents:%u\n",
+		pr_debug("hc3 %s new check sg_table time:%llu, nents:%u\n",
 			__func__, (ts_end - ts_start), buffer->sg_table->nents);
 #endif
 }
@@ -1081,7 +1082,7 @@ static int ion_mm_heap_phys(struct ion_heap *heap, struct ion_buffer *buffer,
 
 		ts_end = sched_clock();
 		if (ts_end - ts_start > 1000000) //1ms
-			pr_info("hc3 %s reuse check sg_table time:%llu, nents:%u\n",
+			pr_debug("hc3 %s reuse check sg_table time:%llu, nents:%u\n",
 				__func__, (ts_end - ts_start), buffer->sg_table->nents);
 	}
 

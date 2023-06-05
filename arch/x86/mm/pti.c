@@ -59,13 +59,13 @@
 static void __init pti_print_if_insecure(const char *reason)
 {
 	if (boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
-		pr_info("%s\n", reason);
+		pr_debug("%s\n", reason);
 }
 
 static void __init pti_print_if_secure(const char *reason)
 {
 	if (!boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
-		pr_info("%s\n", reason);
+		pr_debug("%s\n", reason);
 }
 
 void __init pti_check_boottime_disable(void)
@@ -386,7 +386,7 @@ void __init pti_init(void)
 	if (!static_cpu_has(X86_FEATURE_PTI))
 		return;
 
-	pr_info("enabled\n");
+	pr_debug("enabled\n");
 
 	pti_clone_user_shared();
 	pti_clone_entry_text();

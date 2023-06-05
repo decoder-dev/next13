@@ -416,7 +416,7 @@ static int ima_release_policy(struct inode *inode, struct file *file)
 		valid_policy = 0;
 	}
 
-	pr_info("IMA: policy update %s\n", cause);
+	pr_debug("IMA: policy update %s\n", cause);
 	integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
 			    "policy_update", cause, !valid_policy, 0);
 

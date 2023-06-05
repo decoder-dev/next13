@@ -65,7 +65,7 @@ int __init apollo_parse_bootinfo(const struct bi_record *record)
 
 static void __init dn_setup_model(void)
 {
-	pr_info("Apollo hardware found: [%s]\n",
+	pr_debug("Apollo hardware found: [%s]\n",
 		apollo_models[apollo_model - APOLLO_DN3000]);
 
 	switch(apollo_model) {
@@ -197,9 +197,9 @@ void dn_sched_init(irq_handler_t timer_routine)
 	*(volatile unsigned char *)(pica+1)&=(~8);
 
 #if 0
-	pr_info("*(0x10803) %02x\n",
+	pr_debug("*(0x10803) %02x\n",
 		*(volatile unsigned char *)(apollo_timer + 0x3));
-	pr_info("*(0x10803) %02x\n",
+	pr_debug("*(0x10803) %02x\n",
 		*(volatile unsigned char *)(apollo_timer + 0x3));
 #endif
 
@@ -240,7 +240,7 @@ int dn_dummy_hwclk(int op, struct rtc_time *t) {
 
 int dn_dummy_set_clock_mmss(unsigned long nowtime)
 {
-	pr_info("set_clock_mmss\n");
+	pr_debug("set_clock_mmss\n");
 	return 0;
 }
 

@@ -165,7 +165,7 @@ int ft_queue_status(struct se_cmd *se_cmd)
 
 	rc = fc_seq_send(lport, cmd->seq, fp);
 	if (rc) {
-		pr_info_ratelimited("%s: Failed to send response frame %p, "
+		pr_debug_ratelimited("%s: Failed to send response frame %p, "
 				    "xid <0x%x>\n", __func__, fp, ep->xid);
 		/*
 		 * Generate a TASK_SET_FULL status to notify the initiator

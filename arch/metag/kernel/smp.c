@@ -131,7 +131,7 @@ static void describe_cachepart_change(unsigned int thread, const char *label,
 	if (!diff)
 		return;
 
-	pr_info("Thread %d: %s partition changed:", thread, label);
+	pr_debug("Thread %d: %s partition changed:", thread, label);
 	if (diff & (SYSC_xCPARTL_OR_BITS | SYSC_xCPARTL_AND_BITS)) {
 		lor1   = (old & SYSC_xCPARTL_OR_BITS)  >> SYSC_xCPARTL_OR_S;
 		lor2   = (new & SYSC_xCPARTL_OR_BITS)  >> SYSC_xCPARTL_OR_S;
@@ -377,7 +377,7 @@ asmlinkage void secondary_start_kernel(void)
 
 	notify_cpu_starting(cpu);
 
-	pr_info("CPU%u (thread %u): Booted secondary processor\n",
+	pr_debug("CPU%u (thread %u): Booted secondary processor\n",
 		cpu, cpu_2_hwthread_id[cpu]);
 
 	calibrate_delay();
@@ -409,7 +409,7 @@ void __init smp_cpus_done(unsigned int max_cpus)
 	for_each_online_cpu(cpu)
 		bogosum += per_cpu(cpu_data, cpu).loops_per_jiffy;
 
-	pr_info("SMP: Total of %d processors activated (%lu.%02lu BogoMIPS).\n",
+	pr_debug("SMP: Total of %d processors activated (%lu.%02lu BogoMIPS).\n",
 		num_online_cpus(),
 		bogosum / (500000/HZ),
 		(bogosum / (5000/HZ)) % 100);

@@ -1457,7 +1457,7 @@ static int ir_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	else if (tx_only) /* module option */
 		return -ENXIO;
 
-	pr_info("probing IR %s on %s (i2c-%d)\n",
+	pr_debug("probing IR %s on %s (i2c-%d)\n",
 		tx_probe ? "Tx" : "Rx", adap->name, adap->nr);
 
 	mutex_lock(&ir_devices_lock);
@@ -1593,7 +1593,7 @@ static int ir_probe(struct i2c_client *client, const struct i2c_device_id *id)
 
 		/* Proceed only if the Tx client is also ready */
 		if (!tx) {
-			pr_info("probe of IR Rx on %s (i2c-%d) done. Waiting on IR Tx.\n",
+			pr_debug("probe of IR Rx on %s (i2c-%d) done. Waiting on IR Tx.\n",
 				adap->name, adap->nr);
 			goto out_ok;
 		}

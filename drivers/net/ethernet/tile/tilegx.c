@@ -317,7 +317,7 @@ static bool network_cpus_init(void)
 		return false;
 	}
 
-	pr_info("Linux network CPUs: %*pbl\n",
+	pr_debug("Linux network CPUs: %*pbl\n",
 		cpumask_pr_args(&network_cpus_map));
 	return true;
 }
@@ -2256,7 +2256,7 @@ static int __init tile_net_init_module(void)
 	char name[GXIO_MPIPE_LINK_NAME_LEN];
 	uint8_t mac[6];
 
-	pr_info("Tilera Network Driver\n");
+	pr_debug("Tilera Network Driver\n");
 
 	BUILD_BUG_ON(NR_MPIPE_MAX != 2);
 

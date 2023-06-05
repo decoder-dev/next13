@@ -31,8 +31,11 @@ rq_sched_info_dequeued(struct rq *rq, unsigned long long delta)
 		rq->rq_sched_info.run_delay += delta;
 }
 #define schedstat_enabled()		static_branch_unlikely(&sched_schedstats)
+#define __schedstat_inc(var)		do { var++; } while (0)
 #define schedstat_inc(var)		do { if (schedstat_enabled()) { var++; } } while (0)
+#define __schedstat_add(var, amt)	do { var += (amt); } while (0)
 #define schedstat_add(var, amt)		do { if (schedstat_enabled()) { var += (amt); } } while (0)
+#define __schedstat_set(var, val)		do { var = (val); } while (0)
 #define schedstat_set(var, val)		do { if (schedstat_enabled()) { var = (val); } } while (0)
 #define schedstat_val(var)		(var)
 #define schedstat_val_or_zero(var)	((schedstat_enabled()) ? (var) : 0)
@@ -48,8 +51,11 @@ static inline void
 rq_sched_info_depart(struct rq *rq, unsigned long long delta)
 {}
 #define schedstat_enabled()		0
+#define __schedstat_inc(var)		do { } while (0)
 #define schedstat_inc(var)		do { } while (0)
+#define __schedstat_add(var, amt)	do { } while (0)
 #define schedstat_add(var, amt)		do { } while (0)
+#define __schedstat_set(var, val)	do { } while (0)
 #define schedstat_set(var, val)		do { } while (0)
 #define schedstat_val(var)		0
 #define schedstat_val_or_zero(var)	0
@@ -93,14 +99,6 @@ static inline void psi_dequeue(struct task_struct *p, bool sleep)
 		if (p->flags & PF_MEMSTALL)
 			clear |= TSK_MEMSTALL;
 	} else {
-		/*
-		 * When a task sleeps, schedule() dequeues it before
-		 * switching to the next one. Merge the clearing of
-		 * TSK_RUNNING and TSK_ONCPU to save an unnecessary
-		 * psi_task_change() call in psi_sched_switch().
-		 */
-		clear |= TSK_ONCPU;
-
 		if (p->in_iowait)
 			set |= TSK_IOWAIT;
 	}
@@ -134,16 +132,6 @@ static inline void psi_ttwu_dequeue(struct task_struct *p)
 	}
 }
 
-static inline void psi_sched_switch(struct task_struct *prev,
-				    struct task_struct *next,
-				    bool sleep)
-{
-	if (static_branch_likely(&psi_disabled))
-		return;
-
-	psi_task_switch(prev, next, sleep);
-}
-
 static inline void psi_task_tick(struct rq *rq)
 {
 	if (static_branch_likely(&psi_disabled))
@@ -156,9 +144,6 @@ static inline void psi_task_tick(struct rq *rq)
 static inline void psi_enqueue(struct task_struct *p, bool wakeup) {}
 static inline void psi_dequeue(struct task_struct *p, bool sleep) {}
 static inline void psi_ttwu_dequeue(struct task_struct *p) {}
-static inline void psi_sched_switch(struct task_struct *prev,
-				    struct task_struct *next,
-				    bool sleep) {}
 static inline void psi_task_tick(struct rq *rq) {}
 #endif /* CONFIG_PSI */
 

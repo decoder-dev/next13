@@ -21,7 +21,7 @@
 #include <gxio/kiorpc.h>
 
 #ifdef DEBUG_IORPC
-#define TRACE(FMT, ...) pr_info(SIMPLE_MSG_LINE FMT, ## __VA_ARGS__)
+#define TRACE(FMT, ...) pr_debug(SIMPLE_MSG_LINE FMT, ## __VA_ARGS__)
 #else
 #define TRACE(...)
 #endif

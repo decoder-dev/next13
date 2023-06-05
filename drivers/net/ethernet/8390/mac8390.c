@@ -322,7 +322,7 @@ static bool __init mac8390_init(struct net_device *dev, struct nubus_dev *ndev,
 
 	/* Get the MAC address */
 	if (nubus_find_rsrc(&dir, NUBUS_RESID_MAC_ADDRESS, &ent) == -1) {
-		pr_info("%s: Couldn't get MAC address!\n", dev->name);
+		pr_debug("%s: Couldn't get MAC address!\n", dev->name);
 		return false;
 	}
 
@@ -343,7 +343,7 @@ static bool __init mac8390_init(struct net_device *dev, struct nubus_dev *ndev,
 		nubus_rewinddir(&dir);
 		if (nubus_find_rsrc(&dir, NUBUS_RESID_MINOR_LENGTH,
 				    &ent) == -1) {
-			pr_info("%s: Memory length resource for slot %X not found, probing\n",
+			pr_debug("%s: Memory length resource for slot %X not found, probing\n",
 				dev->name, ndev->board->slot);
 			offset = mac8390_memsize(dev->mem_start);
 		} else {
@@ -620,10 +620,10 @@ static int __init mac8390_initdev(struct net_device *dev,
 	__NS8390_init(dev, 0);
 
 	/* Good, done, now spit out some messages */
-	pr_info("%s: %s in slot %X (type %s)\n",
+	pr_debug("%s: %s in slot %X (type %s)\n",
 		dev->name, ndev->board->name, ndev->board->slot,
 		cardname[type]);
-	pr_info("MAC %pM IRQ %d, %d KB shared memory at %#lx, %d-bit access.\n",
+	pr_debug("MAC %pM IRQ %d, %d KB shared memory at %#lx, %d-bit access.\n",
 		dev->dev_addr, dev->irq,
 		(unsigned int)(dev->mem_end - dev->mem_start) >> 10,
 		dev->mem_start, access_bitmode ? 32 : 16);

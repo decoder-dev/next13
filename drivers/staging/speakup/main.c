@@ -447,7 +447,7 @@ static void speak_char(u16 ch)
 
 	cp = spk_characters[ch];
 	if (!cp) {
-		pr_info("speak_char: cp == NULL!\n");
+		pr_debug("speak_char: cp == NULL!\n");
 		return;
 	}
 	if (IS_CHAR(ch, B_CAP)) {
@@ -2412,8 +2412,8 @@ static int __init speakup_init(void)
 	set_user_nice(speakup_task, 10);
 	wake_up_process(speakup_task);
 
-	pr_info("speakup %s: initialized\n", SPEAKUP_VERSION);
-	pr_info("synth name on entry is: %s\n", synth_name);
+	pr_debug("speakup %s: initialized\n", SPEAKUP_VERSION);
+	pr_debug("synth name on entry is: %s\n", synth_name);
 	goto out;
 
 error_task:

@@ -65,7 +65,7 @@ static int TSS_sha1(const unsigned char *data, unsigned int datalen,
 
 	sdesc = init_sdesc(hashalg);
 	if (IS_ERR(sdesc)) {
-		pr_info("trusted_key: can't alloc %s\n", hash_alg);
+		pr_debug("trusted_key: can't alloc %s\n", hash_alg);
 		return PTR_ERR(sdesc);
 	}
 
@@ -85,7 +85,7 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
 
 	sdesc = init_sdesc(hmacalg);
 	if (IS_ERR(sdesc)) {
-		pr_info("trusted_key: can't alloc %s\n", hmac_alg);
+		pr_debug("trusted_key: can't alloc %s\n", hmac_alg);
 		return PTR_ERR(sdesc);
 	}
 
@@ -135,7 +135,7 @@ static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
 
 	sdesc = init_sdesc(hashalg);
 	if (IS_ERR(sdesc)) {
-		pr_info("trusted_key: can't alloc %s\n", hash_alg);
+		pr_debug("trusted_key: can't alloc %s\n", hash_alg);
 		return PTR_ERR(sdesc);
 	}
 
@@ -207,7 +207,7 @@ static int TSS_checkhmac1(unsigned char *buffer,
 
 	sdesc = init_sdesc(hashalg);
 	if (IS_ERR(sdesc)) {
-		pr_info("trusted_key: can't alloc %s\n", hash_alg);
+		pr_debug("trusted_key: can't alloc %s\n", hash_alg);
 		return PTR_ERR(sdesc);
 	}
 	ret = crypto_shash_init(&sdesc->shash);
@@ -299,7 +299,7 @@ static int TSS_checkhmac2(unsigned char *buffer,
 
 	sdesc = init_sdesc(hashalg);
 	if (IS_ERR(sdesc)) {
-		pr_info("trusted_key: can't alloc %s\n", hash_alg);
+		pr_debug("trusted_key: can't alloc %s\n", hash_alg);
 		return PTR_ERR(sdesc);
 	}
 	ret = crypto_shash_init(&sdesc->shash);
@@ -592,12 +592,12 @@ static int tpm_unseal(struct tpm_buf *tb,
 	/* sessions for unsealing key and data */
 	ret = oiap(tb, &authhandle1, enonce1);
 	if (ret < 0) {
-		pr_info("trusted_key: oiap failed (%d)\n", ret);
+		pr_debug("trusted_key: oiap failed (%d)\n", ret);
 		return ret;
 	}
 	ret = oiap(tb, &authhandle2, enonce2);
 	if (ret < 0) {
-		pr_info("trusted_key: oiap failed (%d)\n", ret);
+		pr_debug("trusted_key: oiap failed (%d)\n", ret);
 		return ret;
 	}
 
@@ -605,7 +605,7 @@ static int tpm_unseal(struct tpm_buf *tb,
 	keyhndl = htonl(SRKHANDLE);
 	ret = tpm_get_random(TPM_ANY_NUM, nonceodd, TPM_NONCE_SIZE);
 	if (ret != TPM_NONCE_SIZE) {
-		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
+		pr_debug("trusted_key: tpm_get_random failed (%d)\n", ret);
 		return ret;
 	}
 	ret = TSS_authhmac(authdata1, keyauth, TPM_NONCE_SIZE,
@@ -637,7 +637,7 @@ static int tpm_unseal(struct tpm_buf *tb,
 
 	ret = trusted_tpm_send(TPM_ANY_NUM, tb->data, MAX_BUF_SIZE);
 	if (ret < 0) {
-		pr_info("trusted_key: authhmac failed (%d)\n", ret);
+		pr_debug("trusted_key: authhmac failed (%d)\n", ret);
 		return ret;
 	}
 
@@ -649,7 +649,7 @@ static int tpm_unseal(struct tpm_buf *tb,
 			     *datalen, TPM_DATA_OFFSET + sizeof(uint32_t), 0,
 			     0);
 	if (ret < 0) {
-		pr_info("trusted_key: TSS_checkhmac2 failed (%d)\n", ret);
+		pr_debug("trusted_key: TSS_checkhmac2 failed (%d)\n", ret);
 		return ret;
 	}
 	memcpy(data, tb->data + TPM_DATA_OFFSET + sizeof(uint32_t), *datalen);
@@ -676,7 +676,7 @@ static int key_seal(struct trusted_key_payload *p,
 		       p->key, p->key_len + 1, p->blob, &p->blob_len,
 		       o->blobauth, o->pcrinfo, o->pcrinfo_len);
 	if (ret < 0)
-		pr_info("trusted_key: srkseal failed (%d)\n", ret);
+		pr_debug("trusted_key: srkseal failed (%d)\n", ret);
 
 	kzfree(tb);
 	return ret;
@@ -698,7 +698,7 @@ static int key_unseal(struct trusted_key_payload *p,
 	ret = tpm_unseal(tb, o->keyhandle, o->keyauth, p->blob, p->blob_len,
 			 o->blobauth, p->key, &p->key_len);
 	if (ret < 0)
-		pr_info("trusted_key: srkunseal failed (%d)\n", ret);
+		pr_debug("trusted_key: srkunseal failed (%d)\n", ret);
 	else
 		/* pull migratable flag out of sealed key */
 		p->migratable = p->key[--p->key_len];
@@ -818,7 +818,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
 			if (i == HASH_ALGO__LAST)
 				return -EINVAL;
 			if  (!tpm2 && i != HASH_ALGO_SHA1) {
-				pr_info("trusted_key: TPM 1.x only supports SHA-1.\n");
+				pr_debug("trusted_key: TPM 1.x only supports SHA-1.\n");
 				return -EINVAL;
 			}
 			break;
@@ -1014,13 +1014,13 @@ static int trusted_instantiate(struct key *key,
 		dump_payload(payload);
 		dump_options(options);
 		if (ret < 0)
-			pr_info("trusted_key: key_unseal failed (%d)\n", ret);
+			pr_debug("trusted_key: key_unseal failed (%d)\n", ret);
 		break;
 	case Opt_new:
 		key_len = payload->key_len;
 		ret = tpm_get_random(TPM_ANY_NUM, payload->key, key_len);
 		if (ret != key_len) {
-			pr_info("trusted_key: key_create failed (%d)\n", ret);
+			pr_debug("trusted_key: key_create failed (%d)\n", ret);
 			goto out;
 		}
 		if (tpm2)
@@ -1028,7 +1028,7 @@ static int trusted_instantiate(struct key *key,
 		else
 			ret = key_seal(payload, options);
 		if (ret < 0)
-			pr_info("trusted_key: key_seal failed (%d)\n", ret);
+			pr_debug("trusted_key: key_seal failed (%d)\n", ret);
 		break;
 	default:
 		ret = -EINVAL;
@@ -1112,14 +1112,14 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
 
 	ret = key_seal(new_p, new_o);
 	if (ret < 0) {
-		pr_info("trusted_key: key_seal failed (%d)\n", ret);
+		pr_debug("trusted_key: key_seal failed (%d)\n", ret);
 		kzfree(new_p);
 		goto out;
 	}
 	if (new_o->pcrlock) {
 		ret = pcrlock(new_o->pcrlock);
 		if (ret < 0) {
-			pr_info("trusted_key: pcrlock failed (%d)\n", ret);
+			pr_debug("trusted_key: pcrlock failed (%d)\n", ret);
 			kzfree(new_p);
 			goto out;
 		}
@@ -1188,14 +1188,14 @@ static int __init trusted_shash_alloc(void)
 
 	hmacalg = crypto_alloc_shash(hmac_alg, 0, CRYPTO_ALG_ASYNC);
 	if (IS_ERR(hmacalg)) {
-		pr_info("trusted_key: could not allocate crypto %s\n",
+		pr_debug("trusted_key: could not allocate crypto %s\n",
 			hmac_alg);
 		return PTR_ERR(hmacalg);
 	}
 
 	hashalg = crypto_alloc_shash(hash_alg, 0, CRYPTO_ALG_ASYNC);
 	if (IS_ERR(hashalg)) {
-		pr_info("trusted_key: could not allocate crypto %s\n",
+		pr_debug("trusted_key: could not allocate crypto %s\n",
 			hash_alg);
 		ret = PTR_ERR(hashalg);
 		goto hashalg_fail;

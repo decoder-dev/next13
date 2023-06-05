@@ -88,7 +88,7 @@ void __init init_metag_clocks(void)
 {
 	init_metag_core_clock();
 
-	pr_info("Core clock frequency: %lu Hz\n", get_coreclock());
+	pr_debug("Core clock frequency: %lu Hz\n", get_coreclock());
 }
 
 /**

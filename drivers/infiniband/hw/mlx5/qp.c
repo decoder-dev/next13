@@ -2532,7 +2532,7 @@ static int modify_raw_packet_qp_rq(struct mlx5_ib_dev *dev,
 				   MLX5_MODIFY_RQ_IN_MODIFY_BITMASK_RQ_COUNTER_SET_ID);
 			MLX5_SET(rqc, rqc, counter_set_id, raw_qp_param->rq_q_ctr_id);
 		} else
-			pr_info_once("%s: RAW PACKET QP counters are not supported on current FW\n",
+			pr_debug_once("%s: RAW PACKET QP counters are not supported on current FW\n",
 				     dev->ib_dev.name);
 	}
 
@@ -5112,7 +5112,7 @@ int mlx5_ib_modify_wq(struct ib_wq *wq, struct ib_wq_attr *wq_attr,
 			MLX5_SET(rqc, rqc, counter_set_id,
 				 dev->port->cnts.set_id);
 		} else
-			pr_info_once("%s: Receive WQ counters are not supported on current FW\n",
+			pr_debug_once("%s: Receive WQ counters are not supported on current FW\n",
 				     dev->ib_dev.name);
 	}
 

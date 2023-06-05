@@ -264,7 +264,7 @@ W6692_empty_Dfifo(struct w6692_hw *card, int count)
 	if (!dch->rx_skb) {
 		dch->rx_skb = mI_alloc_skb(card->dch.maxlen, GFP_ATOMIC);
 		if (!dch->rx_skb) {
-			pr_info("%s: D receive out of memory\n", card->name);
+			pr_debug("%s: D receive out of memory\n", card->name);
 			WriteW6692(card, W_D_CMDR, W_D_CMDR_RACK);
 			return;
 		}
@@ -337,12 +337,12 @@ d_retransmit(struct w6692_hw *card)
 		dch->tx_idx = 0;
 		W6692_fill_Dfifo(card);
 	} else if (dch->tx_skb) { /* should not happen */
-		pr_info("%s: %s without TX_BUSY\n", card->name, __func__);
+		pr_debug("%s: %s without TX_BUSY\n", card->name, __func__);
 		test_and_set_bit(FLG_TX_BUSY, &dch->Flags);
 		dch->tx_idx = 0;
 		W6692_fill_Dfifo(card);
 	} else {
-		pr_info("%s: XDU no TX_BUSY\n", card->name);
+		pr_debug("%s: XDU no TX_BUSY\n", card->name);
 		if (get_next_dframe(dch))
 			W6692_fill_Dfifo(card);
 	}
@@ -640,7 +640,7 @@ w6692_mode(struct w6692_ch *wch, u32 pr)
 		test_and_set_bit(FLG_HDLC, &wch->bch.Flags);
 		break;
 	default:
-		pr_info("%s: protocol %x not known\n", card->name, pr);
+		pr_debug("%s: protocol %x not known\n", card->name, pr);
 		return -ENOPROTOOPT;
 	}
 	wch->bch.state = pr;
@@ -839,7 +839,7 @@ dbusy_timer_handler(struct dchannel *dch)
 			if (dch->tx_idx)
 				dch->tx_idx = 0;
 			else
-				pr_info("%s: W6692 D-Channel Busy no tx_idx\n",
+				pr_debug("%s: W6692 D-Channel Busy no tx_idx\n",
 					card->name);
 			/* Transmitter reset */
 			WriteW6692(card, W_D_CMDR, W_D_CMDR_XRST);
@@ -922,7 +922,7 @@ init_card(struct w6692_hw *card)
 	disable_hwirq(card);
 	spin_unlock_irqrestore(&card->lock, flags);
 	if (request_irq(card->irq, w6692_irq, IRQF_SHARED, card->name, card)) {
-		pr_info("%s: couldn't get interrupt %d\n", card->name,
+		pr_debug("%s: couldn't get interrupt %d\n", card->name,
 			card->irq);
 		return -EIO;
 	}
@@ -937,7 +937,7 @@ init_card(struct w6692_hw *card)
 			pr_notice("%s: IRQ %d count %d\n", card->name,
 				  card->irq, card->irqcnt);
 		if (!card->irqcnt) {
-			pr_info("%s: IRQ(%d) getting no IRQs during init %d\n",
+			pr_debug("%s: IRQ(%d) getting no IRQs during init %d\n",
 				card->name, card->irq, 3 - cnt);
 			reset_w6692(card);
 		} else
@@ -988,7 +988,7 @@ w6692_l2l1B(struct mISDNchannel *ch, struct sk_buff *skb)
 		ret = 0;
 		break;
 	default:
-		pr_info("%s: %s unknown prim(%x,%x)\n",
+		pr_debug("%s: %s unknown prim(%x,%x)\n",
 			card->name, __func__, hh->prim, hh->id);
 		ret = -EINVAL;
 	}
@@ -1033,7 +1033,7 @@ channel_ctrl(struct w6692_hw *card, struct mISDN_ctrl_req *cq)
 		ret = l1_event(card->dch.l1, HW_TIMER3_VALUE | (cq->p1 & 0xff));
 		break;
 	default:
-		pr_info("%s: unknown CTRL OP %x\n", card->name, cq->op);
+		pr_debug("%s: unknown CTRL OP %x\n", card->name, cq->op);
 		ret = -EINVAL;
 		break;
 	}
@@ -1067,7 +1067,7 @@ w6692_bctrl(struct mISDNchannel *ch, u32 cmd, void *arg)
 		ret = channel_bctrl(bch, arg);
 		break;
 	default:
-		pr_info("%s: %s unknown prim(%x)\n",
+		pr_debug("%s: %s unknown prim(%x)\n",
 			card->name, __func__, cmd);
 	}
 	return ret;
@@ -1212,7 +1212,7 @@ w6692_dctrl(struct mISDNchannel *ch, u32 cmd, void *arg)
 		if (err)
 			break;
 		if (!try_module_get(THIS_MODULE))
-			pr_info("%s: cannot get module\n", card->name);
+			pr_debug("%s: cannot get module\n", card->name);
 		break;
 	case CLOSE_CHANNEL:
 		pr_debug("%s: dev(%d) close from %p\n", card->name,
@@ -1235,7 +1235,7 @@ setup_w6692(struct w6692_hw *card)
 	u32	val;
 
 	if (!request_region(card->addr, 256, card->name)) {
-		pr_info("%s: config port %x-%x already in use\n", card->name,
+		pr_debug("%s: config port %x-%x already in use\n", card->name,
 			card->addr, card->addr + 255);
 		return -EIO;
 	}
@@ -1363,7 +1363,7 @@ w6692_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 
 	card = kzalloc(sizeof(struct w6692_hw), GFP_KERNEL);
 	if (!card) {
-		pr_info("No kmem for w6692 card\n");
+		pr_debug("No kmem for w6692 card\n");
 		return err;
 	}
 	card->pdev = pdev;

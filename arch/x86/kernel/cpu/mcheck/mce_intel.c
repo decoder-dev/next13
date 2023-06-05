@@ -325,9 +325,9 @@ static void cmci_discover(int banks)
 	}
 	raw_spin_unlock_irqrestore(&cmci_discover_lock, flags);
 	if (mca_cfg.bios_cmci_threshold && bios_wrong_thresh) {
-		pr_info_once(
+		pr_debug_once(
 			"bios_cmci_threshold: Some banks do not have valid thresholds set\n");
-		pr_info_once(
+		pr_debug_once(
 			"bios_cmci_threshold: Make sure your BIOS supports this boot option\n");
 	}
 }

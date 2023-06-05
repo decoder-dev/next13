@@ -124,7 +124,7 @@ static int exynos_cpu_suspend(unsigned long arg)
 
 	exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
 
-	pr_info("Failed to suspend the system\n");
+	pr_debug("Failed to suspend the system\n");
 	writel(0, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
 	return 1;
 }
@@ -211,7 +211,7 @@ void __init exynos_firmware_init(void)
 		return;
 	}
 
-	pr_info("Running under secure firmware.\n");
+	pr_debug("Running under secure firmware.\n");
 
 	register_firmware_ops(&exynos_firmware_ops);
 

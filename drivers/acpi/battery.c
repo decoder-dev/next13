@@ -1338,7 +1338,7 @@ static void __init acpi_battery_init_async(void *unused, async_cookie_t cookie)
 
 	for (i = 0; i < ARRAY_SIZE(acpi_battery_blacklist); i++)
 		if (acpi_dev_present(acpi_battery_blacklist[i], "1", -1)) {
-			pr_info(PREFIX ACPI_BATTERY_DEVICE_NAME
+			pr_debug(PREFIX ACPI_BATTERY_DEVICE_NAME
 				": found native %s PMIC, not loading\n",
 				acpi_battery_blacklist[i]);
 			return;

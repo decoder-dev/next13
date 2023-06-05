@@ -381,12 +381,12 @@ static void dump_pagetable(unsigned long address)
 	pte_t *pte;
 
 #ifdef CONFIG_X86_PAE
-	pr_info("*pdpt = %016Lx ", pgd_val(*pgd));
+	pr_debug("*pdpt = %016Lx ", pgd_val(*pgd));
 	if (!low_pfn(pgd_val(*pgd) >> PAGE_SHIFT) || !pgd_present(*pgd))
 		goto out;
 #define pr_pde pr_cont
 #else
-#define pr_pde pr_info
+#define pr_pde pr_debug
 #endif
 	p4d = p4d_offset(pgd, address);
 	pud = pud_offset(p4d, address);
@@ -564,7 +564,7 @@ static void dump_pagetable(unsigned long address)
 	if (bad_address(pgd))
 		goto bad;
 
-	pr_info("PGD %lx ", pgd_val(*pgd));
+	pr_debug("PGD %lx ", pgd_val(*pgd));
 
 	if (!pgd_present(*pgd))
 		goto out;
@@ -602,7 +602,7 @@ out:
 	pr_cont("\n");
 	return;
 bad:
-	pr_info("BAD\n");
+	pr_debug("BAD\n");
 }
 
 #endif /* CONFIG_X86_64 */

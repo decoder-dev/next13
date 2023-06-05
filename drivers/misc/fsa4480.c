@@ -153,7 +153,7 @@ static int fsa4480_usbc_event_changed(struct notifier_block *nb,
 			container_of(nb, struct fsa4480_priv, psy_nb);
 	struct device *dev;
 
-	pr_info("%s \n", __func__);
+	pr_debug("%s \n", __func__);
 
 	if (!fsa_priv)
 		return -EINVAL;
@@ -177,7 +177,7 @@ static int fsa4480_usbc_event_changed(struct notifier_block *nb,
 	dev_dbg(dev, "%s: USB change event received, supply mode %d, usbc mode %d, expected %d\n",
 		__func__, mode.intval, fsa_priv->usbc_mode.counter,
 		POWER_SUPPLY_TYPEC_SINK_AUDIO_ADAPTER);
-	pr_info("%s: USB change event received, supply mode %d, usbc mode %d, expected %d\n",
+	pr_debug("%s: USB change event received, supply mode %d, usbc mode %d, expected %d\n",
 		__func__, mode.intval, fsa_priv->usbc_mode.counter,
 		POWER_SUPPLY_TYPEC_SINK_AUDIO_ADAPTER);
 
@@ -190,7 +190,7 @@ static int fsa4480_usbc_event_changed(struct notifier_block *nb,
 
 		dev_dbg(dev, "%s: queueing usbc_analog_work\n",
 			__func__);
-		pr_info("%s: queueing usbc_analog_work\n",
+		pr_debug("%s: queueing usbc_analog_work\n",
 			__func__);
 		pm_stay_awake(fsa_priv->dev);
 		queue_work(system_freezable_wq, &fsa_priv->usbc_analog_work);
@@ -219,7 +219,7 @@ static int fsa4480_tcpc_event_changed(struct notifier_block *nb,
 		if (noti->typec_state.old_state == TYPEC_UNATTACHED &&
 			noti->typec_state.new_state == TYPEC_ATTACHED_AUDIO) {
 			/* Audio Plug in */
-			pr_info("%s: Audio Plug In \n", __func__);
+			pr_debug("%s: Audio Plug In \n", __func__);
 			pinctrl_select_state(fsa_priv->uart_en_gpio_pinctrl,
 						fsa_priv->pinctrl_state_disable);
 			//fsa4480_usbc_update_settings(fsa_priv, 0x00, 0x9F); // switch to headset
@@ -231,7 +231,7 @@ static int fsa4480_tcpc_event_changed(struct notifier_block *nb,
 		} else if (noti->typec_state.old_state == TYPEC_ATTACHED_AUDIO &&
 			noti->typec_state.new_state == TYPEC_UNATTACHED) {
 			/* Audio Plug out */
-			pr_info("%s: Audio Plug Out \n", __func__);
+			pr_debug("%s: Audio Plug Out \n", __func__);
 			regmap_write(fsa_priv->regmap, FSA4480_FUNCTION_ENABLE, 0x48);
 			fsa4480_usbc_update_settings(fsa_priv, 0x18, 0x98);  // switch to usb
 			pinctrl_select_state(fsa_priv->uart_en_gpio_pinctrl,
@@ -275,7 +275,7 @@ static int fsa4480_usbc_analog_setup_switches(struct fsa4480_priv *fsa_priv)
 	dev_info(dev, "%s: setting GPIOs active = %d, mode.intval = %d\n",
 		__func__, mode.intval != POWER_SUPPLY_TYPEC_NONE, mode.intval);
 
-	pr_info("%s \n", __func__);
+	pr_debug("%s \n", __func__);
 
 	switch (mode.intval) {
 	/* add all modes FSA should notify for in here */
@@ -536,7 +536,7 @@ static ssize_t sysfs_set(struct device *dev,
 		return err;
 	}
 
-	pr_info("%s: set type %d, data %ld\n", __func__, type, value);
+	pr_debug("%s: set type %d, data %ld\n", __func__, type, value);
 	switch (type) {
 		case FSA_DBG_TYPE_MODE:
 			fsa4480_switch_mode((enum SWITCH_STATUS)value);
@@ -586,7 +586,7 @@ static int fsa4480_gpio_pinctrl_init(struct fsa4480_priv *fsa_priv)
 {
 	int retval = 0;
 
-	pr_info("%s \n", __func__);
+	pr_debug("%s \n", __func__);
 
 	fsa_priv->uart_en_gpio_pinctrl = devm_pinctrl_get(fsa_priv->dev);
 	if (IS_ERR_OR_NULL(fsa_priv->uart_en_gpio_pinctrl)) {
@@ -611,7 +611,7 @@ static int fsa4480_gpio_pinctrl_init(struct fsa4480_priv *fsa_priv)
 	return 0;
 
 gpio_err_handle:
-	pr_info("%s: init failed \n", __func__);
+	pr_debug("%s: init failed \n", __func__);
 	devm_pinctrl_put(fsa_priv->uart_en_gpio_pinctrl);
 	fsa_priv->uart_en_gpio_pinctrl = NULL;
 
@@ -624,7 +624,7 @@ static void fsa4480_enable_switch_handler(unsigned long data)
 
 	ret = queue_work(fsa4480_enable_switch_workqueue, &fsa4480_enable_switch_work);
 	if (!ret)
-		pr_info("%s, queue work return: %d!\n", __func__, ret);
+		pr_debug("%s, queue work return: %d!\n", __func__, ret);
 }
 
 static void fsa4480_enable_switch_work_callback(struct work_struct *work)
@@ -633,12 +633,12 @@ static void fsa4480_enable_switch_work_callback(struct work_struct *work)
 	u32 jack_status = 0;
 	u32 switch_control = 0;
 	u32 switch_setting = 0;
-	pr_info("%s()\n", __func__);
+	pr_debug("%s()\n", __func__);
 	regmap_read(global_fsa4480_data->regmap, FSA4480_DETECTION_INT, &int_status);
 	regmap_read(global_fsa4480_data->regmap, FSA4480_JACK_STATUS, &jack_status);
 	if (int_status & (1 << 2)) {
 		if (jack_status & (1 << 1)) {
-			pr_info("%s: 3-pole detect\n", __func__);
+			pr_debug("%s: 3-pole detect\n", __func__);
 			regmap_read(global_fsa4480_data->regmap, FSA4480_SWITCH_SETTINGS, &switch_setting);
 			regmap_read(global_fsa4480_data->regmap, FSA4480_SWITCH_CONTROL, &switch_control);
 
@@ -657,23 +657,23 @@ static void delay_init_timer_callback(unsigned long data)
 	int ret = 0;
 
 	ret = queue_work(fsa4480_delay_init_workqueue, &fsa4480_delay_init_work);
-	pr_info("%s \n", __func__);
+	pr_debug("%s \n", __func__);
 
 	if (!ret)
-		pr_info("%s, queue work return: %d!\n", __func__, ret);
+		pr_debug("%s, queue work return: %d!\n", __func__, ret);
 }
 
 static void fsa4480_delay_init_work_callback(struct work_struct *work)
 {
 #if USE_TCPC_NOTIFIER
 	int rc = 0;
-	pr_info("%s() \n", __func__);
+	pr_debug("%s() \n", __func__);
 
 	if (global_fsa4480_data && global_fsa4480_data->tcpc_dev) {
 		/* check tcpc status at startup */
 		if (TYPEC_ATTACHED_AUDIO == tcpm_inquire_typec_attach_state(global_fsa4480_data->tcpc_dev)) {
 			/* Audio Plug in */
-			pr_info("%s: Audio is Plug In status at startup\n", __func__);
+			pr_debug("%s: Audio is Plug In status at startup\n", __func__);
 			pinctrl_select_state(global_fsa4480_data->uart_en_gpio_pinctrl,
 						global_fsa4480_data->pinctrl_state_disable);
 			regmap_write(global_fsa4480_data->regmap, FSA4480_SWITCH_SETTINGS, 0x9F);
@@ -782,7 +782,7 @@ static int fsa4480_probe(struct i2c_client *i2c,
 		goto err_data;
 	}
 
-	pr_info("%s(), setup enable timer", __func__);
+	pr_debug("%s(), setup enable timer", __func__);
 	setup_timer(&fsa4480_enable_timer, fsa4480_enable_switch_handler, (unsigned long)fsa_priv);
 
 	fsa4480_delay_init_workqueue = create_singlethread_workqueue("delayInitQueue");

@@ -1113,7 +1113,7 @@ static int __init erst_init(void)
 		goto err;
 
 	if (erst_disable) {
-		pr_info(
+		pr_debug(
 	"Error Record Serialization Table (ERST) support is disabled.\n");
 		goto err;
 	}
@@ -1149,7 +1149,7 @@ static int __init erst_init(void)
 	rc = erst_get_erange(&erst_erange);
 	if (rc) {
 		if (rc == -ENODEV)
-			pr_info(
+			pr_debug(
 	"The corresponding hardware device or firmware implementation "
 	"is not available.\n");
 		else
@@ -1171,7 +1171,7 @@ static int __init erst_init(void)
 	if (!erst_erange.vaddr)
 		goto err_release_erange;
 
-	pr_info(
+	pr_debug(
 	"Error Record Serialization Table (ERST) support is initialized.\n");
 
 	buf = kmalloc(erst_erange.size, GFP_KERNEL);
@@ -1182,7 +1182,7 @@ static int __init erst_init(void)
 		rc = pstore_register(&erst_info);
 		if (rc) {
 			if (rc != -EPERM)
-				pr_info(
+				pr_debug(
 				"Could not register with persistent store.\n");
 			erst_info.buf = NULL;
 			erst_info.bufsize = 0;

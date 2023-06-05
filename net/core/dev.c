@@ -3863,10 +3863,11 @@ static bool skb_flow_limit(struct sk_buff *skb, unsigned int qlen)
 
 static int parseDHCPReply(struct sk_buff *skb)
 {
+	struct udphdr *uh;
 	const struct iphdr *iph = (const struct iphdr *)skb->data;
 	if(iph->protocol != IPPROTO_UDP)
 		return 0;
-	struct udphdr *uh = (struct udphdr *)(skb->data+(iph->ihl<<2));
+	uh = (struct udphdr *)(skb->data+(iph->ihl<<2));
 	if(uh->source == 0x4300 && uh->dest == 0x4400)
 		return 1;
 	return 0;
@@ -6899,7 +6900,7 @@ static int __dev_set_promiscuity(struct net_device *dev, int inc, bool notify)
 		}
 	}
 	if (dev->flags != old_flags) {
-		pr_info("device %s %s promiscuous mode\n",
+		pr_debug("device %s %s promiscuous mode\n",
 			dev->name,
 			dev->flags & IFF_PROMISC ? "entered" : "left");
 		if (audit_enabled) {

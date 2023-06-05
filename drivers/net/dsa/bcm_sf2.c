@@ -685,7 +685,7 @@ static void bcm_sf2_sw_adjust_link(struct dsa_switch *ds, int port,
 
 	reg_writel(priv, reg, REG_RGMII_CNTRL_P(port));
 
-	pr_info("Port %d configured for %s\n", port, str);
+	pr_debug("Port %d configured for %s\n", port, str);
 
 force_link:
 	/* Force link settings detected from the PHY */
@@ -1295,7 +1295,7 @@ static int bcm_sf2_sw_probe(struct platform_device *pdev)
 	if (ret)
 		goto out_mdio;
 
-	pr_info("Starfighter 2 top: %x.%02x, core: %x.%02x base: 0x%p, IRQs: %d, %d\n",
+	pr_debug("Starfighter 2 top: %x.%02x, core: %x.%02x base: 0x%p, IRQs: %d, %d\n",
 		priv->hw_params.top_rev >> 8, priv->hw_params.top_rev & 0xff,
 		priv->hw_params.core_rev >> 8, priv->hw_params.core_rev & 0xff,
 		priv->core, priv->irq0, priv->irq1);

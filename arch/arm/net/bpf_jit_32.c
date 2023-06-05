@@ -1217,7 +1217,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx)
 #define check_imm(bits, imm) do {				\
 	if ((((imm) > 0) && ((imm) >> (bits))) ||		\
 	    (((imm) < 0) && (~(imm) >> (bits)))) {		\
-		pr_info("[%2d] imm=%d(0x%x) out of range\n",	\
+		pr_debug("[%2d] imm=%d(0x%x) out of range\n",	\
 			i, imm, imm);				\
 		return -EINVAL;					\
 	}							\
@@ -1751,7 +1751,7 @@ go_jmp:
 		emit(ARM_B(jmp_offset), ctx);
 		break;
 notyet:
-		pr_info_once("*** NOT YET: opcode %02x ***\n", code);
+		pr_debug_once("*** NOT YET: opcode %02x ***\n", code);
 		return -EFAULT;
 	default:
 		pr_err_once("unknown opcode %02x\n", code);

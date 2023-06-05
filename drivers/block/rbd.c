@@ -5039,7 +5039,7 @@ static int rbd_dev_v2_parent_info(struct rbd_device *rbd_dev)
 		if (rbd_dev->parent_overlap) {
 			rbd_dev->parent_overlap = 0;
 			rbd_dev_parent_put(rbd_dev);
-			pr_info("%s: clone image has been flattened\n",
+			pr_debug("%s: clone image has been flattened\n",
 				rbd_dev->disk->disk_name);
 		}
 
@@ -5927,7 +5927,7 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
 		return 0;
 
 	if (++depth > RBD_MAX_PARENT_CHAIN_LEN) {
-		pr_info("parent chain is too long (%d)\n", depth);
+		pr_debug("parent chain is too long (%d)\n", depth);
 		ret = -EINVAL;
 		goto out_err;
 	}
@@ -6083,7 +6083,7 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
 		ret = rbd_register_watch(rbd_dev);
 		if (ret) {
 			if (ret == -ENOENT)
-				pr_info("image %s/%s does not exist\n",
+				pr_debug("image %s/%s does not exist\n",
 					rbd_dev->spec->pool_name,
 					rbd_dev->spec->image_name);
 			goto err_out_format;
@@ -6109,7 +6109,7 @@ static int rbd_dev_image_probe(struct rbd_device *rbd_dev, int depth)
 		ret = rbd_spec_fill_names(rbd_dev);
 	if (ret) {
 		if (ret == -ENOENT)
-			pr_info("snap %s/%s@%s does not exist\n",
+			pr_debug("snap %s/%s@%s does not exist\n",
 				rbd_dev->spec->pool_name,
 				rbd_dev->spec->image_name,
 				rbd_dev->spec->snap_name);
@@ -6184,7 +6184,7 @@ static ssize_t do_rbd_add(struct bus_type *bus,
 	rc = rbd_add_get_pool_id(rbdc, spec->pool_name);
 	if (rc < 0) {
 		if (rc == -ENOENT)
-			pr_info("pool %s does not exist\n", spec->pool_name);
+			pr_debug("pool %s does not exist\n", spec->pool_name);
 		goto err_out_client;
 	}
 	spec->pool_id = (u64)rc;
@@ -6239,7 +6239,7 @@ static ssize_t do_rbd_add(struct bus_type *bus,
 	list_add_tail(&rbd_dev->node, &rbd_dev_list);
 	spin_unlock(&rbd_dev_list_lock);
 
-	pr_info("%s: capacity %llu features 0x%llx\n", rbd_dev->disk->disk_name,
+	pr_debug("%s: capacity %llu features 0x%llx\n", rbd_dev->disk->disk_name,
 		(unsigned long long)get_capacity(rbd_dev->disk) << SECTOR_SHIFT,
 		rbd_dev->header.features);
 	rc = count;
@@ -6502,9 +6502,9 @@ static int __init rbd_init(void)
 		goto err_out_blkdev;
 
 	if (single_major)
-		pr_info("loaded (major %d)\n", rbd_major);
+		pr_debug("loaded (major %d)\n", rbd_major);
 	else
-		pr_info("loaded\n");
+		pr_debug("loaded\n");
 
 	return 0;
 

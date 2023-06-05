@@ -2333,7 +2333,7 @@ static void btrfs_interface_exit(void)
 
 static void btrfs_print_mod_info(void)
 {
-	pr_info("Btrfs loaded, crc32c=%s"
+	pr_debug("Btrfs loaded, crc32c=%s"
 #ifdef CONFIG_BTRFS_DEBUG
 			", debug=on"
 #endif

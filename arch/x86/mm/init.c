@@ -756,7 +756,7 @@ void free_init_pages(char *what, unsigned long begin, unsigned long end)
 	 * create a kernel page fault:
 	 */
 	if (debug_pagealloc_enabled()) {
-		pr_info("debug: unmapping init [mem %#010lx-%#010lx]\n",
+		pr_debug("debug: unmapping init [mem %#010lx-%#010lx]\n",
 			begin, end - 1);
 		set_memory_np(begin, (end - begin) >> PAGE_SHIFT);
 	} else {

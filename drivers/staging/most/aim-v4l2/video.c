@@ -492,7 +492,7 @@ static int aim_probe_channel(struct most_interface *iface, int channel_idx,
 	int ret;
 	struct most_video_dev *mdev = get_aim_dev(iface, channel_idx);
 
-	pr_info("aim_probe_channel(%s)\n", name);
+	pr_debug("aim_probe_channel(%s)\n", name);
 
 	if (mdev) {
 		pr_err("channel already linked\n");

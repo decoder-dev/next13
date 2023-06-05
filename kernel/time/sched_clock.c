@@ -271,7 +271,7 @@ sched_clock_register(u64 (*read)(void), int bits, unsigned long rate)
 	/* Calculate the ns resolution of this counter */
 	res = cyc_to_ns(1ULL, new_mult, new_shift);
 
-	pr_info("sched_clock: %u bits at %lu%cHz, resolution %lluns, wraps every %lluns\n",
+	pr_debug("sched_clock: %u bits at %lu%cHz, resolution %lluns, wraps every %lluns\n",
 		bits, r, r_unit, res, wrap);
 
 	/* Enable IRQ time accounting if we have a fast enough sched_clock() */
@@ -375,7 +375,7 @@ void sched_clock_resume(void)
 
 	rd->epoch_cyc = cd.actual_read_sched_clock();
 	resume_cycles = rd->epoch_cyc;
-	pr_info("resume cycles:%17llu\n", rd->epoch_cyc);
+	pr_debug("resume cycles:%17llu\n", rd->epoch_cyc);
 
 	hrtimer_start(&sched_clock_timer, cd.wrap_kt, HRTIMER_MODE_REL);
 	rd->read_sched_clock = cd.actual_read_sched_clock;

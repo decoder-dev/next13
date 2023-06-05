@@ -38,7 +38,7 @@ void init_scb(void)
 	unsigned int i, j;
 	unsigned char scb_tmp_prio[32];
 
-	pr_info("Init System Crossbar\n");
+	pr_debug("Init System Crossbar\n");
 	for (i = 0; scb_data[i].scb_mi_arbr > 0; ++i) {
 
 		scb_mi_write(scb_data[i].scb_mi_arbw, scb_data[i].scb_mi_slots, scb_data[i].scb_mi_prio);

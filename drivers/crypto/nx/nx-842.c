@@ -418,7 +418,7 @@ usesw:
 			dst = ctx->dbounce;
 			dlen = BOUNCE_BUFFER_SIZE;
 		}
-		pr_info_ratelimited("using software 842 decompression\n");
+		pr_debug_ratelimited("using software 842 decompression\n");
 		ret = sw842_decompress(src, slen, dst, &dlen);
 	}
 	if (ret)

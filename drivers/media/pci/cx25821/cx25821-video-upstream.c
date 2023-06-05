@@ -246,7 +246,7 @@ void cx25821_stop_upstream_video(struct cx25821_channel *chan)
 	u32 tmp = 0;
 
 	if (!out->_is_running) {
-		pr_info("No video file is currently running so return!\n");
+		pr_debug("No video file is currently running so return!\n");
 		return;
 	}
 
@@ -390,7 +390,7 @@ static int cx25821_upstream_buffer_prepare(struct cx25821_channel *chan,
 	ret = cx25821_risc_buffer_upstream(chan, dev->pci, 0, bpl,
 			out->_lines_count);
 	if (ret < 0) {
-		pr_info("Failed creating Video Upstream Risc programs!\n");
+		pr_debug("Failed creating Video Upstream Risc programs!\n");
 		goto error;
 	}
 
@@ -610,7 +610,7 @@ int cx25821_vidupstream_init(struct cx25821_channel *chan,
 	int risc_buffer_size = 0;
 
 	if (out->_is_running) {
-		pr_info("Video Channel is still running so return!\n");
+		pr_debug("Video Channel is still running so return!\n");
 		return 0;
 	}
 

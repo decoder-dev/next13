@@ -128,7 +128,7 @@ static void mt_auxadc_update_cali(struct device *dev)
 		ret = of_property_read_u32(np, "mediatek,cali-en-bit",
 			&adc_cali.efuse_en_bs);
 		if (ret == 0)
-			pr_info("find node mediatek,cali-en-bit:%d\n",
+			pr_debug("find node mediatek,cali-en-bit:%d\n",
 				adc_cali.efuse_en_bs);
 		else
 			return;
@@ -136,7 +136,7 @@ static void mt_auxadc_update_cali(struct device *dev)
 		ret = of_property_read_u32(np, "mediatek,cali-ge-bit",
 			&adc_cali.efuse_ge_bs);
 		if (ret == 0)
-			pr_info("find node mediatek,cali-ge-bit:%d\n",
+			pr_debug("find node mediatek,cali-ge-bit:%d\n",
 				adc_cali.efuse_ge_bs);
 		else
 			return;
@@ -144,7 +144,7 @@ static void mt_auxadc_update_cali(struct device *dev)
 		ret = of_property_read_u32(np, "mediatek,cali-oe-bit",
 			&adc_cali.efuse_oe_bs);
 		if (ret == 0)
-			pr_info("find node mediatek,cali-oe-bit:%d\n",
+			pr_debug("find node mediatek,cali-oe-bit:%d\n",
 				adc_cali.efuse_oe_bs);
 		else
 			return;
@@ -152,7 +152,7 @@ static void mt_auxadc_update_cali(struct device *dev)
 		ret = of_property_read_u32(np, "mediatek,cali-efuse-index",
 			&adc_cali.efuse_idx);
 		if (ret == 0)
-			pr_info("find node mediatek,cali-efuse-index:%d\n",
+			pr_debug("find node mediatek,cali-efuse-index:%d\n",
 				adc_cali.efuse_idx);
 		else
 			return;

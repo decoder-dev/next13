@@ -330,7 +330,7 @@ static int epic_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
 
 /* when built into the kernel, we only print version if device is found */
 #ifndef MODULE
-	pr_info_once("%s%s\n", version, version2);
+	pr_debug_once("%s%s\n", version, version2);
 #endif
 
 	card_idx++;
@@ -1562,7 +1562,7 @@ static int __init epic_init (void)
 {
 /* when a module, this is printed whether or not devices are found in probe */
 #ifdef MODULE
-	pr_info("%s%s\n", version, version2);
+	pr_debug("%s%s\n", version, version2);
 #endif
 
 	return pci_register_driver(&epic_driver);

@@ -457,7 +457,7 @@ err_clk_bus:
 err_mem:
 	iounmap(evt->gpt_base);
 	if (of_address_to_resource(node, 0, &res)) {
-		pr_info("Failed to parse resource\n");
+		pr_debug("Failed to parse resource\n");
 		goto err_kzalloc;
 	}
 	release_mem_region(res.start, resource_size(&res));
@@ -510,7 +510,7 @@ static struct miscdevice mt_xgpt_miscdev = {
 
 static int __init mtk_timer_mod_init(void)
 {
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	/* register miscdev node for userspace accessing */
 	if (misc_register(&mt_xgpt_miscdev))

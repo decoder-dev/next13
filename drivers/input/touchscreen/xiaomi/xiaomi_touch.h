@@ -47,19 +47,19 @@ do {\
 #define MI_TOUCH_LOGI(level, fmt, args...)\
 do {\
 	if (mi_log_level >= TOUCH_INFO && level == 1)\
-		pr_info(fmt"\n", ##args);\
+		pr_debug(fmt"\n", ##args);\
 } while(0)
 
 #define MI_TOUCH_LOGN(level, fmt, args...)\
 do {\
 	if (mi_log_level >= TOUCH_NOTICE && level == 1)\
-		pr_info(fmt"\n", ##args);\
+		pr_debug(fmt"\n", ##args);\
 } while(0)
 
 #define MI_TOUCH_LOGD(level, fmt, args...)\
 do {\
 	if (mi_log_level == TOUCH_DEBUG && level == 1)\
-		pr_info(fmt"\n", ##args);\
+		pr_debug(fmt"\n", ##args);\
 } while(0)
 
 enum MODE_CMD {

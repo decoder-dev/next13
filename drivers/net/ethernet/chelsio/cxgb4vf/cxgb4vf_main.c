@@ -2798,7 +2798,7 @@ static int cxgb4vf_pci_probe(struct pci_dev *pdev,
 	 * Print our driver banner the first time we're called to initialize a
 	 * device.
 	 */
-	pr_info_once("%s - version %s\n", DRV_DESC, DRV_VERSION);
+	pr_debug_once("%s - version %s\n", DRV_DESC, DRV_VERSION);
 
 	/*
 	 * Initialize generic PCI device state.

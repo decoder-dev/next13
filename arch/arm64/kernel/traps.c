@@ -373,7 +373,7 @@ static void force_signal_inject(int signal, int code, struct pt_regs *regs,
 
 	if (unhandled_signal(current, signal) &&
 	    show_unhandled_signals_ratelimited()) {
-		pr_info("%s[%d]: %s: pc=%p\n",
+		pr_debug("%s[%d]: %s: pc=%p\n",
 			current->comm, task_pid_nr(current), desc, pc);
 		dump_instr(KERN_INFO, regs);
 	}

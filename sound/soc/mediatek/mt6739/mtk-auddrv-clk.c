@@ -1367,7 +1367,7 @@ void DisableALLbySampleRate(unsigned int SampleRate)
 		}
 		break;
 	default:
-		pr_info("%s(), invalid SampleRate %d\n", __func__, SampleRate);
+		pr_debug("%s(), invalid SampleRate %d\n", __func__, SampleRate);
 		break;
 	}
 }

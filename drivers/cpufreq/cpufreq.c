@@ -442,12 +442,12 @@ static void cpufreq_list_transition_notifiers(void)
 {
 	struct notifier_block *nb;
 
-	pr_info("Registered transition notifiers:\n");
+	pr_debug("Registered transition notifiers:\n");
 
 	mutex_lock(&cpufreq_transition_notifier_list.mutex);
 
 	for (nb = cpufreq_transition_notifier_list.head; nb; nb = nb->next)
-		pr_info("%pF\n", nb->notifier_call);
+		pr_debug("%pF\n", nb->notifier_call);
 
 	mutex_unlock(&cpufreq_transition_notifier_list.mutex);
 }
@@ -2228,7 +2228,7 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
 	* because new_policy is a copy of policy with one field updated.
 	*/
 	if (new_policy->min > new_policy->max)
-		new_policy->min = new_policy->max;
+		return -EINVAL;
 
 	/* verify the cpu speed can be set within this limit */
 	ret = cpufreq_driver->verify(new_policy);

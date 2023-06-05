@@ -49,7 +49,7 @@ int ncp_getopt(const char *caller, char **options, const struct ncp_option *opts
 				if (opts->has_arg & OPT_NOPARAM) {
 					return opts->val;
 				}
-				pr_info("%s: the %s option requires an argument\n",
+				pr_debug("%s: the %s option requires an argument\n",
 					caller, token);
 				return -EINVAL;
 			}
@@ -57,7 +57,7 @@ int ncp_getopt(const char *caller, char **options, const struct ncp_option *opts
 				int rc = kstrtoul(val, 0, value);
 
 				if (rc) {
-					pr_info("%s: invalid numeric value in %s=%s\n",
+					pr_debug("%s: invalid numeric value in %s=%s\n",
 						caller, token, val);
 					return rc;
 				}
@@ -66,11 +66,11 @@ int ncp_getopt(const char *caller, char **options, const struct ncp_option *opts
 			if (opts->has_arg & OPT_STRING) {
 				return opts->val;
 			}
-			pr_info("%s: unexpected argument %s to the %s option\n",
+			pr_debug("%s: unexpected argument %s to the %s option\n",
 				caller, val, token);
 			return -EINVAL;
 		}
 	}
-	pr_info("%s: Unrecognized mount option %s\n", caller, token);
+	pr_debug("%s: Unrecognized mount option %s\n", caller, token);
 	return -EOPNOTSUPP;
 }

@@ -776,7 +776,7 @@ void __init hpte_init_pseries(void)
 
 void radix_init_pseries(void)
 {
-	pr_info("Using radix MMU under hypervisor\n");
+	pr_debug("Using radix MMU under hypervisor\n");
 	register_process_table = pseries_lpar_register_process_table;
 }
 

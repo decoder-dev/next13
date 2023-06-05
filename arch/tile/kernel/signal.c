@@ -320,7 +320,7 @@ static int __init crashinfo(char *str)
 		word = "Detailed";
 		break;
 	}
-	pr_info("%s crash reports will be generated on the console\n", word);
+	pr_debug("%s crash reports will be generated on the console\n", word);
 	return 1;
 }
 __setup("crashinfo", crashinfo);

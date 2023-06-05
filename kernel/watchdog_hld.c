@@ -175,7 +175,7 @@ static int hardlockup_detector_event_create(void)
 	evt = perf_event_create_kernel_counter(wd_attr, cpu, NULL,
 					       watchdog_overflow_callback, NULL);
 	if (IS_ERR(evt)) {
-		pr_info("Perf event create on CPU %d failed with %ld\n", cpu,
+		pr_debug("Perf event create on CPU %d failed with %ld\n", cpu,
 			PTR_ERR(evt));
 		return PTR_ERR(evt);
 	}
@@ -193,7 +193,7 @@ void hardlockup_detector_perf_enable(void)
 
 	/* use original value for check */
 	if (!atomic_fetch_inc(&watchdog_cpus))
-		pr_info("Enabled. Permanently consumes one hw-PMU counter.\n");
+		pr_debug("Enabled. Permanently consumes one hw-PMU counter.\n");
 
 	perf_event_enable(this_cpu_read(watchdog_ev));
 }
@@ -286,7 +286,7 @@ int __init hardlockup_detector_perf_init(void)
 	int ret = hardlockup_detector_event_create();
 
 	if (ret) {
-		pr_info("Perf NMI watchdog permanently disabled\n");
+		pr_debug("Perf NMI watchdog permanently disabled\n");
 	} else {
 		perf_event_release_kernel(this_cpu_read(watchdog_ev));
 		this_cpu_write(watchdog_ev, NULL);

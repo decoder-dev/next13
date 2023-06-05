@@ -727,7 +727,7 @@ int mtd_device_parse_register(struct mtd_info *mtd, const char * const *types,
 		};
 	} else if (ret < 0) {
 		/* Didn't come up with parsed OR fallback partitions */
-		pr_info("mtd: failed to find partitions; one or more parsers reports errors (%d)\n",
+		pr_debug("mtd: failed to find partitions; one or more parsers reports errors (%d)\n",
 			ret);
 		/* Don't abort on errors; we can still use unpartitioned MTD */
 		memset(&parsed, 0, sizeof(parsed));

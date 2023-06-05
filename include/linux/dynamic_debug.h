@@ -59,7 +59,7 @@ void __dynamic_pr_crit(struct _ddebug *descriptor, const char *fmt, ...);
 void __dynamic_pr_err(struct _ddebug *descriptor, const char *fmt, ...);
 void __dynamic_pr_warn(struct _ddebug *descriptor, const char *fmt, ...);
 void __dynamic_pr_notice(struct _ddebug *descriptor, const char *fmt, ...);
-void __dynamic_pr_info(struct _ddebug *descriptor, const char *fmt, ...);
+void __dynamic_pr_debug(struct _ddebug *descriptor, const char *fmt, ...);
 void __dynamic_pr_debug(struct _ddebug *descriptor, const char *fmt, ...);
 
 extern int ddebug_dyndbg_module_param_cb(char *param, char *val,
@@ -211,7 +211,7 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
 		printk(KERN_NOTICE KLOG_MODNAME pr_fmt(fmt), ##__VA_ARGS__); \
 })
 
-#define dynamic_pr_info(fmt, ...)                \
+#define dynamic_pr_debug(fmt, ...)                \
 ({ \
 	static bool __print_once __read_mostly; \
 	if (!__print_once) { \
@@ -219,7 +219,7 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
 		if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT)) \
 			barrier();   \
 		__print_once = true; \
-		__dynamic_pr_info(&descriptor, pr_fmt(fmt), \
+		__dynamic_pr_debug(&descriptor, pr_fmt(fmt), \
 			##__VA_ARGS__);      \
 	}   else \
 		printk(KERN_INFO KLOG_MODNAME pr_fmt(fmt), ##__VA_ARGS__); \

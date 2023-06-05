@@ -208,7 +208,7 @@ static int memtrace_init_regions_runtime(u64 size)
 			continue;
 		}
 
-		pr_info("Allocated trace memory on node %d at 0x%016llx\n", nid, m);
+		pr_debug("Allocated trace memory on node %d at 0x%016llx\n", nid, m);
 
 		memtrace_array[memtrace_array_nr].start = m;
 		memtrace_array[memtrace_array_nr].size = size;

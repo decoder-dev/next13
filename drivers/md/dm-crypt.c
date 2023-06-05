@@ -1646,7 +1646,7 @@ static int crypt_dev_id(const char *path)
 		type = 1;
 	}
 
-	pr_info("[dm-crypt] dev path: %s, type: %d\n", path, type);
+	pr_debug("[dm-crypt] dev path: %s, type: %d\n", path, type);
 
 	return type;
 }
@@ -3012,8 +3012,7 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	if (test_bit(DM_CRYPT_SAME_CPU, &cc->flags))
 		cc->crypt_queue = alloc_workqueue("kcryptd", WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM, 1);
 	else
-		cc->crypt_queue = alloc_workqueue("kcryptd",
-						  WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM | WQ_UNBOUND,
+		cc->crypt_queue = alloc_workqueue("kcryptd", WQ_HIGHPRI | WQ_MEM_RECLAIM | WQ_UNBOUND,
 						  num_online_cpus());
 	if (!cc->crypt_queue) {
 		ti->error = "Couldn't create kcryptd queue";

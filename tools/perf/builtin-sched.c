@@ -655,7 +655,7 @@ static void create_tasks(struct perf_sched *sched)
 	err = pthread_attr_init(&attr);
 	BUG_ON(err);
 	err = pthread_attr_setstacksize(&attr,
-			(size_t) max(16 * 1024, PTHREAD_STACK_MIN));
+			(size_t) max(16 * 1024, (int)PTHREAD_STACK_MIN));
 	BUG_ON(err);
 	err = pthread_mutex_lock(&sched->start_work_mutex);
 	BUG_ON(err);
@@ -2884,7 +2884,7 @@ static int timehist_check_attr(struct perf_sched *sched,
 
 		if (sched->show_callchain &&
 		    !(evsel->attr.sample_type & PERF_SAMPLE_CALLCHAIN)) {
-			pr_info("Samples do not have callchains.\n");
+			pr_debug("Samples do not have callchains.\n");
 			sched->show_callchain = 0;
 			symbol_conf.use_callchain = 0;
 		}

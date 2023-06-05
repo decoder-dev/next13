@@ -130,7 +130,7 @@ static void __nocfi __apply_alternatives(void *alt_region, bool use_linear_alias
 		else
 			BUG_ON(alt->alt_len != alt->orig_len);
 
-		pr_info_once("patching kernel code\n");
+		pr_debug_once("patching kernel code\n");
 
 		origptr = ALT_ORIG_PTR(alt);
 		updptr = use_linear_alias ? lm_alias(origptr) : origptr;

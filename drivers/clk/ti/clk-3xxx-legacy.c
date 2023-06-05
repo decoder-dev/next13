@@ -4589,7 +4589,7 @@ static void __init omap3_clk_legacy_common_init(void)
 	omap2_clk_enable_init_clocks(enable_init_clks,
 				     ARRAY_SIZE(enable_init_clks));
 
-	pr_info("Clocking rate (Crystal/Core/MPU): %ld.%01ld/%ld/%ld MHz\n",
+	pr_debug("Clocking rate (Crystal/Core/MPU): %ld.%01ld/%ld/%ld MHz\n",
 		(clk_get_rate(osc_sys_ck.clk) / 1000000),
 		(clk_get_rate(osc_sys_ck.clk) / 100000) % 10,
 		(clk_get_rate(core_ck.clk) / 1000000),

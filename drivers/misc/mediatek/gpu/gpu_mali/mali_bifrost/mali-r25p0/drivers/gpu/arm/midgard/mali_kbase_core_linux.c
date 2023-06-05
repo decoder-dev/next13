@@ -741,6 +741,8 @@ static int kbase_file_create_kctx(struct kbase_file *const kfile,
 #ifdef CONFIG_DEBUG_FS
 	snprintf(kctx_name, 64, "%d_%d", kctx->tgid, kctx->id);
 
+	mutex_init(&kctx->mem_profile_lock);
+
 	kctx->kctx_dentry = debugfs_create_dir(kctx_name,
 			kbdev->debugfs_ctx_directory);
 
@@ -760,8 +762,6 @@ static int kbase_file_create_kctx(struct kbase_file *const kfile,
 #endif
 		debugfs_create_file("force_same_va", 0600, kctx->kctx_dentry,
 			kctx, &kbase_force_same_va_fops);
-
-		mutex_init(&kctx->mem_profile_lock);
 
 		kbase_context_debugfs_init(kctx);
 	}
@@ -1864,7 +1864,7 @@ void kbase_event_wakeup(struct kbase_context *kctx)
 {
 	KBASE_DEBUG_ASSERT(kctx);
 
-	wake_up_interruptible(&kctx->event_queue);
+	wake_up_interruptible_sync(&kctx->event_queue);
 }
 
 KBASE_EXPORT_TEST_API(kbase_event_wakeup);
@@ -4528,13 +4528,8 @@ static int kbase_device_resume(struct device *dev)
 #if defined(CONFIG_MALI_DEVFREQ) && \
 		(LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
 	dev_dbg(dev, "Callback %s\n", __func__);
-	if (kbdev->devfreq) {
-		mutex_lock(&kbdev->pm.lock);
-		if (kbdev->pm.active_count > 0)
-			kbase_devfreq_enqueue_work(kbdev, DEVFREQ_WORK_RESUME);
-		mutex_unlock(&kbdev->pm.lock);
-		flush_workqueue(kbdev->devfreq_queue.workq);
-	}
+	if (kbdev->devfreq)
+		kbase_devfreq_enqueue_work(kbdev, DEVFREQ_WORK_RESUME);
 #endif
 	return 0;
 }
@@ -4670,6 +4665,7 @@ static struct platform_driver kbase_platform_driver = {
 		   .owner = THIS_MODULE,
 		   .pm = &kbase_pm_ops,
 		   .of_match_table = of_match_ptr(kbase_dt_ids),
+		   .probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 };
 
@@ -4681,7 +4677,7 @@ static struct platform_driver kbase_platform_driver = {
 module_platform_driver(kbase_platform_driver);
 #else
 
-static int __init kbase_driver_init(void)
+static int __kbase_driver_init(void *arg)
 {
 	int ret;
 
@@ -4696,6 +4692,17 @@ static int __init kbase_driver_init(void)
 
 	return ret;
 }
+
+static int __init kbase_driver_init(void)
+{
+	struct task_struct *kbase_driver_init_task =
+		kthread_run(__kbase_driver_init, NULL, "kbase_driver_init");
+	if (IS_ERR(kbase_driver_init_task))
+		return PTR_ERR(kbase_driver_init_task);
+	else
+		return 0;
+}
+
 
 static void __exit kbase_driver_exit(void)
 {

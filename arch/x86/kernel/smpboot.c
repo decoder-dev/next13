@@ -308,7 +308,7 @@ int topology_update_package_map(unsigned int pkg, unsigned int cpu)
 
 	new = logical_packages++;
 	if (new != pkg) {
-		pr_info("CPU %u Converting physical %u to logical package %u\n",
+		pr_debug("CPU %u Converting physical %u to logical package %u\n",
 			cpu, pkg, new);
 	}
 	physical_to_logical_pkg[pkg] = new;
@@ -395,7 +395,7 @@ static void __init smp_init_package_map(struct cpuinfo_x86 *c, unsigned int cpu)
 	size = BITS_TO_LONGS(max_physical_pkg_id) * sizeof(unsigned long);
 	physical_package_map = kzalloc(size, GFP_KERNEL);
 
-	pr_info("Max logical packages: %u\n", __max_logical_packages);
+	pr_debug("Max logical packages: %u\n", __max_logical_packages);
 
 	topology_update_package_map(c->phys_proc_id, cpu);
 }
@@ -632,7 +632,7 @@ static void impress_friends(void)
 	for_each_possible_cpu(cpu)
 		if (cpumask_test_cpu(cpu, cpu_callout_mask))
 			bogosum += cpu_data(cpu).loops_per_jiffy;
-	pr_info("Total of %d processors activated (%lu.%02lu BogoMIPS)\n",
+	pr_debug("Total of %d processors activated (%lu.%02lu BogoMIPS)\n",
 		num_online_cpus(),
 		bogosum/(500000/HZ),
 		(bogosum/(5000/HZ))%100);
@@ -647,10 +647,10 @@ void __inquire_remote_apic(int apicid)
 	int timeout;
 	u32 status;
 
-	pr_info("Inquiring remote APIC 0x%x...\n", apicid);
+	pr_debug("Inquiring remote APIC 0x%x...\n", apicid);
 
 	for (i = 0; i < ARRAY_SIZE(regs); i++) {
-		pr_info("... APIC 0x%x %s: ", apicid, names[i]);
+		pr_debug("... APIC 0x%x %s: ", apicid, names[i]);
 
 		/*
 		 * Wait for idle.
@@ -902,7 +902,7 @@ static void announce_cpu(int cpu, int apicid)
 		pr_cont("%*s#%d", width - num_digits(cpu), " ", cpu);
 
 	} else
-		pr_info("Booting Node %d Processor %d APIC 0x%x\n",
+		pr_debug("Booting Node %d Processor %d APIC 0x%x\n",
 			node, cpu, apicid);
 }
 
@@ -1189,7 +1189,7 @@ void arch_disable_smp_support(void)
  */
 static __init void disable_smp(void)
 {
-	pr_info("SMP disabled\n");
+	pr_debug("SMP disabled\n");
 
 	disable_ioapic_support();
 
@@ -1289,7 +1289,7 @@ static int __init smp_sanity_check(unsigned max_cpus)
 	 * If SMP should be disabled, then really disable it!
 	 */
 	if (!max_cpus) {
-		pr_info("SMP mode deactivated\n");
+		pr_debug("SMP mode deactivated\n");
 		return SMP_FORCE_UP;
 	}
 
@@ -1368,7 +1368,7 @@ void __init native_smp_prepare_cpus(unsigned int max_cpus)
 	default_setup_apic_routing();
 	cpu0_logical_apicid = apic_bsp_setup(false);
 
-	pr_info("CPU0: ");
+	pr_debug("CPU0: ");
 	print_cpu_info(&cpu_data(0));
 
 	uv_system_init();
@@ -1496,7 +1496,7 @@ __init void prefill_possible_map(void)
 
 	nr_cpu_ids = possible;
 
-	pr_info("Allowing %d CPUs, %d hotplug CPUs\n",
+	pr_debug("Allowing %d CPUs, %d hotplug CPUs\n",
 		possible, max_t(int, possible - num_processors, 0));
 
 	reset_cpu_possible_mask();
@@ -1596,7 +1596,7 @@ int common_cpu_die(unsigned int cpu)
 	/* They ack this in play_dead() by setting CPU_DEAD */
 	if (cpu_wait_death(cpu, 5)) {
 		if (system_state == SYSTEM_RUNNING)
-			pr_info("CPU %u is now offline\n", cpu);
+			pr_debug("CPU %u is now offline\n", cpu);
 	} else {
 		pr_err("CPU %u didn't die...\n", cpu);
 		ret = -1;

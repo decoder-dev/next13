@@ -88,14 +88,14 @@ nfp_bpf_check_exit(struct nfp_prog *nfp_prog,
 		char tn_buf[48];
 
 		tnum_strn(tn_buf, sizeof(tn_buf), reg0->var_off);
-		pr_info("unsupported exit state: %d, var_off: %s\n",
+		pr_debug("unsupported exit state: %d, var_off: %s\n",
 			reg0->type, tn_buf);
 		return -EINVAL;
 	}
 
 	imm = reg0->var_off.value;
 	if (nfp_prog->act != NN_ACT_DIRECT && imm != 0 && (imm & ~0U) != ~0U) {
-		pr_info("unsupported exit state: %d, imm: %llx\n",
+		pr_debug("unsupported exit state: %d, imm: %llx\n",
 			reg0->type, imm);
 		return -EINVAL;
 	}
@@ -103,7 +103,7 @@ nfp_bpf_check_exit(struct nfp_prog *nfp_prog,
 	if (nfp_prog->act == NN_ACT_DIRECT && imm <= TC_ACT_REDIRECT &&
 	    imm != TC_ACT_SHOT && imm != TC_ACT_STOLEN &&
 	    imm != TC_ACT_QUEUED) {
-		pr_info("unsupported exit state: %d, imm: %llx\n",
+		pr_debug("unsupported exit state: %d, imm: %llx\n",
 			reg0->type, imm);
 		return -EINVAL;
 	}

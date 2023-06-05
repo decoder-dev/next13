@@ -1598,7 +1598,7 @@ static int __init audit_init(void)
 	for (i = 0; i < AUDIT_INODE_BUCKETS; i++)
 		INIT_LIST_HEAD(&audit_inode_hash[i]);
 
-	pr_info("initializing netlink subsys (%s)\n",
+	pr_debug("initializing netlink subsys (%s)\n",
 		audit_default ? "enabled" : "disabled");
 	register_pernet_subsys(&audit_net_ops);
 
@@ -1627,7 +1627,7 @@ static int __init audit_enable(char *str)
 	audit_enabled = audit_default;
 	audit_ever_enabled = !!audit_enabled;
 
-	pr_info("%s\n", audit_default ?
+	pr_debug("%s\n", audit_default ?
 		"enabled (after initialization)" : "disabled (until reboot)");
 
 	return 1;
@@ -1640,7 +1640,7 @@ static int __init audit_backlog_limit_set(char *str)
 {
 	u32 audit_backlog_limit_arg;
 
-	pr_info("audit_backlog_limit: ");
+	pr_debug("audit_backlog_limit: ");
 	if (kstrtouint(str, 0, &audit_backlog_limit_arg)) {
 		pr_cont("using default of %u, unable to parse %s\n",
 			audit_backlog_limit, str);

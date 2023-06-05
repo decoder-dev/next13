@@ -59,11 +59,11 @@ static void __init bert_print_all(struct acpi_bert_region *region,
 			return;
 		}
 
-		pr_info_once("Error records from previous boot:\n");
+		pr_debug_once("Error records from previous boot:\n");
 		if (region_len < ACPI_BERT_PRINT_MAX_LEN)
 			cper_estatus_print(KERN_INFO HW_ERR, estatus);
 		else
-			pr_info_once("Max print length exceeded, table data is available at:\n"
+			pr_debug_once("Max print length exceeded, table data is available at:\n"
 				     "/sys/firmware/acpi/tables/data/BERT");
 
 		/*
@@ -112,7 +112,7 @@ static int __init bert_init(void)
 		return 0;
 
 	if (bert_disable) {
-		pr_info("Boot Error Record Table support is disabled.\n");
+		pr_debug("Boot Error Record Table support is disabled.\n");
 		return 0;
 	}
 

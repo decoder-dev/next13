@@ -142,7 +142,7 @@ int __init tcm_add_region(struct tcm_region *reg)
 		pr_err("Failed to add memory to TCM pool!\n");
 		return -ENOMEM;
 	}
-	pr_info("Added %s TCM pool (%08x bytes @ %08x)\n",
+	pr_debug("Added %s TCM pool (%08x bytes @ %08x)\n",
 		reg->res.name, reg->res.end - reg->res.start + 1,
 		reg->res.start);
 

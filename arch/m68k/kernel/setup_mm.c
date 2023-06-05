@@ -368,7 +368,7 @@ void __init setup_arch(char **cmdline_p)
 				     BOOTMEM_DEFAULT);
 		initrd_start = (unsigned long)phys_to_virt(m68k_ramdisk.addr);
 		initrd_end = initrd_start + m68k_ramdisk.size;
-		pr_info("initrd: %08lx - %08lx\n", initrd_start, initrd_end);
+		pr_debug("initrd: %08lx - %08lx\n", initrd_start, initrd_end);
 	}
 #endif
 

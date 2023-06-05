@@ -48,7 +48,7 @@ static int s3c2412_cpu_suspend(unsigned long arg)
 
 	s3c2412_sleep_enter();
 
-	pr_info("Failed to suspend the system\n");
+	pr_debug("Failed to suspend the system\n");
 	return 1; /* Aborting suspend */
 }
 

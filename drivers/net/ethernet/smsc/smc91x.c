@@ -1925,7 +1925,7 @@ static int smc_probe(struct net_device *dev, void __iomem *ioaddr,
 	}
 
 	/* At this point I'll assume that the chip is an SMC91x. */
-	pr_info_once("%s\n", version);
+	pr_debug_once("%s\n", version);
 
 	/* fill in some of the fields */
 	dev->base_addr = (unsigned long)ioaddr;
@@ -2418,7 +2418,7 @@ static int smc_drv_probe(struct platform_device *pdev)
  out_free_netdev:
 	free_netdev(ndev);
  out:
-	pr_info("%s: not found (%d).\n", CARDNAME, ret);
+	pr_debug("%s: not found (%d).\n", CARDNAME, ret);
 
 	return ret;
 }

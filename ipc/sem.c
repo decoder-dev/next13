@@ -1030,7 +1030,7 @@ static int check_qop(struct sem_array *sma, int semnum, struct sem_queue *q,
 	 * Give the administrators a chance to notice that an application
 	 * might misbehave because it relies on the Linux behavior.
 	 */
-	pr_info_once("semctl(GETNCNT/GETZCNT) is since 3.16 Single Unix Specification compliant.\n"
+	pr_debug_once("semctl(GETNCNT/GETZCNT) is since 3.16 Single Unix Specification compliant.\n"
 			"The task %s (%d) triggered the difference, watch for misbehavior.\n",
 			current->comm, task_pid_nr(current));
 

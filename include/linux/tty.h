@@ -479,6 +479,8 @@ extern void __stop_tty(struct tty_struct *tty);
 extern void stop_tty(struct tty_struct *tty);
 extern void __start_tty(struct tty_struct *tty);
 extern void start_tty(struct tty_struct *tty);
+void tty_write_unlock(struct tty_struct *tty);
+int tty_write_lock(struct tty_struct *tty, int ndelay);
 extern int tty_register_driver(struct tty_driver *driver);
 extern int tty_unregister_driver(struct tty_driver *driver);
 extern struct device *tty_register_device(struct tty_driver *driver,
@@ -790,12 +792,12 @@ static inline void proc_tty_unregister_driver(struct tty_driver *d) {}
 	fn("%s %s: " f, tty_driver_name(tty), tty_name(tty), ##__VA_ARGS__)
 
 #define tty_debug(tty, f, ...)	tty_msg(pr_debug, tty, f, ##__VA_ARGS__)
-#define tty_info(tty, f, ...)	tty_msg(pr_info, tty, f, ##__VA_ARGS__)
+#define tty_info(tty, f, ...)	tty_msg(pr_debug, tty, f, ##__VA_ARGS__)
 #define tty_notice(tty, f, ...)	tty_msg(pr_notice, tty, f, ##__VA_ARGS__)
 #define tty_warn(tty, f, ...)	tty_msg(pr_warn, tty, f, ##__VA_ARGS__)
 #define tty_err(tty, f, ...)	tty_msg(pr_err, tty, f, ##__VA_ARGS__)
 
 #define tty_info_ratelimited(tty, f, ...) \
-		tty_msg(pr_info_ratelimited, tty, f, ##__VA_ARGS__)
+		tty_msg(pr_debug_ratelimited, tty, f, ##__VA_ARGS__)
 
 #endif

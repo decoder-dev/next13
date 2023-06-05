@@ -361,7 +361,7 @@ static void vpu_err_msg(int core, const char *msg)
 #else
 #define vpu_err_hnd(hw_fail, core, req, key, fmt, args...) \
         do { \
-                pr_info(fmt, ##args); \
+                pr_debug(fmt, ##args); \
                 vpu_err_msg(core, __func__); \
                 if (hw_fail) { \
                         vpu_dmp_create_locked(core, req, fmt, ##args); \

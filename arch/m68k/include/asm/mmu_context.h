@@ -117,7 +117,7 @@ static inline void load_ksp_mmu(struct task_struct *task)
 	if (mmuar >= PAGE_OFFSET) {
 		mm = &init_mm;
 	} else {
-		pr_info("load_ksp_mmu: non-kernel mm found: 0x%p\n", task->mm);
+		pr_debug("load_ksp_mmu: non-kernel mm found: 0x%p\n", task->mm);
 		mm = task->mm;
 	}
 
@@ -154,7 +154,7 @@ static inline void load_ksp_mmu(struct task_struct *task)
 	goto end;
 
 bug:
-	pr_info("ksp load failed: mm=0x%p ksp=0x08%lx\n", mm, mmuar);
+	pr_debug("ksp load failed: mm=0x%p ksp=0x08%lx\n", mm, mmuar);
 end:
 	local_irq_restore(flags);
 }

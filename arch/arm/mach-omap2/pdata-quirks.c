@@ -281,7 +281,7 @@ static void __init nokia_n900_legacy_init(void)
 
 	if (omap_type() == OMAP2_DEVICE_TYPE_SEC) {
 		if (IS_ENABLED(CONFIG_ARM_ERRATA_430973)) {
-			pr_info("RX-51: Enabling ARM errata 430973 workaround\n");
+			pr_debug("RX-51: Enabling ARM errata 430973 workaround\n");
 			/* set IBE to 1 */
 			rx51_secure_update_aux_cr(BIT(6), 0);
 		} else {
@@ -289,7 +289,7 @@ static void __init nokia_n900_legacy_init(void)
 			pr_warn("Thumb binaries may crash randomly without this workaround\n");
 		}
 
-		pr_info("RX-51: Registering OMAP3 HWRNG device\n");
+		pr_debug("RX-51: Registering OMAP3 HWRNG device\n");
 		platform_device_register(&omap3_rom_rng_device);
 	}
 }

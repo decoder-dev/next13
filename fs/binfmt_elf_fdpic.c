@@ -1336,7 +1336,7 @@ static inline void fill_note(struct memelfnote *note, const char *name, int type
 static void fill_prstatus(struct elf_prstatus *prstatus,
 			  struct task_struct *p, long signr)
 {
-	prstatus->pr_info.si_signo = prstatus->pr_cursig = signr;
+	prstatus->pr_debug.si_signo = prstatus->pr_cursig = signr;
 	prstatus->pr_sigpend = p->pending.signal.sig[0];
 	prstatus->pr_sighold = p->blocked.sig[0];
 	rcu_read_lock();

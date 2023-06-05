@@ -818,7 +818,7 @@ static int w83977af_dma_receive_complete(struct w83977af_ir *self)
 
 			skb = dev_alloc_skb(len + 1);
 			if (!skb)  {
-				pr_info("%s: memory squeeze, dropping frame\n",
+				pr_debug("%s: memory squeeze, dropping frame\n",
 					__func__);
 				/* Restore set register */
 				outb(set, iobase + SSR);

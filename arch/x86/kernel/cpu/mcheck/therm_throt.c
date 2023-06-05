@@ -193,7 +193,7 @@ static void therm_throt_process(bool new_event, int event, int level)
 	}
 	if (old_event) {
 		if (event == THERMAL_THROTTLING_EVENT)
-			pr_info("CPU%d: %s temperature/speed normal\n", this_cpu,
+			pr_debug("CPU%d: %s temperature/speed normal\n", this_cpu,
 				level == CORE_LEVEL ? "Core" : "Package");
 		return;
 	}
@@ -513,7 +513,7 @@ void intel_init_thermal(struct cpuinfo_x86 *c)
 	l = apic_read(APIC_LVTTHMR);
 	apic_write(APIC_LVTTHMR, l & ~APIC_LVT_MASKED);
 
-	pr_info_once("CPU0: Thermal monitoring enabled (%s)\n",
+	pr_debug_once("CPU0: Thermal monitoring enabled (%s)\n",
 		      tm2 ? "TM2" : "TM1");
 
 	/* enable thermal throttle processing */

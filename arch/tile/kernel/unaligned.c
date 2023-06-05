@@ -49,7 +49,7 @@ static int __init setup_unaligned_printk(char *str)
 	if (kstrtol(str, 0, &val) != 0)
 		return 0;
 	unaligned_printk = val;
-	pr_info("Printk for each unaligned data accesses is %s\n",
+	pr_debug("Printk for each unaligned data accesses is %s\n",
 		unaligned_printk ? "enabled" : "disabled");
 	return 1;
 }
@@ -971,7 +971,7 @@ void jit_bundle_gen(struct pt_regs *regs, tilegx_bundle_bits bundle,
 		unaligned_fixup_count++;
 
 		if (unaligned_printk) {
-			pr_info("%s/%d - Unalign fixup for kernel access to userspace %lx\n",
+			pr_debug("%s/%d - Unalign fixup for kernel access to userspace %lx\n",
 				current->comm, current->pid, regs->regs[ra]);
 		}
 
@@ -986,7 +986,7 @@ void jit_bundle_gen(struct pt_regs *regs, tilegx_bundle_bits bundle,
 			.si_addr = (unsigned char __user *)0
 		};
 		if (unaligned_printk)
-			pr_info("Unalign bundle: unexp @%llx, %llx\n",
+			pr_debug("Unalign bundle: unexp @%llx, %llx\n",
 				(unsigned long long)regs->pc,
 				(unsigned long long)bundle);
 
@@ -1371,7 +1371,7 @@ void jit_bundle_gen(struct pt_regs *regs, tilegx_bundle_bits bundle,
 		frag.bundle = bundle;
 
 		if (unaligned_printk) {
-			pr_info("%s/%d, Unalign fixup: pc=%lx bundle=%lx %d %d %d %d %d %d %d %d\n",
+			pr_debug("%s/%d, Unalign fixup: pc=%lx bundle=%lx %d %d %d %d %d %d %d %d\n",
 				current->comm, current->pid,
 				(unsigned long)frag.pc,
 				(unsigned long)frag.bundle,
@@ -1380,7 +1380,7 @@ void jit_bundle_gen(struct pt_regs *regs, tilegx_bundle_bits bundle,
 				(int)y1_lr, (int)y1_br, (int)x1_add);
 
 			for (k = 0; k < n; k += 2)
-				pr_info("[%d] %016llx %016llx\n",
+				pr_debug("[%d] %016llx %016llx\n",
 					k, (unsigned long long)frag.insn[k],
 					(unsigned long long)frag.insn[k+1]);
 		}
@@ -1485,7 +1485,7 @@ void do_unaligned(struct pt_regs *regs, int vecnum)
 			/* If exception came from kernel, try fix it up. */
 			if (fixup_exception(regs)) {
 				if (unaligned_printk)
-					pr_info("Unalign fixup: %d %llx @%llx\n",
+					pr_debug("Unalign fixup: %d %llx @%llx\n",
 						(int)unaligned_fixup,
 						(unsigned long long)regs->ex1,
 						(unsigned long long)regs->pc);
@@ -1518,7 +1518,7 @@ void do_unaligned(struct pt_regs *regs, int vecnum)
 		};
 
 		if (unaligned_printk)
-			pr_info("Unalign fixup: %d %llx @%llx\n",
+			pr_debug("Unalign fixup: %d %llx @%llx\n",
 				(int)unaligned_fixup,
 				(unsigned long long)regs->ex1,
 				(unsigned long long)regs->pc);
@@ -1585,7 +1585,7 @@ void do_unaligned(struct pt_regs *regs, int vecnum)
 		/* Save the address in the thread_info struct */
 		info->unalign_jit_base = user_page;
 		if (unaligned_printk)
-			pr_info("Unalign bundle: %d:%d, allocate page @%llx\n",
+			pr_debug("Unalign bundle: %d:%d, allocate page @%llx\n",
 				raw_smp_processor_id(), current->pid,
 				(unsigned long long)user_page);
 	}

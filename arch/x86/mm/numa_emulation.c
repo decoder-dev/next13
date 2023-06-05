@@ -93,7 +93,7 @@ static int __init split_nodes_interleave(struct numa_meminfo *ei,
 	if (nr_nodes <= 0)
 		return -1;
 	if (nr_nodes > MAX_NUMNODES) {
-		pr_info("numa=fake=%d too large, reducing to %d\n",
+		pr_debug("numa=fake=%d too large, reducing to %d\n",
 			nr_nodes, MAX_NUMNODES);
 		nr_nodes = MAX_NUMNODES;
 	}

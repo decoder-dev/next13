@@ -1020,7 +1020,7 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
 		/* need reverse the direction for gpiolib */
 		return !mtk_pinctrl_get_gpio_direction(pctl, offset);
 	}
-	pr_info("pinctrl direction array is NULL of phone\n");
+	pr_debug("pinctrl direction array is NULL of phone\n");
 #endif
 
 	reg_addr =  mtk_get_port(pctl, offset) + pctl->devdata->dir_offset;
@@ -1352,7 +1352,7 @@ static int mtk_eint_set_type(struct irq_data *d,
 
 	if (((type & IRQ_TYPE_EDGE_BOTH) && (type & IRQ_TYPE_LEVEL_MASK)) ||
 		((type & IRQ_TYPE_LEVEL_MASK) == IRQ_TYPE_LEVEL_MASK)) {
-		pr_info("[GPIO]Can't config IRQ%d (EINT%lu) for type 0x%X\n",
+		pr_debug("[GPIO]Can't config IRQ%d (EINT%lu) for type 0x%X\n",
 			d->irq, d->hwirq, type);
 		return -EINVAL;
 	}
@@ -2037,7 +2037,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
 		pr_warn("mtk_eint create attribute error\n");
 
 	pctl_alt = pctl;
-	pr_info("mtk pctrl init OK\n");
+	pr_debug("mtk pctrl init OK\n");
 	return 0;
 
 chip_error:

@@ -478,7 +478,7 @@ static bool load_builtin_intel_microcode(struct cpio_data *cp)
 static void
 print_ucode_info(struct ucode_cpu_info *uci, unsigned int date)
 {
-	pr_info_once("microcode updated early to revision 0x%x, date = %04x-%02x-%02x\n",
+	pr_debug_once("microcode updated early to revision 0x%x, date = %04x-%02x-%02x\n",
 		     uci->cpu_sig.rev,
 		     date & 0xffff,
 		     date >> 24,
@@ -733,7 +733,7 @@ static int collect_cpu_info(int cpu_num, struct cpu_signature *csig)
 
 	/* No extra locking on prev, races are harmless. */
 	if (csig->sig != prev.sig || csig->pf != prev.pf || csig->rev != prev.rev) {
-		pr_info("sig=0x%x, pf=0x%x, revision=0x%x\n",
+		pr_debug("sig=0x%x, pf=0x%x, revision=0x%x\n",
 			csig->sig, csig->pf, csig->rev);
 		prev = *csig;
 	}
@@ -791,7 +791,7 @@ static enum ucode_state apply_microcode_intel(int cpu)
 	}
 
 	if (rev != prev_rev) {
-		pr_info("updated to revision 0x%x, date = %04x-%02x-%02x\n",
+		pr_debug("updated to revision 0x%x, date = %04x-%02x-%02x\n",
 			rev,
 			mc->hdr.date & 0xffff,
 			mc->hdr.date >> 24,

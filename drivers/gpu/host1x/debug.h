@@ -36,7 +36,7 @@ static inline void write_to_seqfile(void *ctx, const char *str, size_t len)
 
 static inline void write_to_printk(void *ctx, const char *str, size_t len)
 {
-	pr_info("%s", str);
+	pr_debug("%s", str);
 }
 
 void __printf(2, 3) host1x_debug_output(struct output *o, const char *fmt, ...);

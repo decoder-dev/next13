@@ -2065,7 +2065,7 @@ int bitmap_resize(struct bitmap *bitmap, sector_t blocks,
 	struct bitmap_page *new_bp;
 
 	if (bitmap->storage.file && !init) {
-		pr_info("md: cannot resize file-based bitmap\n");
+		pr_debug("md: cannot resize file-based bitmap\n");
 		return -EINVAL;
 	}
 

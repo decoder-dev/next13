@@ -66,7 +66,7 @@ int __init security_init(void)
 	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct list_head);
 	     i++)
 		INIT_LIST_HEAD(&list[i]);
-	pr_info("Security Framework initialized\n");
+	pr_debug("Security Framework initialized\n");
 
 	/*
 	 * Load minor LSMs, with the capability module always first.

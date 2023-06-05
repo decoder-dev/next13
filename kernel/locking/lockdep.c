@@ -251,9 +251,9 @@ static void lock_mon_msg(char *buf, int out)
 		trace_lock_monitor(buf);
 	/* check warn_msgs to avoid printing too much log */
 	if (out & TO_KERNEL_LOG && warn_msgs++ < MAX_WARN_MSG) {
-		pr_info("%s\n", buf);
+		pr_debug("%s\n", buf);
 		if (warn_msgs == MAX_WARN_MSG)
-			pr_info(" See SYS_FTRACE for more log\n");
+			pr_debug(" See SYS_FTRACE for more log\n");
 	}
 #ifdef CONFIG_MTK_RAM_CONSOLE
 	if (out & TO_SRAM)
@@ -828,7 +828,7 @@ static void lockdep_print_held_locks(struct task_struct *curr)
 		printk("no locks held by %s/%d.\n", curr->comm, task_pid_nr(curr));
 		return;
 	}
-	pr_info("%d lock%s held by %s/%d/[%ld] on CPU#%d:\n",
+	pr_debug("%d lock%s held by %s/%d/[%ld] on CPU#%d:\n",
 		depth, depth > 1 ? "s" : "", curr->comm,
 		curr->pid, curr->state, task_cpu(curr));
 
@@ -5034,7 +5034,7 @@ void lockdep_rcu_suspicious(const char *file, const int line, const char *s)
 				? "RCU used illegally from idle CPU!\n"
 				: "",
 	       rcu_scheduler_active, debug_locks);
-	pr_info("cpu_id = %d, cpu_is_offline = %ld\n",
+	pr_debug("cpu_id = %d, cpu_is_offline = %ld\n",
 		raw_smp_processor_id(), cpu_is_offline(raw_smp_processor_id()));
 
 	/*
@@ -6297,20 +6297,20 @@ static void show_debug_locks_state(void)
 		return;
 	pre_time_sec = time_sec;
 
-	pr_info("debug_locks is off at [%lld.%06lu]\n",
+	pr_debug("debug_locks is off at [%lld.%06lu]\n",
 		sec_high(debug_locks_off_ts),
 		sec_low(debug_locks_off_ts));
 
 	if (nr_lock_classes >= MAX_LOCKDEP_KEYS ||
 	    nr_list_entries >= MAX_LOCKDEP_ENTRIES ||
 	    nr_stack_trace_entries >= MAX_STACK_TRACE_ENTRIES - 1)
-		pr_info("lock_classes[%lu] list_entries[%lu] stack_trace_entries[%lu]\n",
+		pr_debug("lock_classes[%lu] list_entries[%lu] stack_trace_entries[%lu]\n",
 			nr_lock_classes, nr_list_entries,
 			nr_stack_trace_entries);
 #ifdef CONFIG_PROVE_LOCKING
 	if (nr_lock_chains >= MAX_LOCKDEP_CHAINS ||
 	    nr_chain_hlocks > MAX_LOCKDEP_CHAIN_HLOCKS)
-		pr_info("lock_chains[%lu] chain_hlocks[%d]\n",
+		pr_debug("lock_chains[%lu] chain_hlocks[%d]\n",
 			nr_lock_chains, nr_chain_hlocks);
 #endif
 }

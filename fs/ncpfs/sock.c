@@ -424,7 +424,7 @@ void ncpdgram_rcv_proc(struct work_struct *work)
 							result -= 8;
 							hdrl = sock->sk->sk_family == AF_INET ? 8 : 6;
 							if (sign_verify_reply(server, server->rxbuf + hdrl, result - hdrl, cpu_to_le32(result), server->rxbuf + result)) {
-								pr_info("Signature violation\n");
+								pr_debug("Signature violation\n");
 								result = -EIO;
 							}
 						}

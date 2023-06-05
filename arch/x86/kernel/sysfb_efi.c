@@ -9,14 +9,12 @@
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  */
-
 /*
  * EFI Quirks
  * Several EFI systems do not correctly advertise their boot framebuffers.
  * Hence, we use this static table of known broken machines and fix up the
  * information so framebuffer drivers can load corectly.
  */
-
 #include <linux/dmi.h>
 #include <linux/err.h>
 #include <linux/init.h>
@@ -26,7 +24,6 @@
 #include <linux/screen_info.h>
 #include <video/vga.h>
 #include <asm/sysfb.h>
-
 enum {
 	OVERRIDE_NONE = 0x0,
 	OVERRIDE_BASE = 0x1,
@@ -34,7 +31,6 @@ enum {
 	OVERRIDE_HEIGHT = 0x4,
 	OVERRIDE_WIDTH = 0x8,
 };
-
 struct efifb_dmi_info efifb_dmi_list[] = {
 	[M_I17] = { "i17", 0x80010000, 1472 * 4, 1440, 900, OVERRIDE_NONE },
 	[M_I20] = { "i20", 0x80010000, 1728 * 4, 1680, 1050, OVERRIDE_NONE }, /* guess */
@@ -67,11 +63,9 @@ struct efifb_dmi_info efifb_dmi_list[] = {
 	[M_MBP_8_2] = { "mbp82", 0x90010000, 1472 * 4, 1440, 900, OVERRIDE_NONE },
 	[M_UNKNOWN] = { NULL, 0, 0, 0, 0, OVERRIDE_NONE }
 };
-
 void efifb_setup_from_dmi(struct screen_info *si, const char *opt)
 {
 	int i;
-
 	for (i = 0; i < M_UNKNOWN; i++) {
 		if (efifb_dmi_list[i].base != 0 &&
 		    !strcmp(opt, efifb_dmi_list[i].optname)) {
@@ -82,7 +76,6 @@ void efifb_setup_from_dmi(struct screen_info *si, const char *opt)
 		}
 	}
 }
-
 #define choose_value(dmivalue, fwvalue, field, flags) ({	\
 		typeof(fwvalue) _ret_ = fwvalue;		\
 		if ((flags) & (field))				\
@@ -91,15 +84,12 @@ void efifb_setup_from_dmi(struct screen_info *si, const char *opt)
 			_ret_ = dmivalue;			\
 		_ret_;						\
 	})
-
 static int __init efifb_set_system(const struct dmi_system_id *id)
 {
 	struct efifb_dmi_info *info = id->driver_data;
-
 	if (info->base == 0 && info->height == 0 && info->width == 0 &&
 	    info->stride == 0)
 		return 0;
-
 	/* Trust the bootloader over the DMI tables */
 	if (screen_info.lfb_base == 0) {
 #if defined(CONFIG_PCI)
@@ -110,11 +100,9 @@ static int __init efifb_set_system(const struct dmi_system_id *id)
 			screen_info.lfb_base = choose_value(info->base,
 				screen_info.lfb_base, OVERRIDE_BASE,
 				info->flags);
-
 #if defined(CONFIG_PCI)
 			/* make sure that the address in the table is actually
 			 * on a VGA device's PCI BAR */
-
 			for_each_pci_dev(dev) {
 				int i;
 				if ((dev->class >> 8) != PCI_CLASS_DISPLAY_VGA)
@@ -122,17 +110,13 @@ static int __init efifb_set_system(const struct dmi_system_id *id)
 				for (i = 0; i < DEVICE_COUNT_RESOURCE; i++) {
 					resource_size_t start, end;
 					unsigned long flags;
-
 					flags = pci_resource_flags(dev, i);
 					if (!(flags & IORESOURCE_MEM))
 						continue;
-
 					if (flags & IORESOURCE_UNSET)
 						continue;
-
 					if (pci_resource_len(dev, i) == 0)
 						continue;
-
 					start = pci_resource_start(dev, i);
 					end = pci_resource_end(dev, i);
 					if (screen_info.lfb_base >= start &&
@@ -166,15 +150,12 @@ static int __init efifb_set_system(const struct dmi_system_id *id)
 		screen_info.orig_video_isVGA = 0;
 		return 0;
 	}
-
 	printk(KERN_INFO "efifb: dmi detected %s - framebuffer at 0x%08x "
 			 "(%dx%d, stride %d)\n", id->ident,
 			 screen_info.lfb_base, screen_info.lfb_width,
 			 screen_info.lfb_height, screen_info.lfb_linelength);
-
 	return 1;
 }
-
 #define EFIFB_DMI_SYSTEM_ID(vendor, name, enumid)		\
 	{							\
 		efifb_set_system,				\
@@ -185,7 +166,6 @@ static int __init efifb_set_system(const struct dmi_system_id *id)
 		},						\
 		&efifb_dmi_list[enumid]				\
 	}
-
 static const struct dmi_system_id efifb_dmi_system_table[] __initconst = {
 	EFIFB_DMI_SYSTEM_ID("Apple Computer, Inc.", "iMac4,1", M_I17),
 	/* At least one of these two will be right; maybe both? */
@@ -230,7 +210,6 @@ static const struct dmi_system_id efifb_dmi_system_table[] __initconst = {
 	EFIFB_DMI_SYSTEM_ID("Apple Inc.", "MacBookPro8,2", M_MBP_8_2),
 	{},
 };
-
 /*
  * Some devices have a portrait LCD but advertise a landscape resolution (and
  * pitch). We simply swap width and height for these devices so that we can
@@ -283,17 +262,14 @@ static const struct dmi_system_id efifb_dmi_swap_width_height[] __initconst = {
 	},
 	{},
 };
-
 __init void sysfb_apply_efi_quirks(void)
 {
 	if (screen_info.orig_video_isVGA != VIDEO_TYPE_EFI ||
 	    !(screen_info.capabilities & VIDEO_CAPABILITY_SKIP_QUIRKS))
 		dmi_check_system(efifb_dmi_system_table);
-
 	if (screen_info.orig_video_isVGA == VIDEO_TYPE_EFI &&
 	    dmi_check_system(efifb_dmi_swap_width_height)) {
 		u16 temp = screen_info.lfb_width;
-
 		screen_info.lfb_width = screen_info.lfb_height;
 		screen_info.lfb_height = temp;
 		screen_info.lfb_linelength = 4 * screen_info.lfb_width;

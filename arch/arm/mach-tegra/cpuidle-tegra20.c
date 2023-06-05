@@ -217,7 +217,7 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
  */
 void tegra20_cpuidle_pcie_irqs_in_use(void)
 {
-	pr_info_once(
+	pr_debug_once(
 		"Disabling cpuidle LP2 state, since PCIe IRQs are in use\n");
 	tegra_idle_driver.states[1].disabled = true;
 }

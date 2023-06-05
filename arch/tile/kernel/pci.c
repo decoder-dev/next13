@@ -136,11 +136,11 @@ int __init tile_pci_init(void)
 	int i;
 
 	if (!pci_probe) {
-		pr_info("PCI: disabled by boot argument\n");
+		pr_debug("PCI: disabled by boot argument\n");
 		return 0;
 	}
 
-	pr_info("PCI: Searching for controllers...\n");
+	pr_debug("PCI: Searching for controllers...\n");
 
 	/* Re-init number of PCIe controllers to support hot-plug feature. */
 	num_controllers = 0;
@@ -180,7 +180,7 @@ int __init tile_pci_init(void)
 				goto err_cont;
 			}
 
-			pr_info("PCI: Found PCI controller #%d\n", i);
+			pr_debug("PCI: Found PCI controller #%d\n", i);
 
 			controller = &controllers[i];
 
@@ -267,7 +267,7 @@ int __init pcibios_init(void)
 	struct pci_host_bridge *bridge;
 	int i;
 
-	pr_info("PCI: Probing PCI hardware\n");
+	pr_debug("PCI: Probing PCI hardware\n");
 
 	/*
 	 * Delay a bit in case devices aren't ready.  Some devices are
@@ -293,7 +293,7 @@ int __init pcibios_init(void)
 				continue;
 			}
 
-			pr_info("PCI: initializing controller #%d\n", i);
+			pr_debug("PCI: initializing controller #%d\n", i);
 
 			pci_add_resource(&resources, &ioport_resource);
 			pci_add_resource(&resources, &iomem_resource);

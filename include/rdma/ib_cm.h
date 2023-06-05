@@ -219,7 +219,7 @@ enum ib_cm_apr_status {
 
 struct ib_cm_apr_event_param {
 	enum ib_cm_apr_status	ap_status;
-	void			*apr_info;
+	void			*apr_debug;
 	u8			info_len;
 };
 

@@ -859,7 +859,7 @@ void __init acpi_gpe_apply_masked_gpes(void)
 		if (acpi_masked_gpes & ((u64)1<<gpe)) {
 			status = acpi_get_gpe_device(gpe, &handle);
 			if (ACPI_SUCCESS(status)) {
-				pr_info("Masking GPE 0x%x.\n", gpe);
+				pr_debug("Masking GPE 0x%x.\n", gpe);
 				(void)acpi_mask_gpe(handle, gpe, TRUE);
 			}
 		}

@@ -127,7 +127,7 @@ static void push_panel_table(struct LCM_setting_table *table, struct drm_panel *
 	void *dsi, dcs_write_gce cb, void *handle, int len)
 {
 	unsigned int i = 0;
-	pr_info("%s +\n", __func__);
+	pr_debug("%s +\n", __func__);
 
 	for (i = 0; i < len; i++) {
 		unsigned int cmd;
@@ -147,7 +147,7 @@ static void push_panel_table(struct LCM_setting_table *table, struct drm_panel *
 				table[i].count);
 		}
 	}
-	pr_info("%s -\n", __func__);
+	pr_debug("%s -\n", __func__);
 }
 
 static void lcm_dcs_write(struct lcm *ctx, const void *data, size_t len)
@@ -199,7 +199,7 @@ static int lcm_panel_vci_enable(struct device *dev)
        int retval = 0;
        int status = 0;
 
-       pr_info("%s +\n",__func__);
+       pr_debug("%s +\n",__func__);
 
        lcm_panel_vci_regulator_init(dev);
 
@@ -210,7 +210,7 @@ static int lcm_panel_vci_enable(struct device *dev)
        retval |= ret;
 
        status = regulator_is_enabled(disp_vci);
-       pr_info("%s regulator_is_enabled=%d\n",__func__,status);
+       pr_debug("%s regulator_is_enabled=%d\n",__func__,status);
        if(!status){
                /* enable regulator */
                ret = regulator_enable(disp_vci);
@@ -219,7 +219,7 @@ static int lcm_panel_vci_enable(struct device *dev)
                retval |= ret;
        }
 
-       pr_info("%s -\n",__func__);
+       pr_debug("%s -\n",__func__);
        return retval;
 }
 static unsigned int start_up = 1;
@@ -227,7 +227,7 @@ static int lcm_panel_vci_disable(struct device *dev)
 {
        int ret = 0;
        int retval = 0;
-       pr_info("%s +\n",__func__);
+       pr_debug("%s +\n",__func__);
 
        lcm_panel_vci_regulator_init(dev);
 
@@ -235,7 +235,7 @@ static int lcm_panel_vci_disable(struct device *dev)
        //pr_err("%s regulator_is_enabled=%d\n",__func__,status);
        //if(!status){
        if(start_up) {
-               pr_info("%s enable regulator\n",__func__);
+               pr_debug("%s enable regulator\n",__func__);
                /* enable regulator */
                ret = regulator_enable(disp_vci);
                if (ret < 0)
@@ -251,14 +251,14 @@ static int lcm_panel_vci_disable(struct device *dev)
                pr_err("disable regulator disp_vci fail, ret = %d\n", ret);
        retval |= ret;
 
-       pr_info("%s -\n",__func__);
+       pr_debug("%s -\n",__func__);
 
        return retval;
 }
 
 static void lcm_panel_init(struct lcm *ctx)
 {
-	pr_info("%s \n",__func__);
+	pr_debug("%s \n",__func__);
 	ctx->reset_gpio =
 		devm_gpiod_get(ctx->dev, "reset", GPIOD_OUT_HIGH);
 	msleep(10);
@@ -341,7 +341,7 @@ static void lcm_panel_init(struct lcm *ctx)
 	msleep(80);
 
 	/* Frequency Select */
-	pr_info("%s ctx->high_refresh_rate = %d\n", __func__, ctx->high_refresh_rate);
+	pr_debug("%s ctx->high_refresh_rate = %d\n", __func__, ctx->high_refresh_rate);
 	if (ctx->high_refresh_rate)
 		lcm_dcs_write_seq_static(ctx, 0x60, 0x10, 0x00);
 	else
@@ -382,7 +382,7 @@ static void lcm_panel_init(struct lcm *ctx)
 
 	 /*Display on*/
  	lcm_dcs_write_seq_static(ctx, 0x29);
-	pr_info("%s -\n", __func__);
+	pr_debug("%s -\n", __func__);
 }
 
 static int lcm_disable(struct drm_panel *panel)
@@ -410,7 +410,7 @@ static int lcm_unprepare(struct drm_panel *panel)
 	if (!ctx->prepared)
 		return 0;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	if (ctx->hbm_en)
 		lcm_dcs_write_seq_static(ctx, 0x53, 0x20, 0x00);
 	msleep(20);
@@ -461,7 +461,7 @@ static int lcm_prepare(struct drm_panel *panel)
 	if (ctx->prepared)
 		return 0;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	lcm_panel_vci_enable(ctx->dev);
 	ctx->bias_gpio = devm_gpiod_get(ctx->dev, "bias", GPIOD_OUT_HIGH);
 	gpiod_set_value(ctx->bias_gpio, 1);
@@ -672,14 +672,14 @@ static int lcm_setbacklight_cmdq(void *dsi,
 {
 	bl_tb0[1] = (level >> 8) & 0x7;
 	bl_tb0[2] = level & 0xFF;
-	pr_info("%s+ \n", __func__);
-	pr_info("%s level = %d\n",  __func__, level);
+	pr_debug("%s+ \n", __func__);
+	pr_debug("%s level = %d\n",  __func__, level);
 
 	if (!cb)
 		return -1;
 
 	cb(dsi, handle, bl_tb0, ARRAY_SIZE(bl_tb0));
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 	return 0;
 }
 
@@ -694,7 +694,7 @@ static int panel_hbm_set_cmdq(struct drm_panel *panel, void *dsi,
 		return -1;
 
 	if (ctx->hbm_en == en) {
-		pr_info("%s-skip hbm set\n", __func__);
+		pr_debug("%s-skip hbm set\n", __func__);
 		goto done;
 	}
 
@@ -702,7 +702,7 @@ static int panel_hbm_set_cmdq(struct drm_panel *panel, void *dsi,
 		hbm_tb[1] = 0xe0;
 		//ctx->unset_doze_brightness = ctx->doze_brightness_state;
 		//ctx->doze_brightness_state = DOZE_TO_NORMAL;
-		//pr_info("set unset_doze_brightness = %d", ctx->unset_doze_brightness);
+		//pr_debug("set unset_doze_brightness = %d", ctx->unset_doze_brightness);
 		ctx->skip_dimmingon = STATE_DIM_BLOCK;
 
 		atomic_set(&fod_hbm_on_flag, 1);
@@ -716,7 +716,7 @@ static int panel_hbm_set_cmdq(struct drm_panel *panel, void *dsi,
 				hbm_tb[1] = 0x22;
 			if (ctx->doze_brightness_state == DOZE_BRIGHTNESS_LBM)
 				hbm_tb[1] = 0x23;
-			pr_info("%s hbm off in doze, ctx->doze_brightness_state = %d\n",
+			pr_debug("%s hbm off in doze, ctx->doze_brightness_state = %d\n",
 					__func__, ctx->doze_brightness_state);
 		} else {
 			ctx->skip_dimmingon = STATE_DIM_RESTORE;
@@ -724,7 +724,7 @@ static int panel_hbm_set_cmdq(struct drm_panel *panel, void *dsi,
 
 		atomic_set(&fod_hbm_on_flag, 0);
 	}
-	pr_info("%s+, hbm: %s\n", __func__, en ? "OFF->ON":"ON->OFF");
+	pr_debug("%s+, hbm: %s\n", __func__, en ? "OFF->ON":"ON->OFF");
 
 	cb(dsi, handle, hbm_tb, ARRAY_SIZE(hbm_tb));
 	cb(dsi, handle, bl_tb, ARRAY_SIZE(bl_tb));
@@ -780,7 +780,7 @@ static int lcm_setbacklight_control(struct drm_panel *panel, unsigned int level,
 			panel_hbm_set_state(panel, &hbm_flag);
 		}
 		if(((last_backlight == 0 && !ctx->doze_enable) || ctx->skip_dimmingon == STATE_DIM_RESTORE) && level) {
-			pr_info("%s,last_backlight = %d, doze_enable = %d, skip_dimmingon = %d\n", __func__, last_backlight, ctx->doze_enable, ctx->skip_dimmingon);
+			pr_debug("%s,last_backlight = %d, doze_enable = %d, skip_dimmingon = %d\n", __func__, last_backlight, ctx->doze_enable, ctx->skip_dimmingon);
 			schedule_delayed_work(&ctx->dimmingon_delayed_work,
 					msecs_to_jiffies(PANEL_DIMMINGON_DELAY));
 
@@ -789,13 +789,13 @@ static int lcm_setbacklight_control(struct drm_panel *panel, unsigned int level,
 		}
 
 		if (((!last_backlight) && level) || (last_backlight && (!level))) {
-			pr_info("%s,fod_backlight_flag = %d, level = 0x%x, high_bl = 0x%x, low_bl = 0x%x \n", __func__, fod_backlight_flag, level, bl_tb0[1], bl_tb0[2]);
+			pr_debug("%s,fod_backlight_flag = %d, level = 0x%x, high_bl = 0x%x, low_bl = 0x%x \n", __func__, fod_backlight_flag, level, bl_tb0[1], bl_tb0[2]);
 		}
 
 		ctx->set_backlight_time = ktime_add_ms(ktime_get(), 267);
 	}
 	else {
-		pr_info("%s,fod_backlight_flag = %d,  can't set backlight\n", __func__, fod_backlight_flag);
+		pr_debug("%s,fod_backlight_flag = %d,  can't set backlight\n", __func__, fod_backlight_flag);
 	}
 	if (!fod_cal_flag && !(mtk_dc_flag(panel->connector) && DC_BACKLIGHT_LEVEL == level) && level != 1 && level != 2) {
 		panel->connector->brightness_clone = level;
@@ -839,7 +839,7 @@ static int panel_esd_recovery_in_doze(struct drm_panel *panel,
 		return -EAGAIN;
 	}
 
-	pr_info("%s+ \n", __func__);
+	pr_debug("%s+ \n", __func__);
 
 	if (!panel->connector) {
 		pr_err("panel_aod_set_state invalid panel->connector\n");
@@ -851,7 +851,7 @@ static int panel_esd_recovery_in_doze(struct drm_panel *panel,
 	fod_hbm_flag = mtk_fod_hbm_flag(panel->connector);
 
 	if (ctx->hbm_en || fod_backlight_flag || normal_hbm_flag || fod_hbm_flag) {
-		pr_info("%s hbm en, can't set aod cmd\n", __func__);
+		pr_debug("%s hbm en, can't set aod cmd\n", __func__);
 		goto exit;
 	}
 
@@ -859,14 +859,14 @@ static int panel_esd_recovery_in_doze(struct drm_panel *panel,
 		panel_esd_recovery_in_doze_table[5].para_list[1] = 0x22;
 	else if (doze_brightness == DOZE_BRIGHTNESS_LBM)
 		panel_esd_recovery_in_doze_table[5].para_list[1] = 0x23;
-	pr_info("aod 0x53 = 0x%x\n", panel_esd_recovery_in_doze_table[5].para_list[1]);
+	pr_debug("aod 0x53 = 0x%x\n", panel_esd_recovery_in_doze_table[5].para_list[1]);
 
 	push_panel_table(panel_esd_recovery_in_doze_table, panel, dsi, cb, handle, ARRAY_SIZE(panel_esd_recovery_in_doze_table));
 	ctx->doze_enable = true;
 	ctx->skip_dimmingon = STATE_DIM_BLOCK;
 
 exit:
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 
 	return 0;
 }
@@ -885,12 +885,12 @@ static void panel_esd_restore_backlight(struct drm_panel *panel,
 		pr_err("%s, the connector is null\n", __func__);
 		return ;
 	}
-	pr_info("%s doze_enable = %d, unset_doze_brightness = %d, doze_brightness_state = %d\n",
+	pr_debug("%s doze_enable = %d, unset_doze_brightness = %d, doze_brightness_state = %d\n",
 		__func__, ctx->doze_enable, ctx->unset_doze_brightness, ctx->doze_brightness_state);
 
 	/* for esd recovery in aod */
 	if (ctx->doze_enable) {
-		pr_info("%s trigger in aod, save unset_doze_brightness = %s\n", __func__, doze_brightness_str[ctx->doze_brightness_state]);
+		pr_debug("%s trigger in aod, save unset_doze_brightness = %s\n", __func__, doze_brightness_str[ctx->doze_brightness_state]);
 		ctx->unset_doze_brightness = ctx->doze_brightness_state;
 		ctx->doze_brightness_state = DOZE_TO_NORMAL;
 		ctx->in_aod = true;
@@ -899,7 +899,7 @@ static void panel_esd_restore_backlight(struct drm_panel *panel,
 	} else {
 		lcm_dcs_write(ctx, bl_tb0, ARRAY_SIZE(bl_tb0));
 	}
-	pr_info("%s high_bl = 0x%x, low_bl = 0x%x \n", __func__, bl_tb0[1], bl_tb0[2]);
+	pr_debug("%s high_bl = 0x%x, low_bl = 0x%x \n", __func__, bl_tb0[1], bl_tb0[2]);
 }
 
 static int mtk_panel_ext_param_set(struct drm_panel *panel,
@@ -924,7 +924,7 @@ static void mode_switch_60_to_120(struct drm_panel *panel,
 	struct lcm *ctx = panel_to_lcm(panel);
 	ctx->high_refresh_rate = true;
 
-	pr_info("%s +", __func__);
+	pr_debug("%s +", __func__);
 	if (stage == AFTER_DSI_POWERON) {
 		/* Frequency Select 120HZ*/
 		lcm_dcs_write_seq_static(ctx, 0x60, 0x10, 0x00);
@@ -942,7 +942,7 @@ static void mode_switch_120_to_60(struct drm_panel *panel,
 	struct lcm *ctx = panel_to_lcm(panel);
 	ctx->high_refresh_rate = false;
 
-	pr_info("%s +", __func__);
+	pr_debug("%s +", __func__);
 	if (stage == AFTER_DSI_POWERON) {
 		/* Frequency Select 60HZ*/
 		lcm_dcs_write_seq_static(ctx, 0x60, 0x00, 0x00);
@@ -977,7 +977,7 @@ static void panel_set_display_on(struct drm_panel *panel)
 			vmalloc(sizeof(struct mtk_ddic_dsi_msg));
 	struct lcm *ctx = panel_to_lcm(panel);
 
-	pr_info("%s+ display on\n", __func__);
+	pr_debug("%s+ display on\n", __func__);
 
 	int ret = 0;
 	char display_on_tb[] = {0x29};
@@ -1013,7 +1013,7 @@ static int panel_doze_aod_control(struct drm_panel *panel, bool is_aod_hbm)
 	int ret = 0;
 	char aod_mode_tb[] = {0x53, 0x2A, 0x00};
 
-	pr_info("%s+ is_aod_hbm = %d\n", __func__, is_aod_hbm);
+	pr_debug("%s+ is_aod_hbm = %d\n", __func__, is_aod_hbm);
 	fod_backlight_flag = mtk_fod_backlight_flag(panel->connector);
 	normal_hbm_flag = mtk_normal_hbm_flag(panel->connector);
 	fod_hbm_flag = mtk_fod_hbm_flag(panel->connector);
@@ -1021,7 +1021,7 @@ static int panel_doze_aod_control(struct drm_panel *panel, bool is_aod_hbm)
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
 	if (ctx->hbm_en || fod_backlight_flag || normal_hbm_flag || fod_hbm_flag) {
-		pr_info("%s hbm en, can't set aod cmd\n", __func__);
+		pr_debug("%s hbm en, can't set aod cmd\n", __func__);
 		goto exit;
 	}
 
@@ -1051,7 +1051,7 @@ static int panel_doze_aod_control(struct drm_panel *panel, bool is_aod_hbm)
 exit:
 	panel_set_display_on(panel);
 	vfree(cmd_msg);
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 
 	return ret;
 }
@@ -1075,24 +1075,24 @@ int panel_set_doze_brightness(struct drm_panel *panel, int doze_brightness)
 
 	if (!ctx->prepared) {
 		ctx->unset_doze_brightness = doze_brightness;
-		pr_info("Panel not initialized! save unset_doze_brightness = %s\n",
+		pr_debug("Panel not initialized! save unset_doze_brightness = %s\n",
 				doze_brightness_str[ctx->unset_doze_brightness]);
 		goto exit;
 	}
 
-	pr_info("%s +\n", __func__);
+	pr_debug("%s +\n", __func__);
 	if (ctx->hbm_en || fod_backlight_flag || normal_hbm_flag || fod_hbm_flag) {
 		ctx->unset_doze_brightness = doze_brightness;
 		if (ctx->unset_doze_brightness == DOZE_TO_NORMAL) {
 			ctx->doze_brightness_state = DOZE_TO_NORMAL;
 		}
-		pr_info("fod_hbm_enabled set, save unset_doze_brightness = %s\n",
+		pr_debug("fod_hbm_enabled set, save unset_doze_brightness = %s\n",
 				doze_brightness_str[ctx->unset_doze_brightness]);
 		panel_set_display_on(panel);
 		goto exit;
 	}
 
-	pr_info("doze_brightness_state = %d, doze_brightness = %d, unset_doze_brightness = %d\n",
+	pr_debug("doze_brightness_state = %d, doze_brightness = %d, unset_doze_brightness = %d\n",
 			ctx->doze_brightness_state, doze_brightness, ctx->unset_doze_brightness);
 	if (ctx->doze_brightness_state != doze_brightness ||
 		ctx->unset_doze_brightness != DOZE_TO_NORMAL) {
@@ -1104,7 +1104,7 @@ int panel_set_doze_brightness(struct drm_panel *panel, int doze_brightness)
 				pr_err("[%s] failed to send DSI_CMD_SET_MI_DOZE_HBM cmd, rc=%d\n",
 					panel->connector->name, rc);
 			} else {
-				pr_info("set doze mode to DOZE_BRIGHTNESS_HBM");
+				pr_debug("set doze mode to DOZE_BRIGHTNESS_HBM");
 			}
 		} else if (doze_brightness == DOZE_BRIGHTNESS_LBM ||
 			ctx->unset_doze_brightness == DOZE_BRIGHTNESS_LBM) {
@@ -1113,15 +1113,15 @@ int panel_set_doze_brightness(struct drm_panel *panel, int doze_brightness)
 				pr_err("[%s] failed to send DSI_CMD_SET_MI_DOZE_LBM cmd, rc=%d\n",
 					panel->connector->name, rc);
 			} else {
-				pr_info("set doze mode to DOZE_BRIGHTNESS_LBM");
+				pr_debug("set doze mode to DOZE_BRIGHTNESS_LBM");
 			}
 		}
 
 		ctx->unset_doze_brightness = DOZE_TO_NORMAL;
 		ctx->doze_brightness_state = doze_brightness;
-		pr_info("set doze brightness to %s\n", doze_brightness_str[doze_brightness]);
+		pr_debug("set doze brightness to %s\n", doze_brightness_str[doze_brightness]);
 	} else {
-		pr_info("%s has been set, skip\n", doze_brightness_str[doze_brightness]);
+		pr_debug("%s has been set, skip\n", doze_brightness_str[doze_brightness]);
 	}
 
 exit:
@@ -1185,14 +1185,14 @@ static int panel_doze_enable(struct drm_panel *panel,
 		return -EAGAIN;
 	}
 
-	pr_info("%s+ \n", __func__);
+	pr_debug("%s+ \n", __func__);
 
 	fod_backlight_flag = mtk_fod_backlight_flag(panel->connector);
 	normal_hbm_flag = mtk_normal_hbm_flag(panel->connector);
 	fod_hbm_flag = mtk_fod_hbm_flag(panel->connector);
 
 	if (ctx->hbm_en || fod_backlight_flag || normal_hbm_flag || fod_hbm_flag) {
-		pr_info("%s hbm en, can't set aod cmd\n");
+		pr_debug("%s hbm en, can't set aod cmd\n");
 		goto exit;
 	}
 
@@ -1211,7 +1211,7 @@ exit:
 	if (atomic_read(&panel_active_count_enable))
 		dsi_panel_state_count(panel, 0);
 #endif
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 
 	return 0;
 }
@@ -1283,14 +1283,14 @@ static int panel_doze_disable(struct drm_panel *panel,
 	fod_backlight_flag = mtk_fod_backlight_flag(panel->connector);
 	fod_hbm_flag = mtk_fod_hbm_flag(panel->connector);
 
-	pr_info("%s fod_backlight_flag = %d, fod_hbm_flag = %d, fod_hbm_enabled set\n",
+	pr_debug("%s fod_backlight_flag = %d, fod_hbm_flag = %d, fod_hbm_enabled set\n",
 			__func__, fod_backlight_flag, fod_hbm_flag);
 
 	if (fod_backlight_flag || fod_hbm_flag) {
-		pr_info("fod_backlight_flag/fod_hbm_flag set, skip nolp\n");
+		pr_debug("fod_backlight_flag/fod_hbm_flag set, skip nolp\n");
 		push_panel_table(panel_set_nolp_skip_table, panel, dsi, cb, handle, ARRAY_SIZE(panel_set_nolp_skip_table));
 	} else {
-		pr_info("%s+ \n", __func__);
+		pr_debug("%s+ \n", __func__);
 		push_panel_table(panel_set_nolp_table, panel, dsi, cb, handle, ARRAY_SIZE(panel_set_nolp_table));
 		ctx->hbm_en = false;
 		ctx->hbm_wait = false;
@@ -1317,7 +1317,7 @@ static void panel_set_nolp(struct drm_panel *panel)
 			vmalloc(sizeof(struct mtk_ddic_dsi_msg));
 	struct lcm *ctx = panel_to_lcm(panel);
 
-	pr_info("%s+ display on\n", __func__);
+	pr_debug("%s+ display on\n", __func__);
 
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
@@ -1363,14 +1363,14 @@ static int panel_set_aod_light_mode(struct drm_panel *panel, void *dsi, dcs_writ
 		return -EAGAIN;
 	}
 
-	pr_info("%s+ \n", __func__);
+	pr_debug("%s+ \n", __func__);
 
 	fod_backlight_flag = mtk_fod_backlight_flag(panel->connector);
 	normal_hbm_flag = mtk_normal_hbm_flag(panel->connector);
 	fod_hbm_flag = mtk_fod_hbm_flag(panel->connector);
 
 	if (ctx->hbm_en || fod_backlight_flag || normal_hbm_flag || fod_hbm_flag) {
-		pr_info("%s hbm en, can't set aod cmd\n", __func__);
+		pr_debug("%s hbm en, can't set aod cmd\n", __func__);
 		goto exit;
 	}
 
@@ -1383,7 +1383,7 @@ static int panel_set_aod_light_mode(struct drm_panel *panel, void *dsi, dcs_writ
 		panel, dsi, cb, handle, ARRAY_SIZE(panel_set_aod_backlight_table));
 
 exit:
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 
 	return 0;
 }
@@ -1413,7 +1413,7 @@ void panel_get_unset_doze_brightness(struct drm_panel *panel, int *state)
 	}
 
 	*state = ctx->unset_doze_brightness;
-	pr_info("%s unset_doze_brightness = %d\n", __func__, *state);
+	pr_debug("%s unset_doze_brightness = %d\n", __func__, *state);
 }
 
 static void panel_aod_get_state(struct drm_panel *panel, bool *state)
@@ -1426,7 +1426,7 @@ static void panel_aod_get_state(struct drm_panel *panel, bool *state)
 	}
 
 	*state = ctx->in_aod;
-	pr_info("%s+ in_aod = %b\n", __func__, *state);
+	pr_debug("%s+ in_aod = %b\n", __func__, *state);
 }
 
 static void panel_aod_set_state(struct drm_panel *panel, bool *state)
@@ -1439,7 +1439,7 @@ static void panel_aod_set_state(struct drm_panel *panel, bool *state)
 	}
 
 	ctx->in_aod = *state;
-	pr_info("%s in_aod = %d\n", __func__, *state);
+	pr_debug("%s in_aod = %d\n", __func__, *state);
 }
 
 static int panel_hbm_fod_control(struct drm_panel *panel, bool en)
@@ -1455,7 +1455,7 @@ static int panel_hbm_fod_control(struct drm_panel *panel, bool en)
 	char level2_key_disable_tb[] = {0xF0, 0xA5, 0xA5};
 	char hbm_tb[] = {0x53, 0xe0, 0x00};
 	char bl_tb[] = {0x51, 0x07, 0xff};
-	pr_info("%s+ en = %d\n", __func__, en);
+	pr_debug("%s+ en = %d\n", __func__, en);
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
 	if (en) {
@@ -1529,7 +1529,7 @@ static int panel_hbm_fod_control(struct drm_panel *panel, bool en)
 		cmd_msg->tx_len[5] = 3;
 	}
 
-	pr_info("%s+,hbm_tb = 0x%x, high_bl = 0x%x, low_bl = 0x%x, elvss dimming state = %d\n",
+	pr_debug("%s+,hbm_tb = 0x%x, high_bl = 0x%x, low_bl = 0x%x, elvss dimming state = %d\n",
 		__func__, hbm_tb[1], bl_tb[1], bl_tb[2], en);
 
 	ret = mtk_ddic_dsi_send_cmd(cmd_msg, true, false);
@@ -1541,7 +1541,7 @@ static int panel_hbm_fod_control(struct drm_panel *panel, bool en)
 		ctx->set_backlight_time = ktime_add_ms(ktime_get(), 80);
 
 	vfree(cmd_msg);
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 
 	return 0;
 }
@@ -1561,7 +1561,7 @@ static int panel_normal_hbm_control(struct drm_panel *panel, bool en)
 	char level2_key_disable_tb[] = {0xF0, 0xA5, 0xA5};
 	char hbm_tb[] = {0x53, 0xe0, 0x00};
 	char bl_tb[] = {0x51, 0x07, 0xff};
-	pr_info("%s+ en = %d\n", __func__, en);
+	pr_debug("%s+ en = %d\n", __func__, en);
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
 	if (en) {
@@ -1639,7 +1639,7 @@ static int panel_normal_hbm_control(struct drm_panel *panel, bool en)
 		cmd_msg->tx_len[5] = 3;
 	}
 
-	pr_info("%s+,hbm_tb = 0x%x, high_bl = 0x%x, low_bl = 0x%x, elvss dimming state = %d\n",
+	pr_debug("%s+,hbm_tb = 0x%x, high_bl = 0x%x, low_bl = 0x%x, elvss dimming state = %d\n",
 		__func__, hbm_tb[1], bl_tb[1], bl_tb[2], en);
 
 	ret = mtk_ddic_dsi_send_cmd(cmd_msg, true, false);
@@ -1648,7 +1648,7 @@ static int panel_normal_hbm_control(struct drm_panel *panel, bool en)
 	}
 
 	vfree(cmd_msg);
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 
 	return 0;
 }
@@ -1672,11 +1672,11 @@ static void panel_set_crc_off(struct drm_panel *panel)
 		vmalloc(sizeof(struct mtk_ddic_dsi_msg));
 
 	if (ctx && ctx->crc_state == CRC_OFF) {
-		pr_info("%s crc_state is already in CRC_OFF,skip \n", __func__);
+		pr_debug("%s crc_state is already in CRC_OFF,skip \n", __func__);
 		goto done;
 	}
 
-	pr_info("%s begin +\n", __func__);
+	pr_debug("%s begin +\n", __func__);
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
 	cmd_msg->channel = 0;
@@ -1726,7 +1726,7 @@ static void panel_set_crc_off(struct drm_panel *panel)
 done:
 	vfree(cmd_msg);
 
-	pr_info("%s end -\n", __func__);
+	pr_debug("%s end -\n", __func__);
 }
 
 static void panel_set_crc_srgb(struct drm_panel *panel)
@@ -1748,11 +1748,11 @@ static void panel_set_crc_srgb(struct drm_panel *panel)
 		vmalloc(sizeof(struct mtk_ddic_dsi_msg));
 
 	if (ctx && ctx->crc_state == CRC_SRGB) {
-			pr_info("%s crc_state is already in SRGB,skip \n", __func__);
+			pr_debug("%s crc_state is already in SRGB,skip \n", __func__);
 			goto done;
 	}
 
-	pr_info("%s begin +\n", __func__);
+	pr_debug("%s begin +\n", __func__);
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
 	cmd_msg->channel = 0;
@@ -1802,7 +1802,7 @@ static void panel_set_crc_srgb(struct drm_panel *panel)
 done:
 	vfree(cmd_msg);
 
-	pr_info("%s end -\n", __func__);
+	pr_debug("%s end -\n", __func__);
 }
 
 static void panel_set_crc_p3(struct drm_panel *panel)
@@ -1825,11 +1825,11 @@ static void panel_set_crc_p3(struct drm_panel *panel)
 		vmalloc(sizeof(struct mtk_ddic_dsi_msg));
 
 	if (ctx && ctx->crc_state == CRC_P3) {
-		pr_info("%s crc_state is already in P3,skip \n", __func__);
+		pr_debug("%s crc_state is already in P3,skip \n", __func__);
 		goto done;
 	}
 
-	pr_info("%s begin +\n", __func__);
+	pr_debug("%s begin +\n", __func__);
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
 	cmd_msg->channel = 0;
@@ -1879,7 +1879,7 @@ static void panel_set_crc_p3(struct drm_panel *panel)
 done:
 	vfree(cmd_msg);
 
-	pr_info("%s end -\n", __func__);
+	pr_debug("%s end -\n", __func__);
 }
 
 static void panel_set_crc_p3_d65(struct drm_panel *panel)
@@ -1902,11 +1902,11 @@ static void panel_set_crc_p3_d65(struct drm_panel *panel)
 		vmalloc(sizeof(struct mtk_ddic_dsi_msg));
 
 	if (ctx && ctx->crc_state == CRC_P3_D65) {
-		pr_info("%s crc_state is already in CRC_P3_D65, skip \n", __func__);
+		pr_debug("%s crc_state is already in CRC_P3_D65, skip \n", __func__);
 		goto done;
 	}
 
-	pr_info("%s begin +\n", __func__);
+	pr_debug("%s begin +\n", __func__);
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
 	cmd_msg->channel = 0;
@@ -1956,7 +1956,7 @@ static void panel_set_crc_p3_d65(struct drm_panel *panel)
 done:
 	vfree(cmd_msg);
 
-	pr_info("%s end -\n", __func__);
+	pr_debug("%s end -\n", __func__);
 }
 
 static void panel_set_flat_crc_p3(struct drm_panel *panel)
@@ -1979,11 +1979,11 @@ static void panel_set_flat_crc_p3(struct drm_panel *panel)
 		vmalloc(sizeof(struct mtk_ddic_dsi_msg));
 
 	if (ctx && ctx->crc_state == CRC_P3_FLAT) {
-		pr_info("%s crc_state is already in CRC_P3_FLAT, skip \n", __func__);
+		pr_debug("%s crc_state is already in CRC_P3_FLAT, skip \n", __func__);
 		goto done;
 	}
 
-	pr_info("%s begin +\n", __func__);
+	pr_debug("%s begin +\n", __func__);
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
 	cmd_msg->channel = 0;
@@ -2033,7 +2033,7 @@ static void panel_set_flat_crc_p3(struct drm_panel *panel)
 done:
 	vfree(cmd_msg);
 
-	pr_info("%s end -\n", __func__);
+	pr_debug("%s end -\n", __func__);
 }
 
 static void panel_dimming_control(struct drm_panel *panel, bool en)
@@ -2043,7 +2043,7 @@ static void panel_dimming_control(struct drm_panel *panel, bool en)
 	int ret;
 	bool hbm_flag = 0;
 	char dimming_tb[] = {0x53, 0x28, 0x00};
-	pr_info("%s+ en = %d\n", __func__, en);
+	pr_debug("%s+ en = %d\n", __func__, en);
 	memset(cmd_msg, 0, sizeof(struct mtk_ddic_dsi_msg));
 
 	if (en) {
@@ -2061,7 +2061,7 @@ static void panel_dimming_control(struct drm_panel *panel, bool en)
 	cmd_msg->tx_buf[0] = dimming_tb;
 	cmd_msg->tx_len[0] = 3;
 
-	pr_info("%s+,dimming = %d \n", __func__, en);
+	pr_debug("%s+,dimming = %d \n", __func__, en);
 
 	ret = mtk_ddic_dsi_send_cmd(cmd_msg, true, true);
 	if (ret != 0) {
@@ -2070,7 +2070,7 @@ static void panel_dimming_control(struct drm_panel *panel, bool en)
 		panel_hbm_set_state(panel, &hbm_flag);
 	}
 	vfree(cmd_msg);
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 }
 
 static int panel_freq_switch(struct drm_panel *panel, unsigned int cur_mode, unsigned int dst_mode)
@@ -2083,14 +2083,14 @@ static int panel_freq_switch(struct drm_panel *panel, unsigned int cur_mode, uns
 
 	if (cur_mode == 0 && dst_mode == 1) { /* 60 switch to 120 */
 		freq_tb[1] = 0x10;
-		pr_info("%s_60_to_120+,freq_tb = 0x%x\n", __func__, freq_tb[1]);
+		pr_debug("%s_60_to_120+,freq_tb = 0x%x\n", __func__, freq_tb[1]);
 #ifdef CONFIG_HWCONF_MANAGER
 		/* add for display fps cpunt */
 		dsi_panel_fps_count(panel, 120, 1);
 #endif
 	} else if (cur_mode == 1 && dst_mode == 0) { /* 120 switch to 60 */
 		freq_tb[1] = 0x00;
-		pr_info("%s_120_to_60+,freq_tb = 0x%x\n", __func__, freq_tb[1]);
+		pr_debug("%s_120_to_60+,freq_tb = 0x%x\n", __func__, freq_tb[1]);
 #ifdef CONFIG_HWCONF_MANAGER
 		/* add for display fps cpunt */
 		dsi_panel_fps_count(panel, 60, 1);
@@ -2116,7 +2116,7 @@ static int panel_freq_switch(struct drm_panel *panel, unsigned int cur_mode, uns
 
 done:
 	vfree(cmd_msg);
-	pr_info("%s end -\n", __func__);
+	pr_debug("%s end -\n", __func__);
 	return ret;
 }
 
@@ -2314,7 +2314,7 @@ static int lcm_probe(struct mipi_dsi_device *dsi)
 	struct device_node *backlight;
 	int ret;
 
-	pr_info("%s+\n", __func__);
+	pr_debug("%s+\n", __func__);
 	ctx = devm_kzalloc(dev, sizeof(struct lcm), GFP_KERNEL);
 	if (!ctx)
 		return -ENOMEM;
@@ -2379,7 +2379,7 @@ static int lcm_probe(struct mipi_dsi_device *dsi)
 	ctx->skip_dimmingon = STATE_NONE;
 	INIT_DELAYED_WORK(&ctx->dimmingon_delayed_work, panel_dimming_on_delayed_work);
 
-	pr_info("%s-\n", __func__);
+	pr_debug("%s-\n", __func__);
 
 	return ret;
 }

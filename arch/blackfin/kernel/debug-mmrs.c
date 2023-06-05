@@ -581,7 +581,7 @@ static int __init bfin_debug_mmrs_init(void)
 {
 	struct dentry *top, *parent;
 
-	pr_info("debug-mmrs: setting up Blackfin MMR debugfs\n");
+	pr_debug("debug-mmrs: setting up Blackfin MMR debugfs\n");
 
 	top = debugfs_create_dir("blackfin", NULL);
 	if (top == NULL)

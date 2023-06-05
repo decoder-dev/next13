@@ -1483,7 +1483,7 @@ static void fill_note(struct memelfnote *note, const char *name, int type,
 static void fill_prstatus(struct elf_prstatus *prstatus,
 		struct task_struct *p, long signr)
 {
-	prstatus->pr_info.si_signo = prstatus->pr_cursig = signr;
+	prstatus->pr_debug.si_signo = prstatus->pr_cursig = signr;
 	prstatus->pr_sigpend = p->pending.signal.sig[0];
 	prstatus->pr_sighold = p->blocked.sig[0];
 	rcu_read_lock();
@@ -2368,7 +2368,7 @@ static int elf_core_dump(struct coredump_params *cprm)
 			} else
 				stop = !dump_skip(cprm, PAGE_SIZE);
 			if (stop) {
-				pr_info("%s: stop:0x%lx, vm_start:0x%lx, vm_end:0x%lx\n",
+				pr_debug("%s: stop:0x%lx, vm_start:0x%lx, vm_end:0x%lx\n",
 					__func__, addr,
 					vma->vm_start, vma->vm_end);
 				goto end_coredump;

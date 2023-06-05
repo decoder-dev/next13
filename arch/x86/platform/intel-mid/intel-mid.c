@@ -144,7 +144,7 @@ static void intel_mid_arch_setup(void)
 		intel_mid_ops = get_intel_mid_ops[__intel_mid_cpu_chip]();
 	else {
 		intel_mid_ops = get_intel_mid_ops[INTEL_MID_CPU_CHIP_PENWELL]();
-		pr_info("ARCH: Unknown SoC, assuming Penwell!\n");
+		pr_debug("ARCH: Unknown SoC, assuming Penwell!\n");
 	}
 
 out:

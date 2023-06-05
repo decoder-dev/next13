@@ -239,7 +239,7 @@ static int modern_apic(void)
  */
 static void __init apic_disable(void)
 {
-	pr_info("APIC: switched to apic NOOP\n");
+	pr_debug("APIC: switched to apic NOOP\n");
 	apic = &apic_noop;
 }
 
@@ -411,12 +411,11 @@ static unsigned int reserve_eilvt_offset(int offset, unsigned int new)
 		if (vector && !eilvt_entry_is_changeable(vector, new))
 			/* may not change if vectors are different */
 			return rsvd;
-		rsvd = atomic_cmpxchg(&eilvt_offsets[offset], rsvd, new);
-	} while (rsvd != new);
+	} while (!atomic_try_cmpxchg(&eilvt_offsets[offset], &rsvd, new));
 
-	rsvd &= ~APIC_EILVT_MASKED;
+	rsvd = new & ~APIC_EILVT_MASKED;
 	if (rsvd && rsvd != vector)
-		pr_info("LVT offset %d assigned for vector 0x%02x\n",
+		pr_debug("LVT offset %d assigned for vector 0x%02x\n",
 			offset, rsvd);
 
 	return new;
@@ -791,7 +790,7 @@ calibrate_by_pmtimer(long deltapm, long *delta, long *deltatsc)
 	/* Correct the lapic counter value */
 	res = (((u64)(*delta)) * pm_100ms);
 	do_div(res, deltapm);
-	pr_info("APIC delta adjusted to PM-Timer: "
+	pr_debug("APIC delta adjusted to PM-Timer: "
 		"%lu (%ld)\n", (unsigned long)res, *delta);
 	*delta = (long)res;
 
@@ -1011,7 +1010,7 @@ void __init setup_boot_APIC_clock(void)
 	 * broadcast mechanism is used. On UP systems simply ignore it.
 	 */
 	if (disable_apic_timer) {
-		pr_info("Disabling APIC timer\n");
+		pr_debug("Disabling APIC timer\n");
 		/* No broadcast on UP ! */
 		if (num_possible_cpus() > 1) {
 			lapic_clockevent.mult = 1;
@@ -1330,7 +1329,7 @@ static void lapic_setup_esr(void)
 	unsigned int oldvalue, value, maxlvt;
 
 	if (!lapic_is_integrated()) {
-		pr_info("No ESR for 82489DX.\n");
+		pr_debug("No ESR for 82489DX.\n");
 		return;
 	}
 
@@ -1341,7 +1340,7 @@ static void lapic_setup_esr(void)
 		 * ESR disabled - we can't do anything useful with the
 		 * errors anyway - mbligh
 		 */
-		pr_info("Leaving ESR disabled.\n");
+		pr_debug("Leaving ESR disabled.\n");
 		return;
 	}
 
@@ -1713,7 +1712,7 @@ static __init void try_to_enable_x2apic(int remap_mode)
 		 */
 		if (max_physical_apicid > 255 ||
 		    !x86_init.hyper.x2apic_available()) {
-			pr_info("x2apic: IRQ remapping doesn't support X2APIC mode\n");
+			pr_debug("x2apic: IRQ remapping doesn't support X2APIC mode\n");
 			x2apic_disable();
 			return;
 		}
@@ -1730,7 +1729,7 @@ static __init void try_to_enable_x2apic(int remap_mode)
 void __init check_x2apic(void)
 {
 	if (x2apic_enabled()) {
-		pr_info("x2apic: enabled by BIOS, switching to x2apic ops\n");
+		pr_debug("x2apic: enabled by BIOS, switching to x2apic ops\n");
 		x2apic_mode = 1;
 		x2apic_state = X2APIC_ON;
 	} else if (!boot_cpu_has(X86_FEATURE_X2APIC)) {
@@ -1759,7 +1758,7 @@ void __init enable_IR_x2apic(void)
 	int ret, ir_stat;
 
 	if (skip_ioapic_setup) {
-		pr_info("Not enabling interrupt remapping due to skipped IO-APIC setup\n");
+		pr_debug("Not enabling interrupt remapping due to skipped IO-APIC setup\n");
 		return;
 	}
 
@@ -1769,7 +1768,7 @@ void __init enable_IR_x2apic(void)
 
 	ret = save_ioapic_entries();
 	if (ret) {
-		pr_info("Saving IO-APIC state failed: %d\n", ret);
+		pr_debug("Saving IO-APIC state failed: %d\n", ret);
 		return;
 	}
 
@@ -1799,7 +1798,7 @@ void __init enable_IR_x2apic(void)
 static int __init detect_init_APIC(void)
 {
 	if (!boot_cpu_has(X86_FEATURE_APIC)) {
-		pr_info("No local APIC present\n");
+		pr_debug("No local APIC present\n");
 		return -1;
 	}
 
@@ -1831,7 +1830,7 @@ static int __init apic_verify(void)
 			mp_lapic_addr = l & MSR_IA32_APICBASE_BASE;
 	}
 
-	pr_info("Found and enabled local APIC!\n");
+	pr_debug("Found and enabled local APIC!\n");
 	return 0;
 }
 
@@ -1850,7 +1849,7 @@ int __init apic_force_enable(unsigned long addr)
 	if (boot_cpu_data.x86 >= 6) {
 		rdmsr(MSR_IA32_APICBASE, l, h);
 		if (!(l & MSR_IA32_APICBASE_ENABLE)) {
-			pr_info("Local APIC disabled by BIOS -- reenabling.\n");
+			pr_debug("Local APIC disabled by BIOS -- reenabling.\n");
 			l &= ~MSR_IA32_APICBASE_BASE;
 			l |= MSR_IA32_APICBASE_ENABLE | addr;
 			wrmsr(MSR_IA32_APICBASE, l, h);
@@ -1890,7 +1889,7 @@ static int __init detect_init_APIC(void)
 		 * "lapic" specified.
 		 */
 		if (!force_enable_local_apic) {
-			pr_info("Local APIC disabled by BIOS -- "
+			pr_debug("Local APIC disabled by BIOS -- "
 				"you can enable it with \"lapic\"\n");
 			return -1;
 		}
@@ -1906,7 +1905,7 @@ static int __init detect_init_APIC(void)
 	return 0;
 
 no_apic:
-	pr_info("No local APIC present or hardware disabled\n");
+	pr_debug("No local APIC present or hardware disabled\n");
 	return -1;
 }
 #endif
@@ -1919,7 +1918,7 @@ void __init init_apic_mappings(void)
 	unsigned int new_apicid;
 
 	if (apic_validate_deadline_timer())
-		pr_info("TSC deadline timer available\n");
+		pr_debug("TSC deadline timer available\n");
 
 	if (x2apic_mode) {
 		boot_cpu_physical_apicid = read_apic_id();
@@ -1929,7 +1928,7 @@ void __init init_apic_mappings(void)
 	/* If no local APIC can be found return early */
 	if (!smp_found_config && detect_init_APIC()) {
 		/* lets NOP'ify apic operations */
-		pr_info("APIC: disable apic facility\n");
+		pr_debug("APIC: disable apic facility\n");
 		apic_disable();
 	} else {
 		apic_phys = mp_lapic_addr;
@@ -2002,7 +2001,7 @@ __visible void __irq_entry smp_spurious_interrupt(struct pt_regs *regs)
 	inc_irq_stat(irq_spurious_count);
 
 	/* see sw-dev-man vol 3, chapter 7.4.13.5 */
-	pr_info("spurious APIC interrupt through vector %02x on CPU#%d, "
+	pr_debug("spurious APIC interrupt through vector %02x on CPU#%d, "
 		"should never happen.\n", vector, smp_processor_id());
 
 	trace_spurious_apic_exit(vector);
@@ -2437,13 +2436,13 @@ int __init apic_bsp_setup(bool upmode)
 int __init APIC_init_uniprocessor(void)
 {
 	if (disable_apic) {
-		pr_info("Apic disabled\n");
+		pr_debug("Apic disabled\n");
 		return -1;
 	}
 #ifdef CONFIG_X86_64
 	if (!boot_cpu_has(X86_FEATURE_APIC)) {
 		disable_apic = 1;
-		pr_info("Apic disabled by BIOS\n");
+		pr_debug("Apic disabled by BIOS\n");
 		return -1;
 	}
 #else
@@ -2658,7 +2657,7 @@ static int set_multi(const struct dmi_system_id *d)
 {
 	if (multi)
 		return 0;
-	pr_info("APIC: %s detected, Multi Chassis\n", d->ident);
+	pr_debug("APIC: %s detected, Multi Chassis\n", d->ident);
 	multi = 1;
 	return 0;
 }

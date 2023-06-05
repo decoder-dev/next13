@@ -195,10 +195,10 @@ static int startup_dim(struct platform_device *pdev)
 	}
 
 	if (dev->clk_speed == -1) {
-		pr_info("Bad or missing clock speed parameter, using default value: 3072fs\n");
+		pr_debug("Bad or missing clock speed parameter, using default value: 3072fs\n");
 		dev->clk_speed = CLK_3072FS;
 	} else {
-		pr_info("Selected clock speed: %s\n", clock_speed);
+		pr_debug("Selected clock speed: %s\n", clock_speed);
 	}
 	if (pdata && pdata->init) {
 		int ret = pdata->init(pdata, dev->io_base, dev->clk_speed);
@@ -207,7 +207,7 @@ static int startup_dim(struct platform_device *pdev)
 			return ret;
 	}
 
-	pr_info("sync: num of frames per sub-buffer: %u\n", fcnt);
+	pr_debug("sync: num of frames per sub-buffer: %u\n", fcnt);
 	hal_ret = dim_startup(dev->io_base, dev->clk_speed, fcnt);
 	if (hal_ret != DIM_NO_ERROR) {
 		pr_err("dim_startup failed: %d\n", hal_ret);
@@ -311,9 +311,9 @@ static void retrieve_netinfo(struct dim2_hdm *dev, struct mbo *mbo)
 {
 	u8 *data = mbo->virt_address;
 
-	pr_info("Node Address: 0x%03x\n", (u16)data[16] << 8 | data[17]);
+	pr_debug("Node Address: 0x%03x\n", (u16)data[16] << 8 | data[17]);
 	dev->link_state = data[18];
-	pr_info("NIState: %d\n", dev->link_state);
+	pr_debug("NIState: %d\n", dev->link_state);
 	memcpy(dev->mac_addrs, data + 19, 6);
 	dev->deliver_netinfo++;
 	wake_up_interruptible(&dev->netinfo_waitq);

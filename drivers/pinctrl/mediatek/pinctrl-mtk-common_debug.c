@@ -26,10 +26,10 @@ static int mtk_pinctrl_set_gpio_output(struct mtk_pinctrl *pctl,
 	return mtk_pinctrl_update_gpio_value(pctl, pin, value,
 		pctl->devdata->n_pin_dout, pctl->devdata->pin_dout_grps);
 #else
-	pr_info("config pin = %d, value = %d\n", pin, value);
+	pr_debug("config pin = %d, value = %d\n", pin, value);
 	mtk_pinctrl_update_gpio_value(pctl, pin, value,
 		pctl->devdata->n_pin_dout, pctl->devdata->pin_dout_grps);
-	pr_info("set pin = %d, value = %d\n", pin,
+	pr_debug("set pin = %d, value = %d\n", pin,
 		mtk_pinctrl_get_gpio_output(pctl, pin));
 	return 0;
 #endif
@@ -54,10 +54,10 @@ static int mtk_pinctrl_set_gpio_direction(struct mtk_pinctrl *pctl,
 	return mtk_pinctrl_update_gpio_value(pctl, pin, input,
 		pctl->devdata->n_pin_dir, pctl->devdata->pin_dir_grps);
 #else
-	pr_info("config pin = %d, dir = %d\n", pin, input);
+	pr_debug("config pin = %d, dir = %d\n", pin, input);
 	mtk_pinctrl_update_gpio_value(pctl, pin, input,
 			pctl->devdata->n_pin_dir, pctl->devdata->pin_dir_grps);
-	pr_info("set pin = %d, dir = %d\n", pin,
+	pr_debug("set pin = %d, dir = %d\n", pin,
 		mtk_pinctrl_get_gpio_direction(pctl, pin));
 	return 0;
 #endif
@@ -76,10 +76,10 @@ static int mtk_pinctrl_set_gpio_mode(struct mtk_pinctrl *pctl,
 	return mtk_pinctrl_update_gpio_value(pctl, pin, mode,
 		pctl->devdata->n_pin_mode, pctl->devdata->pin_mode_grps);
 #else
-	pr_info("config pin = %d, mode = %d\n", pin, (int)mode);
+	pr_debug("config pin = %d, mode = %d\n", pin, (int)mode);
 	mtk_pinctrl_update_gpio_value(pctl, pin, mode,
 		pctl->devdata->n_pin_mode, pctl->devdata->pin_mode_grps);
-	pr_info("set pin = %d, mode = %d\n", pin,
+	pr_debug("set pin = %d, mode = %d\n", pin,
 		mtk_pinctrl_get_gpio_mode(pctl, pin));
 	return 0;
 #endif
@@ -98,10 +98,10 @@ static int mtk_pinctrl_set_gpio_driving(struct mtk_pinctrl *pctl,
 	return mtk_pinctrl_update_gpio_value(pctl, pin, driving,
 		pctl->devdata->n_pin_drv, pctl->devdata->pin_drv_grps);
 #else
-	pr_info("config pin = %d, driving = %d\n", pin, driving);
+	pr_debug("config pin = %d, driving = %d\n", pin, driving);
 	mtk_pinctrl_update_gpio_value(pctl, pin, driving,
 		pctl->devdata->n_pin_drv, pctl->devdata->pin_drv_grps);
-	pr_info("set pin = %d, driving = %d\n", pin,
+	pr_debug("set pin = %d, driving = %d\n", pin,
 		mtk_pinctrl_get_gpio_driving(pctl, pin));
 	return 0;
 #endif
@@ -483,7 +483,7 @@ int mtk_pctrl_get_gpio_chip_base(void)
 {
 	if (pctl_alt)
 		return pctl_alt->chip->base;
-	pr_info("mtk_pinctrl is not initialized\n");
+	pr_debug("mtk_pinctrl is not initialized\n");
 	return 0;
 }
 #endif

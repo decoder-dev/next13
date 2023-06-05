@@ -46,7 +46,7 @@ typedef elf_fpreg_t elf_fpregset_t[ELF_NFPREG];
 #define elf_prstatus elf_prstatus32
 struct elf_prstatus32
 {
-	struct elf_siginfo pr_info;	/* Info associated with signal */
+	struct elf_siginfo pr_debug;	/* Info associated with signal */
 	short	pr_cursig;		/* Current signal */
 	unsigned int pr_sigpend;	/* Set of pending signals */
 	unsigned int pr_sighold;	/* Set of held signals */

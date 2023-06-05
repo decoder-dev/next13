@@ -1305,7 +1305,7 @@ static int kvmppc_emulate_mmio_vsx_loadstore(struct kvm_vcpu *vcpu,
 		r = RESUME_HOST;
 		break;
 	case EMULATE_FAIL:
-		pr_info("KVM: MMIO emulation failed (VSX repeat)\n");
+		pr_debug("KVM: MMIO emulation failed (VSX repeat)\n");
 		run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
 		run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
 		r = RESUME_HOST;

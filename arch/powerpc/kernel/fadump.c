@@ -285,7 +285,7 @@ static inline unsigned long fadump_calculate_reserve_size(void)
 		unsigned long max_size;
 
 		if (fw_dump.reserve_bootvar)
-			pr_info("Using 'crashkernel=' parameter for memory reservation.\n");
+			pr_debug("Using 'crashkernel=' parameter for memory reservation.\n");
 
 		fw_dump.reserve_bootvar = (unsigned long)size;
 
@@ -296,7 +296,7 @@ static inline unsigned long fadump_calculate_reserve_size(void)
 		max_size = memblock_phys_mem_size() / MAX_BOOT_MEM_RATIO;
 		if (fw_dump.reserve_bootvar > max_size) {
 			fw_dump.reserve_bootvar = max_size;
-			pr_info("Adjusted boot memory size to %luMB\n",
+			pr_debug("Adjusted boot memory size to %luMB\n",
 				(fw_dump.reserve_bootvar >> 20));
 		}
 
@@ -430,7 +430,7 @@ int __init fadump_reserve_mem(void)
 			return 0;
 		}
 
-		pr_info("Reserved %ldMB of memory at %ldMB for firmware-"
+		pr_debug("Reserved %ldMB of memory at %ldMB for firmware-"
 			"assisted dump (System RAM: %ldMB)\n",
 			(unsigned long)(size >> 20),
 			(unsigned long)(base >> 20),
@@ -1236,7 +1236,7 @@ static void fadump_free_reserved_memory(unsigned long start_pfn,
 	unsigned long pfn;
 	unsigned long time_limit = jiffies + HZ;
 
-	pr_info("freeing reserved memory (0x%llx - 0x%llx)\n",
+	pr_debug("freeing reserved memory (0x%llx - 0x%llx)\n",
 		PFN_PHYS(start_pfn), PFN_PHYS(end_pfn));
 
 	for (pfn = start_pfn; pfn < end_pfn; pfn++) {

@@ -242,7 +242,7 @@ static ssize_t panel_info_show(struct device *device,
     const char *panel_name_prefix = "panel_name=dsi_";
     struct drm_connector *connector = to_drm_connector(device);
     if (!connector) {
-        pr_info("%s-%d connector is NULL \r\n",__func__, __LINE__);
+        pr_debug("%s-%d connector is NULL \r\n",__func__, __LINE__);
         return ret;
     }
 
@@ -258,7 +258,7 @@ static ssize_t disp_param_store(struct device *device,
 	int32_t param;
 	struct drm_connector *connector = to_drm_connector(device);
 	if (!connector) {
-		pr_info("%s-%d connector is NULL \r\n",__func__, __LINE__);
+		pr_debug("%s-%d connector is NULL \r\n",__func__, __LINE__);
 		return ret;
 	}
 
@@ -275,7 +275,7 @@ static ssize_t disp_param_show(struct device *device,
     unsigned char* p_temp;
     struct drm_connector *connector = to_drm_connector(device);
     if (!connector) {
-        pr_info("%s-%d connector is NULL\r\n",__func__, __LINE__);
+        pr_debug("%s-%d connector is NULL\r\n",__func__, __LINE__);
         return ret;
     }
 
@@ -283,12 +283,12 @@ static ssize_t disp_param_show(struct device *device,
 
 	if (connector->read_flag == 0x1) {
 		ret = scnprintf(buf, 13, "%s", p_temp);
-		pr_info("dsi panel read data flag: 0x1, buf: %s\n", buf);
+		pr_debug("dsi panel read data flag: 0x1, buf: %s\n", buf);
 	} else if (connector->read_flag == 0x2) {
 		ret = scnprintf(buf, 7, "%s", p_temp + PANEL_MAX_LUMINANCE_READ_OFFSET );
-		pr_info("dsi panel read data flag: 0x2, buf: %s\n", buf);
+		pr_debug("dsi panel read data flag: 0x2, buf: %s\n", buf);
 	} else {
-		pr_info("dai panel read data flag 0x%x can't use !\n", connector->read_flag);
+		pr_debug("dai panel read data flag 0x%x can't use !\n", connector->read_flag);
 	}
 	
     return ret;
@@ -309,7 +309,7 @@ static ssize_t panel_id_show(struct device *device,
 	ssize_t ret = 0;
 	struct drm_connector *connector = to_drm_connector(device);
 	if (!connector) {
-		pr_info("%s-%d connector is NULL \r\n",__func__, __LINE__);
+		pr_debug("%s-%d connector is NULL \r\n",__func__, __LINE__);
 		return ret;
 	}
 
@@ -342,7 +342,7 @@ static ssize_t panel_event_show(struct device *device,
         ssize_t ret = 0;
         struct drm_connector *connector = to_drm_connector(device);
         if (!connector) {
-                pr_info("%s-%d connector is NULL \r\n",__func__, __LINE__);
+                pr_debug("%s-%d connector is NULL \r\n",__func__, __LINE__);
                 return ret;
         }
 
@@ -359,7 +359,7 @@ static ssize_t doze_brightness_store(struct device *device,
 	int doze_brightness;
 	int ret;
 	struct drm_connector *connector = to_drm_connector(device);
-	pr_info("%s +\n", __func__);
+	pr_debug("%s +\n", __func__);
 	if (!connector) {
 		pr_err("%s, the connector is null\n", __func__);
 		return 0;
@@ -415,7 +415,7 @@ static ssize_t thermal_hbm_disabled_store(struct device *device,
 		goto exit_free;
 	}
 
-	pr_info("set thermal_hbm_disabled %d\n", thermal_hbm_disabled);
+	pr_debug("set thermal_hbm_disabled %d\n", thermal_hbm_disabled);
 	ret = dsi_display_panel_set_thermal_hbm_disabled(connector, thermal_hbm_disabled);
 
 exit_free:

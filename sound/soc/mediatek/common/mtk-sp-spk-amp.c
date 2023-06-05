@@ -135,7 +135,7 @@ static int mtk_spk_i2c_probe(struct i2c_client *client,
 			if (mtk_spk_type != i)
 				pr_err("%s cnt: %d, type: %d, i:%d\n", __func__, mtk_spk_cnt, mtk_spk_type, i);
 			else
-				pr_info("%s cnt: %d, type: %d\n", __func__, mtk_spk_cnt, mtk_spk_type);
+				pr_debug("%s cnt: %d, type: %d\n", __func__, mtk_spk_cnt, mtk_spk_type);
 		}
 #endif
 

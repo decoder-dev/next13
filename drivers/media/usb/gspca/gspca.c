@@ -2027,7 +2027,7 @@ int gspca_dev_probe2(struct usb_interface *intf,
 	struct usb_device *dev = interface_to_usbdev(intf);
 	int ret;
 
-	pr_info("%s-" GSPCA_VERSION " probing %04x:%04x\n",
+	pr_debug("%s-" GSPCA_VERSION " probing %04x:%04x\n",
 		sd_desc->name, id->idVendor, id->idProduct);
 
 	/* create the device */
@@ -2275,7 +2275,7 @@ EXPORT_SYMBOL(gspca_resume);
 /* -- module insert / remove -- */
 static int __init gspca_init(void)
 {
-	pr_info("v" GSPCA_VERSION " registered\n");
+	pr_debug("v" GSPCA_VERSION " registered\n");
 	return 0;
 }
 static void __exit gspca_exit(void)

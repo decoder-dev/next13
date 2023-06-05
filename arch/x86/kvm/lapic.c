@@ -1465,7 +1465,7 @@ static bool set_target_expiration(struct kvm_lapic *apic)
 		s64 min_period = min_timer_period_us * 1000LL;
 
 		if (apic->lapic_timer.period < min_period) {
-			pr_info_ratelimited(
+			pr_debug_ratelimited(
 			    "kvm: vcpu %i: requested %lld ns "
 			    "lapic timer period limited to %lld ns\n",
 			    apic->vcpu->vcpu_id,

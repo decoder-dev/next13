@@ -209,7 +209,7 @@ static __init int isram_read_test(char *sdram, void *l1inst)
 	int i, ret = 0;
 	uint64_t data1, data2;
 
-	pr_info("INFO: running isram_read tests\n");
+	pr_debug("INFO: running isram_read tests\n");
 
 	/* setup some different data to play with */
 	for (i = 0; i < test_len; ++i)
@@ -235,7 +235,7 @@ static __init int isram_write_test(char *sdram, void *l1inst)
 	int i, ret = 0;
 	uint64_t data1, data2;
 
-	pr_info("INFO: running isram_write tests\n");
+	pr_debug("INFO: running isram_write tests\n");
 
 	/* setup some different data to play with */
 	memset(sdram, 0, test_len * 2);
@@ -285,12 +285,12 @@ static __init int isram_memcpy_test(char *sdram, void *l1inst)
 	int i, j, thisret, ret = 0;
 
 	/* check broad isram_memcpy() */
-	pr_info("INFO: running broad isram_memcpy tests\n");
+	pr_debug("INFO: running broad isram_memcpy tests\n");
 	for (i = 0xf; i >= 0; --i)
 		ret += _isram_memcpy_test(i, sdram, l1inst, isram_memcpy);
 
 	/* check read of small, unaligned, and hardware 64bit limits */
-	pr_info("INFO: running isram_memcpy (read) tests\n");
+	pr_debug("INFO: running isram_memcpy (read) tests\n");
 
 	/* setup some different data to play with */
 	for (i = 0; i < test_len; ++i)
@@ -320,7 +320,7 @@ static __init int isram_memcpy_test(char *sdram, void *l1inst)
 	ret += thisret;
 
 	/* check write of small, unaligned, and hardware 64bit limits */
-	pr_info("INFO: running isram_memcpy (write) tests\n");
+	pr_debug("INFO: running isram_memcpy (write) tests\n");
 
 	memset(sdram + test_len, 0, test_len);
 	dma_memcpy(l1inst, sdram + test_len, test_len);
@@ -367,7 +367,7 @@ static __init int isram_test_init(void)
 		pr_warning("SKIP: could not allocate L1 inst\n");
 		return 0;
 	}
-	pr_info("INFO: testing %#x bytes (%p - %p)\n",
+	pr_debug("INFO: testing %#x bytes (%p - %p)\n",
 	        test_len, l1inst, l1inst + test_len);
 
 	sdram = kmalloc(test_len * 2, GFP_KERNEL);
@@ -379,7 +379,7 @@ static __init int isram_test_init(void)
 
 	/* sanity check initial L1 inst state */
 	ret = 1;
-	pr_info("INFO: running initial dma_memcpy checks %p\n", sdram);
+	pr_debug("INFO: running initial dma_memcpy checks %p\n", sdram);
 	if (_isram_memcpy_test(0xa, sdram, l1inst, dma_memcpy))
 		goto abort;
 	if (_isram_memcpy_test(0x5, sdram, l1inst, dma_memcpy))
@@ -397,7 +397,7 @@ static __init int isram_test_init(void)
 	if (ret)
 		return -EIO;
 
-	pr_info("PASS: all tests worked !\n");
+	pr_debug("PASS: all tests worked !\n");
 	return 0;
 }
 late_initcall(isram_test_init);

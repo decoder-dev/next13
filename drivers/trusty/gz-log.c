@@ -97,7 +97,7 @@ static int trusty_log_panic_notify(struct notifier_block *nb,
 	 * though this is racy.
 	 */
 	s = container_of(nb, struct trusty_log_state, panic_notifier);
-	pr_info("trusty-log panic notifier - trusty version %s",
+	pr_debug("trusty-log panic notifier - trusty version %s",
 		trusty_version_str_get(s->trusty_dev));
 	atomic_inc(&gz_log_event_count);
 	wake_up_interruptible(&gz_log_wq);
@@ -111,10 +111,10 @@ static bool trusty_supports_logging(struct device *device)
 	result = trusty_std_call32(device, SMC_SC_SHARED_LOG_VERSION,
 				   TRUSTY_LOG_API_VERSION, 0, 0);
 	if (result == SM_ERR_UNDEFINED_SMC) {
-		pr_info("trusty-log not supported on secure side.\n");
+		pr_debug("trusty-log not supported on secure side.\n");
 		return false;
 	} else if (result < 0) {
-		pr_info("trusty std call (SHARED_LOG_VERSION) failed: %d\n",
+		pr_debug("trusty std call (SHARED_LOG_VERSION) failed: %d\n",
 			result);
 		return false;
 	}
@@ -122,7 +122,7 @@ static bool trusty_supports_logging(struct device *device)
 	if (result == TRUSTY_LOG_API_VERSION)
 		return true;
 
-	pr_info("trusty-log unsupported api version: %d, supported: %d\n",
+	pr_debug("trusty-log unsupported api version: %d, supported: %d\n",
 		result, TRUSTY_LOG_API_VERSION);
 	return false;
 }
@@ -254,7 +254,7 @@ static int gz_log_proc_init(void)
 	gz_log_proc_file = proc_create("gz_log", 0444, NULL,
 				       &proc_gz_log_file_operations);
 	if (gz_log_proc_file == NULL) {
-		pr_info("gz_log proc_create failed!\n");
+		pr_debug("gz_log proc_create failed!\n");
 		return -ENOMEM;
 	}
 
@@ -294,7 +294,7 @@ void get_gz_log_buffer(unsigned long *addr, unsigned long *size,
 		       unsigned long *start)
 {
 	*addr = (unsigned long)page_address(trusty_log_pages);
-	pr_info("trusty_log_pages virtual address:%lx\n", (unsigned long)*addr);
+	pr_debug("trusty_log_pages virtual address:%lx\n", (unsigned long)*addr);
 	*start = 0;
 	*size = TRUSTY_LOG_SIZE;
 }
@@ -304,7 +304,7 @@ int gz_log_page_init(void)
 	trusty_log_pages = alloc_pages(GFP_KERNEL | __GFP_ZERO | GFP_DMA,
 				       get_order(TRUSTY_LOG_SIZE));
 	if (!trusty_log_pages) {
-		pr_info("trusty_log_pages alloc fail!\n");
+		pr_debug("trusty_log_pages alloc fail!\n");
 		return -ENOMEM;
 	}
 
@@ -337,15 +337,15 @@ static int trusty_log_probe(struct platform_device *pdev)
 		goto error_alloc_log;
 	}
 	tls->log = page_address(tls->log_pages);
-	pr_info("tls->log virtual address:%p\n", tls->log);
+	pr_debug("tls->log virtual address:%p\n", tls->log);
 
 	pa = page_to_phys(tls->log_pages);
-	pr_info("tls->log physical address:%x\n", (unsigned int)pa);
+	pr_debug("tls->log physical address:%x\n", (unsigned int)pa);
 	result = trusty_std_call32(tls->trusty_dev, SMC_SC_SHARED_LOG_ADD,
 				   (u32)(pa), (u32)((u64)pa >> 32),
 				   TRUSTY_LOG_SIZE);
 	if (result < 0) {
-		pr_info("trusty std call (SHARED_LOG_ADD) failed: %d %pa\n",
+		pr_debug("trusty std call (SHARED_LOG_ADD) failed: %d %pa\n",
 			result, &pa);
 		goto error_std_call;
 	}
@@ -399,7 +399,7 @@ static int trusty_log_remove(struct platform_device *pdev)
 	result = trusty_std_call32(tls->trusty_dev, SMC_SC_SHARED_LOG_RM,
 				   (u32)pa, (u32)((u64)pa >> 32), 0);
 	if (result) {
-		pr_info("trusty std call (SMC_SC_SHARED_LOG_RM) failed: %d\n",
+		pr_debug("trusty std call (SMC_SC_SHARED_LOG_RM) failed: %d\n",
 			result);
 	}
 	__free_pages(tls->log_pages, get_order(TRUSTY_LOG_SIZE));

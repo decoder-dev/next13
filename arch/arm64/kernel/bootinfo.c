@@ -21,7 +21,7 @@ static int cpumaxfreq_show(struct seq_file *m, void *v)
 	char* hwid_ptr = strstr(saved_command_line, HWVERSION_CMDLINE);
 	if (hwid_ptr) {
 		sscanf(hwid_ptr, HWVERSION_CMDLINE"%d", &main_hwid);
-		pr_info("CPU_MAXFREQ: main hwid = %d", main_hwid);
+		pr_debug("CPU_MAXFREQ: main hwid = %d", main_hwid);
 	}
 
 	//judge the type by main_hwid: 1-J7A, 2-J7B
@@ -31,7 +31,7 @@ static int cpumaxfreq_show(struct seq_file *m, void *v)
 		seq_printf(m, "2.6\n");
 	} else {
 		seq_printf(m, "unknown\n");
-		pr_info("CPU_MAXFREQ: main hwid get error!");
+		pr_debug("CPU_MAXFREQ: main hwid get error!");
 	}
 #endif
 	return 0;

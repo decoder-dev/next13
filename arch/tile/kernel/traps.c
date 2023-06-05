@@ -48,7 +48,7 @@ static int __init setup_unaligned_fixup(char *str)
 	if (kstrtoint(str, 0, &unaligned_fixup) != 0)
 		return 0;
 
-	pr_info("Fixups for unaligned data accesses are %s\n",
+	pr_debug("Fixups for unaligned data accesses are %s\n",
 		unaligned_fixup >= 0 ?
 		(unaligned_fixup ? "enabled" : "disabled") :
 		"completely disabled");
@@ -62,7 +62,7 @@ static int dma_disabled;
 
 static int __init nodma(char *str)
 {
-	pr_info("User-space DMA is disabled\n");
+	pr_debug("User-space DMA is disabled\n");
 	dma_disabled = 1;
 	return 1;
 }

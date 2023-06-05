@@ -70,51 +70,51 @@ static bool __read_mostly rcu_nocb_poll;    /* Offload kthread are to poll. */
 static void __init rcu_bootup_announce_oddness(void)
 {
 	if (IS_ENABLED(CONFIG_RCU_TRACE))
-		pr_info("\tRCU event tracing is enabled.\n");
+		pr_debug("\tRCU event tracing is enabled.\n");
 	if ((IS_ENABLED(CONFIG_64BIT) && RCU_FANOUT != 64) ||
 	    (!IS_ENABLED(CONFIG_64BIT) && RCU_FANOUT != 32))
-		pr_info("\tCONFIG_RCU_FANOUT set to non-default value of %d\n",
+		pr_debug("\tCONFIG_RCU_FANOUT set to non-default value of %d\n",
 		       RCU_FANOUT);
 	if (rcu_fanout_exact)
-		pr_info("\tHierarchical RCU autobalancing is disabled.\n");
+		pr_debug("\tHierarchical RCU autobalancing is disabled.\n");
 	if (IS_ENABLED(CONFIG_RCU_FAST_NO_HZ))
-		pr_info("\tRCU dyntick-idle grace-period acceleration is enabled.\n");
+		pr_debug("\tRCU dyntick-idle grace-period acceleration is enabled.\n");
 	if (IS_ENABLED(CONFIG_PROVE_RCU))
-		pr_info("\tRCU lockdep checking is enabled.\n");
+		pr_debug("\tRCU lockdep checking is enabled.\n");
 	if (RCU_NUM_LVLS >= 4)
-		pr_info("\tFour(or more)-level hierarchy is enabled.\n");
+		pr_debug("\tFour(or more)-level hierarchy is enabled.\n");
 	if (RCU_FANOUT_LEAF != 16)
-		pr_info("\tBuild-time adjustment of leaf fanout to %d.\n",
+		pr_debug("\tBuild-time adjustment of leaf fanout to %d.\n",
 			RCU_FANOUT_LEAF);
 	if (rcu_fanout_leaf != RCU_FANOUT_LEAF)
-		pr_info("\tBoot-time adjustment of leaf fanout to %d.\n", rcu_fanout_leaf);
+		pr_debug("\tBoot-time adjustment of leaf fanout to %d.\n", rcu_fanout_leaf);
 	if (nr_cpu_ids != NR_CPUS)
-		pr_info("\tRCU restricting CPUs from NR_CPUS=%d to nr_cpu_ids=%u.\n", NR_CPUS, nr_cpu_ids);
+		pr_debug("\tRCU restricting CPUs from NR_CPUS=%d to nr_cpu_ids=%u.\n", NR_CPUS, nr_cpu_ids);
 #ifdef CONFIG_RCU_BOOST
-	pr_info("\tRCU priority boosting: priority %d delay %d ms.\n", kthread_prio, CONFIG_RCU_BOOST_DELAY);
+	pr_debug("\tRCU priority boosting: priority %d delay %d ms.\n", kthread_prio, CONFIG_RCU_BOOST_DELAY);
 #endif
 	if (blimit != DEFAULT_RCU_BLIMIT)
-		pr_info("\tBoot-time adjustment of callback invocation limit to %ld.\n", blimit);
+		pr_debug("\tBoot-time adjustment of callback invocation limit to %ld.\n", blimit);
 	if (qhimark != DEFAULT_RCU_QHIMARK)
-		pr_info("\tBoot-time adjustment of callback high-water mark to %ld.\n", qhimark);
+		pr_debug("\tBoot-time adjustment of callback high-water mark to %ld.\n", qhimark);
 	if (qlowmark != DEFAULT_RCU_QLOMARK)
-		pr_info("\tBoot-time adjustment of callback low-water mark to %ld.\n", qlowmark);
+		pr_debug("\tBoot-time adjustment of callback low-water mark to %ld.\n", qlowmark);
 	if (jiffies_till_first_fqs != ULONG_MAX)
-		pr_info("\tBoot-time adjustment of first FQS scan delay to %ld jiffies.\n", jiffies_till_first_fqs);
+		pr_debug("\tBoot-time adjustment of first FQS scan delay to %ld jiffies.\n", jiffies_till_first_fqs);
 	if (jiffies_till_next_fqs != ULONG_MAX)
-		pr_info("\tBoot-time adjustment of subsequent FQS scan delay to %ld jiffies.\n", jiffies_till_next_fqs);
+		pr_debug("\tBoot-time adjustment of subsequent FQS scan delay to %ld jiffies.\n", jiffies_till_next_fqs);
 	if (rcu_kick_kthreads)
-		pr_info("\tKick kthreads if too-long grace period.\n");
+		pr_debug("\tKick kthreads if too-long grace period.\n");
 	if (IS_ENABLED(CONFIG_DEBUG_OBJECTS_RCU_HEAD))
-		pr_info("\tRCU callback double-/use-after-free debug enabled.\n");
+		pr_debug("\tRCU callback double-/use-after-free debug enabled.\n");
 	if (gp_preinit_delay)
-		pr_info("\tRCU debug GP pre-init slowdown %d jiffies.\n", gp_preinit_delay);
+		pr_debug("\tRCU debug GP pre-init slowdown %d jiffies.\n", gp_preinit_delay);
 	if (gp_init_delay)
-		pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_init_delay);
+		pr_debug("\tRCU debug GP init slowdown %d jiffies.\n", gp_init_delay);
 	if (gp_cleanup_delay)
-		pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_cleanup_delay);
+		pr_debug("\tRCU debug GP init slowdown %d jiffies.\n", gp_cleanup_delay);
 	if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG))
-		pr_info("\tRCU debug extended QS entry/exit.\n");
+		pr_debug("\tRCU debug extended QS entry/exit.\n");
 	rcupdate_announce_bootup_oddness();
 }
 
@@ -132,7 +132,7 @@ static void rcu_report_exp_rnp(struct rcu_state *rsp, struct rcu_node *rnp,
  */
 static void __init rcu_bootup_announce(void)
 {
-	pr_info("Preemptible hierarchical RCU implementation.\n");
+	pr_debug("Preemptible hierarchical RCU implementation.\n");
 	rcu_bootup_announce_oddness();
 }
 
@@ -814,7 +814,7 @@ static struct rcu_state *const rcu_state_p = &rcu_sched_state;
  */
 static void __init rcu_bootup_announce(void)
 {
-	pr_info("Hierarchical RCU implementation.\n");
+	pr_debug("Hierarchical RCU implementation.\n");
 	rcu_bootup_announce_oddness();
 }
 
@@ -2302,7 +2302,7 @@ void __init rcu_init_nohz(void)
 
 	if (!have_rcu_nocb_mask && need_rcu_nocb_mask) {
 		if (!zalloc_cpumask_var(&rcu_nocb_mask, GFP_KERNEL)) {
-			pr_info("rcu_nocb_mask allocation failed, callback offloading disabled.\n");
+			pr_debug("rcu_nocb_mask allocation failed, callback offloading disabled.\n");
 			return;
 		}
 		have_rcu_nocb_mask = true;
@@ -2316,14 +2316,14 @@ void __init rcu_init_nohz(void)
 #endif /* #if defined(CONFIG_NO_HZ_FULL) */
 
 	if (!cpumask_subset(rcu_nocb_mask, cpu_possible_mask)) {
-		pr_info("\tNote: kernel parameter 'rcu_nocbs=' contains nonexistent CPUs.\n");
+		pr_debug("\tNote: kernel parameter 'rcu_nocbs=' contains nonexistent CPUs.\n");
 		cpumask_and(rcu_nocb_mask, cpu_possible_mask,
 			    rcu_nocb_mask);
 	}
-	pr_info("\tOffload RCU callbacks from CPUs: %*pbl.\n",
+	pr_debug("\tOffload RCU callbacks from CPUs: %*pbl.\n",
 		cpumask_pr_args(rcu_nocb_mask));
 	if (rcu_nocb_poll)
-		pr_info("\tPoll for callbacks from no-CBs CPUs.\n");
+		pr_debug("\tPoll for callbacks from no-CBs CPUs.\n");
 
 	for_each_rcu_flavor(rsp) {
 		for_each_cpu(cpu, rcu_nocb_mask)

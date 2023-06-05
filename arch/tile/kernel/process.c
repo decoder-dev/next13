@@ -57,7 +57,7 @@ static int __init idle_setup(char *str)
 		return -EINVAL;
 
 	if (!strcmp(str, "poll")) {
-		pr_info("using polling idle threads\n");
+		pr_debug("using polling idle threads\n");
 		cpu_idle_poll_ctrl(true);
 		return 0;
 	} else if (!strcmp(str, "halt")) {

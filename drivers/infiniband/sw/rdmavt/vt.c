@@ -838,7 +838,7 @@ int rvt_register_device(struct rvt_dev_info *rdi)
 
 	rvt_create_mad_agents(rdi);
 
-	rvt_pr_info(rdi, "Registration with rdmavt done.\n");
+	rvt_pr_debug(rdi, "Registration with rdmavt done.\n");
 	return ret;
 
 bail_cq:

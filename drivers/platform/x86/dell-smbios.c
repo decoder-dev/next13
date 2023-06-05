@@ -176,7 +176,7 @@ static int __init dell_smbios_init(void)
 	dmi_walk(find_tokens, NULL);
 
 	if (!da_tokens)  {
-		pr_info("Unable to find dmi tokens\n");
+		pr_debug("Unable to find dmi tokens\n");
 		return -ENODEV;
 	}
 

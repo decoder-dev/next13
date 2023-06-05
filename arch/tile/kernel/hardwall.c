@@ -127,7 +127,7 @@ static void hardwall_remove_proc(struct hardwall_info *);
 /* Allow disabling UDN access. */
 static int __init noudn(char *str)
 {
-	pr_info("User-space UDN access is disabled\n");
+	pr_debug("User-space UDN access is disabled\n");
 	hardwall_types[HARDWALL_UDN].disabled = 1;
 	return 0;
 }
@@ -137,7 +137,7 @@ early_param("noudn", noudn);
 /* Allow disabling IDN access. */
 static int __init noidn(char *str)
 {
-	pr_info("User-space IDN access is disabled\n");
+	pr_debug("User-space IDN access is disabled\n");
 	hardwall_types[HARDWALL_IDN].disabled = 1;
 	return 0;
 }
@@ -146,7 +146,7 @@ early_param("noidn", noidn);
 /* Allow disabling IPI access. */
 static int __init noipi(char *str)
 {
-	pr_info("User-space IPI access is disabled\n");
+	pr_debug("User-space IPI access is disabled\n");
 	hardwall_types[HARDWALL_IPI].disabled = 1;
 	return 0;
 }

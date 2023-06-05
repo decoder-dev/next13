@@ -166,7 +166,6 @@ struct irq_domain *hlwd_pic_init(struct device_node *np)
 	struct resource res;
 	void __iomem *io_base;
 	int retval;
-
 	retval = of_address_to_resource(np, 0, &res);
 	if (retval) {
 		pr_err("no io memory range found\n");
@@ -177,11 +176,8 @@ struct irq_domain *hlwd_pic_init(struct device_node *np)
 		pr_err("ioremap failed\n");
 		return NULL;
 	}
-
-	pr_info("controller at 0x%08x mapped to 0x%p\n", res.start, io_base);
-
+	pr_info("controller at 0x%pa mapped to 0x%p\n", &res.start, io_base);
 	__hlwd_quiesce(io_base);
-
 	irq_domain = irq_domain_add_linear(np, HLWD_NR_IRQS,
 					   &hlwd_irq_domain_ops, io_base);
 	if (!irq_domain) {
@@ -189,27 +185,22 @@ struct irq_domain *hlwd_pic_init(struct device_node *np)
 		iounmap(io_base);
 		return NULL;
 	}
-
 	return irq_domain;
 }
-
 unsigned int hlwd_pic_get_irq(void)
 {
 	return __hlwd_pic_get_irq(hlwd_irq_host);
 }
-
 /*
  * Probe function.
  *
  */
-
 void hlwd_pic_probe(void)
 {
 	struct irq_domain *host;
 	struct device_node *np;
 	const u32 *interrupts;
 	int cascade_virq;
-
 	for_each_compatible_node(np, NULL, "nintendo,hollywood-pic") {
 		interrupts = of_get_property(np, "interrupts", NULL);
 		if (interrupts) {
@@ -225,7 +216,6 @@ void hlwd_pic_probe(void)
 		}
 	}
 }
-
 /**
  * hlwd_quiesce() - quiesce hollywood irq controller
  *

@@ -102,7 +102,7 @@ static const struct soc_enum rcv_amp_type_enum =
 static int mt6853_rcv_amp_mode_get(struct snd_kcontrol *kcontrol,
 				   struct snd_ctl_elem_value *ucontrol)
 {
-	pr_info("%s() = %d\n", __func__, rcv_amp_mode);
+	pr_debug("%s() = %d\n", __func__, rcv_amp_mode);
 	ucontrol->value.integer.value[0] = rcv_amp_mode;
 	return 0;
 }
@@ -116,7 +116,7 @@ static int mt6853_rcv_amp_mode_set(struct snd_kcontrol *kcontrol,
 		return -EINVAL;
 
 	rcv_amp_mode = ucontrol->value.integer.value[0];
-	pr_info("%s() = %d\n", __func__, rcv_amp_mode);
+	pr_debug("%s() = %d\n", __func__, rcv_amp_mode);
 	return 0;
 }
 
@@ -164,10 +164,10 @@ static int mt6853_mt6359_rcv_amp_event(struct snd_soc_dapm_widget *w,
 	case SND_SOC_DAPM_POST_PMU:
 		/* rcv amp on control */
 		if (rcv_amp_mode) {
-			pr_info("%s(), aw87359_audio_abrcv()\n", __func__);
+			pr_debug("%s(), aw87359_audio_abrcv()\n", __func__);
 			aw87359_audio_abrcv();
 		} else {
-			pr_info("%s(), aw87359_audio_dspk()\n", __func__);
+			pr_debug("%s(), aw87359_audio_dspk()\n", __func__);
 			aw87359_audio_dspk();
 		}
 		break;

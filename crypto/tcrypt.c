@@ -458,7 +458,7 @@ static void test_mb_ahash_speed(const char *algo, unsigned int sec,
 		test_hash_sg_init(data[i].sg);
 	}
 
-	pr_info("\ntesting speed of multibuffer %s (%s)\n", algo,
+	pr_debug("\ntesting speed of multibuffer %s (%s)\n", algo,
 		get_driver_name(crypto_ahash, tfm));
 
 	for (i = 0; speed[i].blen != 0; i++) {
@@ -479,7 +479,7 @@ static void test_mb_ahash_speed(const char *algo, unsigned int sec,
 			ahash_request_set_crypt(data[k].req, data[k].sg,
 						data[k].result, speed[i].blen);
 
-		pr_info("test%3u "
+		pr_debug("test%3u "
 			"(%5u byte blocks,%5u bytes per update,%4u updates): ",
 			i, speed[i].blen, speed[i].plen,
 			speed[i].blen / speed[i].plen);
@@ -730,7 +730,7 @@ static void test_ahash_speed_common(const char *algo, unsigned int secs,
 		if (speed[i].klen)
 			crypto_ahash_setkey(tfm, tvmem[0], speed[i].klen);
 
-		pr_info("test%3u "
+		pr_debug("test%3u "
 			"(%5u byte blocks,%5u bytes per update,%4u updates): ",
 			i, speed[i].blen, speed[i].plen, speed[i].blen / speed[i].plen);
 
@@ -883,7 +883,7 @@ static void test_skcipher_speed(const char *algo, int enc, unsigned int secs,
 		return;
 	}
 
-	pr_info("\ntesting speed of async %s (%s) %s\n", algo,
+	pr_debug("\ntesting speed of async %s (%s) %s\n", algo,
 			get_driver_name(crypto_skcipher, tfm), e);
 
 	req = skcipher_request_alloc(tfm, GFP_KERNEL);
@@ -910,7 +910,7 @@ static void test_skcipher_speed(const char *algo, int enc, unsigned int secs,
 				goto out_free_req;
 			}
 
-			pr_info("test %u (%d bit key, %d byte blocks): ", i,
+			pr_debug("test %u (%d bit key, %d byte blocks): ", i,
 				*keysize * 8, *b_size);
 
 			memset(tvmem[0], 0xff, PAGE_SIZE);

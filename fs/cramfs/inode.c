@@ -328,7 +328,7 @@ static int cramfs_fill_super(struct super_block *sb, void *data, int silent)
 	sbi->magic = super.magic;
 	sbi->flags = super.flags;
 	if (root_offset == 0)
-		pr_info("empty filesystem");
+		pr_debug("empty filesystem");
 	else if (!(super.flags & CRAMFS_FLAG_SHIFTED_ROOT_OFFSET) &&
 		 ((root_offset != sizeof(struct cramfs_super)) &&
 		  (root_offset != 512 + sizeof(struct cramfs_super))))

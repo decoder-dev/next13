@@ -409,7 +409,7 @@ extern struct timeval __t2;
 #define TIME_END(e)	sdfat_time_current_usec(e)
 #define TIME_ELAPSED(s, e) ((u32)(((e)->tv_sec - (s)->tv_sec) * 1000000 + \
 			((e)->tv_usec - (s)->tv_usec)))
-#define PRINT_TIME(n)	pr_info("[SDFAT] Elapsed time %d = %d (usec)\n", n, (__t2 - __t1))
+#define PRINT_TIME(n)	pr_debug("[SDFAT] Elapsed time %d = %d (usec)\n", n, (__t2 - __t1))
 #else /* CONFIG_SDFAT_TRACE_ELAPSED_TIME */
 #define TIME_GET(tv)    (0)
 #define TIME_START(s)

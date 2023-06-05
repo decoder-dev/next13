@@ -2265,7 +2265,7 @@ static int __init netvsc_drv_init(void)
 
 	if (ring_size < RING_SIZE_MIN) {
 		ring_size = RING_SIZE_MIN;
-		pr_info("Increased ring_size to %d (min allowed)\n",
+		pr_debug("Increased ring_size to %d (min allowed)\n",
 			ring_size);
 	}
 	ret = vmbus_driver_register(&netvsc_drv);

@@ -248,7 +248,7 @@ int __init meson_sm_init(void)
 	}
 
 	fw.chip = chip;
-	pr_info("secure-monitor enabled\n");
+	pr_debug("secure-monitor enabled\n");
 
 	return 0;
 

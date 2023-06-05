@@ -4407,7 +4407,7 @@ static int bond_check_params(struct bond_params *params)
 		if ((bond_mode != BOND_MODE_XOR) &&
 		    (bond_mode != BOND_MODE_8023AD) &&
 		    (bond_mode != BOND_MODE_TLB)) {
-			pr_info("xmit_hash_policy param is irrelevant in mode %s\n",
+			pr_debug("xmit_hash_policy param is irrelevant in mode %s\n",
 				bond_mode_name(bond_mode));
 		} else {
 			bond_opt_initstr(&newval, xmit_hash_policy);
@@ -4424,7 +4424,7 @@ static int bond_check_params(struct bond_params *params)
 
 	if (lacp_rate) {
 		if (bond_mode != BOND_MODE_8023AD) {
-			pr_info("lacp_rate param is irrelevant in mode %s\n",
+			pr_debug("lacp_rate param is irrelevant in mode %s\n",
 				bond_mode_name(bond_mode));
 		} else {
 			bond_opt_initstr(&newval, lacp_rate);
@@ -4626,11 +4626,11 @@ static int bond_check_params(struct bond_params *params)
 	}
 
 	if (miimon) {
-		pr_info("MII link monitoring set to %d ms\n", miimon);
+		pr_debug("MII link monitoring set to %d ms\n", miimon);
 	} else if (arp_interval) {
 		valptr = bond_opt_get_val(BOND_OPT_ARP_VALIDATE,
 					  arp_validate_value);
-		pr_info("ARP monitoring set to %d ms, validate %s, with %d target(s):",
+		pr_debug("ARP monitoring set to %d ms, validate %s, with %d target(s):",
 			arp_interval, valptr->string, arp_ip_count);
 
 		for (i = 0; i < arp_ip_count; i++)
@@ -4889,7 +4889,7 @@ static int __init bonding_init(void)
 	int i;
 	int res;
 
-	pr_info("%s", bond_version);
+	pr_debug("%s", bond_version);
 
 	res = bond_check_params(&bonding_defaults);
 	if (res)

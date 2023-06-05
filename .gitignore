@@ -124,3 +124,12 @@ all.config
 
 # fetched Android config fragments
 kernel/configs/android-*.cfg
+
+# out folder if O=out is used
+/out/
+/Telegram/
+/anykernel/
+kranul-build.sh
+config.env
+/builds/
+/clang-azure/

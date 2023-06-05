@@ -1,5 +1,4 @@
 #!/bin/bash
-# SPDX-License-Identifier: GPL-2.0+
 #
 # Run a kvm-based test of the specified tree on the specified configs.
 # Fully automated run and error checking, no graphics console.
@@ -21,9 +20,23 @@
 #
 # More sophisticated argument parsing is clearly needed.
 #
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, you can access it online at
+# http://www.gnu.org/licenses/gpl-2.0.html.
+#
 # Copyright (C) IBM Corporation, 2011
 #
-# Authors: Paul E. McKenney <paulmck@linux.ibm.com>
+# Authors: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
 T=/tmp/kvm-test-1-run.sh.$$
 trap 'rm -rf $T' 0
@@ -128,7 +141,7 @@ qemu_args=$5
 boot_args=$6
 
 cd $KVM
-kstarttime=`gawk 'BEGIN { print systime() }' < /dev/null`
+kstarttime=`awk 'BEGIN { print systime() }' < /dev/null`
 if test -z "$TORTURE_BUILDONLY"
 then
 	echo ' ---' `date`: Starting kernel
@@ -184,7 +197,7 @@ do
 	then
 		qemu_pid=`cat "$resdir/qemu_pid"`
 	fi
-	kruntime=`gawk 'BEGIN { print systime() - '"$kstarttime"' }' < /dev/null`
+	kruntime=`awk 'BEGIN { print systime() - '"$kstarttime"' }' < /dev/null`
 	if test -z "$qemu_pid" || kill -0 "$qemu_pid" > /dev/null 2>&1
 	then
 		if test $kruntime -ge $seconds
@@ -220,7 +233,7 @@ then
 	oldline="`tail $resdir/console.log`"
 	while :
 	do
-		kruntime=`gawk 'BEGIN { print systime() - '"$kstarttime"' }' < /dev/null`
+		kruntime=`awk 'BEGIN { print systime() - '"$kstarttime"' }' < /dev/null`
 		if kill -0 $qemu_pid > /dev/null 2>&1
 		then
 			:

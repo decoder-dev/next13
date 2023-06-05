@@ -904,7 +904,7 @@ static int __init ashmem_init(void)
 
 	register_shrinker(&ashmem_shrinker);
 
-	pr_info("initialized\n");
+	pr_debug("initialized\n");
 
 	return 0;
 

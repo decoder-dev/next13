@@ -1162,9 +1162,9 @@ int btrfs_scan_one_device(const char *path, fmode_t flags, void *holder,
 	ret = device_list_add(path, disk_super, devid, fs_devices_ret);
 	if (ret > 0) {
 		if (disk_super->label[0]) {
-			pr_info("BTRFS: device label %s ", disk_super->label);
+			pr_debug("BTRFS: device label %s ", disk_super->label);
 		} else {
-			pr_info("BTRFS: device fsid %pU ", disk_super->fsid);
+			pr_debug("BTRFS: device fsid %pU ", disk_super->fsid);
 		}
 
 		pr_cont("devid %llu transid %llu %s\n", devid, transid, path);

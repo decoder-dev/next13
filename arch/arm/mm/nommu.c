@@ -134,7 +134,7 @@ void __init adjust_lowmem_bounds_mpu(void)
 	 * region start must be aligned to the region size
 	 */
 	if (phys_offset != 0)
-		pr_info("PHYS_OFFSET != 0 => MPU Region size constrained by alignment requirements\n");
+		pr_debug("PHYS_OFFSET != 0 => MPU Region size constrained by alignment requirements\n");
 
 	/*
 	 * Maximum aligned region might overflow phys_addr_t if phys_offset is
@@ -277,7 +277,7 @@ void __init mpu_setup(void)
 	if (region_err) {
 		panic("MPU region initialization failure! %d", region_err);
 	} else {
-		pr_info("Using ARMv7 PMSA Compliant MPU. "
+		pr_debug("Using ARMv7 PMSA Compliant MPU. "
 			 "Region independence: %s, Max regions: %d\n",
 			mpu_iside_independent() ? "Yes" : "No",
 			mpu_max_regions());

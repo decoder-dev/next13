@@ -176,7 +176,7 @@ static int __init stm32_clockevent_init(struct device_node *np)
 		goto err_get_irq;
 	}
 
-	pr_info("%pOF: STM32 clockevent driver initialized (%d bits)\n",
+	pr_debug("%pOF: STM32 clockevent driver initialized (%d bits)\n",
 			np, bits);
 
 	return ret;

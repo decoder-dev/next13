@@ -148,7 +148,7 @@ struct eth_phy_ops {
 #define star_mb() mb()
 
 #define STAR_PR_ERR(fmt...) pr_err("star: " fmt)
-#define STAR_PR_INFO(fmt...) pr_info("star: " fmt)
+#define STAR_PR_INFO(fmt...) pr_debug("star: " fmt)
 #define STAR_PR_DEBUG(fmt...) pr_debug("star: " fmt)
 
 static inline void star_set_reg(void __iomem *reg, u32 value)

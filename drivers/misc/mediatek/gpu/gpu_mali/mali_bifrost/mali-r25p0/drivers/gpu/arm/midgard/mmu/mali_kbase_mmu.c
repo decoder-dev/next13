@@ -27,6 +27,7 @@
 
 #include <linux/kernel.h>
 #include <linux/dma-mapping.h>
+#include <linux/swap.h>
 #include <mali_kbase.h>
 #include <gpu/mali_kbase_gpu_fault.h>
 #include <gpu/mali_kbase_gpu_regmap.h>
@@ -1549,12 +1550,17 @@ static void kbase_mmu_flush_invalidate_as(struct kbase_device *kbdev,
 {
 	int err;
 	u32 op;
+	unsigned long irq_flags = 0;
+	bool powered_on;
 
-	if (kbase_pm_context_active_handle_suspend(kbdev,
-				KBASE_PM_SUSPEND_HANDLER_DONT_REACTIVATE)) {
-		/* GPU is off so there's no need to perform flush/invalidate */
+	/* Flush/invalidate is only required if the GPU is powered on */
+	spin_lock_irqsave(&kbdev->hwaccess_lock, irq_flags);
+	powered_on = kbdev->pm.backend.gpu_powered;
+	spin_unlock_irqrestore(&kbdev->hwaccess_lock, irq_flags);
+
+	if (!powered_on || kbase_pm_context_active_handle_suspend(kbdev,
+		KBASE_PM_SUSPEND_HANDLER_DONT_REACTIVATE))
 		return;
-	}
 
 	/* AS transaction begin */
 	mutex_lock(&kbdev->mmu_hw_mutex);
@@ -1688,7 +1694,17 @@ int kbase_mmu_teardown_pages(struct kbase_device *kbdev,
 		return 0;
 	}
 
-	mutex_lock(&mmut->mmu_lock);
+	if (!mutex_trylock(&mmut->mmu_lock)) {
+		/*
+		 * Sometimes, mmu_lock takes long time to be released.
+		 * In that case, kswapd is stuck until it can hold
+		 * the lock. Instead, just bail out here so kswapd
+		 * could reclaim other pages.
+		 */
+		if (current_is_kswapd())
+			return -EBUSY;
+		mutex_lock(&mmut->mmu_lock);
+	}
 
 	mmu_mode = kbdev->mmu_mode;
 

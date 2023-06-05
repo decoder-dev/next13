@@ -410,7 +410,7 @@ int __init cma_declare_contiguous(phys_addr_t base,
 	if (ret)
 		goto free_mem;
 
-	pr_info("Reserved %ld MiB at %pa\n", (unsigned long)size / SZ_1M,
+	pr_debug("Reserved %ld MiB at %pa\n", (unsigned long)size / SZ_1M,
 		&base);
 	return 0;
 
@@ -430,7 +430,7 @@ static void cma_debug_show_areas(struct cma *cma)
 	unsigned long nbits = cma_bitmap_maxno(cma);
 
 	mutex_lock(&cma->lock);
-	pr_info("number of available pages: ");
+	pr_debug("number of available pages: ");
 	for (;;) {
 		next_zero_bit = find_next_zero_bit(cma->bitmap, nbits, start);
 		if (next_zero_bit >= nbits)
@@ -537,7 +537,7 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
 	}
 
 	if (ret && !(gfp_mask & __GFP_NOWARN)) {
-		pr_info("%s: alloc failed, req-size: %zu pages, ret: %d\n",
+		pr_debug("%s: alloc failed, req-size: %zu pages, ret: %d\n",
 			__func__, count, ret);
 		cma_debug_show_areas(cma);
 	}

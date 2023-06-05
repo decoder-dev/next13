@@ -1664,7 +1664,7 @@ static char bfin_atapi_mode[ATAPI_MODE_SIZE];
 
 static int __init bfin_atapi_init(void)
 {
-	pr_info("register bfin atapi driver\n");
+	pr_debug("register bfin atapi driver\n");
 
 	switch(bfin_atapi_mode[0]) {
 	case 'p':

@@ -486,7 +486,7 @@ static bool dump_interrupted(void)
 	int ret = signal_pending(current);
 
 	if (ret) {
-		pr_info("%s: clear sig pending flag\n", __func__);
+		pr_debug("%s: clear sig pending flag\n", __func__);
 		clear_thread_flag(TIF_SIGPENDING);
 		ret = signal_pending(current);
 	}
@@ -559,7 +559,7 @@ static int coredump_pm_notifier_cb(struct notifier_block *nb,
 	switch (event) {
 	case PM_SUSPEND_PREPARE:
 		if (atomic_read(&coredump_request_count) > 0) {
-			pr_info("%s coredump is on going", __func__);
+			pr_debug("%s coredump is on going", __func__);
 			return NOTIFY_BAD;
 		} else
 			return NOTIFY_DONE;
@@ -580,7 +580,7 @@ static int __init init_coredump(void)
 	int ret = register_pm_notifier(&coredump_pm_notifier_block);
 
 	if (ret)
-		pr_info("%s: failed to register_pm_notifier(%d)\n",
+		pr_debug("%s: failed to register_pm_notifier(%d)\n",
 				__func__, ret);
 	return 0;
 }
@@ -835,7 +835,7 @@ void do_coredump(const siginfo_t *siginfo)
 		 * have this set to NULL.
 		 */
 		if (!cprm.file) {
-			pr_info("Core dump to |%s disabled\n", cn.corename);
+			pr_debug("Core dump to |%s disabled\n", cn.corename);
 			goto close_fail;
 		}
 		file_start_write(cprm.file);
@@ -877,23 +877,23 @@ int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
 		return 0;
 	while (nr) {
 		if (dump_interrupted()) {
-			pr_info("%s: interrupted\n", __func__);
+			pr_debug("%s: interrupted\n", __func__);
 			return 0;
 		}
 		n = __kernel_write(file, addr, nr, &pos);
 		if (n <= 0) {
-			pr_info("%s: __kernel_write fail: %zd\n", __func__, n);
+			pr_debug("%s: __kernel_write fail: %zd\n", __func__, n);
 #ifdef CONFIG_MTK_AEE_FEATURE
 			/* retry for avoid coredump truncated */
 			if (n == -ERESTARTSYS) {
 				if (signal_pending(current)) {
-					pr_info("%s: clear sig pending flag\n",
+					pr_debug("%s: clear sig pending flag\n",
 						__func__);
 					clear_thread_flag(TIF_SIGPENDING);
 				}
 				n = __kernel_write(file, addr, nr, &pos);
 				if (n <= 0) {
-					pr_info("%s: retry fail: %zd\n",
+					pr_debug("%s: retry fail: %zd\n",
 						__func__, n);
 					return 0;
 				}

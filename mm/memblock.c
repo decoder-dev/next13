@@ -1668,7 +1668,7 @@ static void __init_memblock memblock_dump(struct memblock_type *type)
 	int idx;
 	struct memblock_region *rgn;
 
-	pr_info(" %s.cnt  = 0x%lx\n", type->name, type->cnt);
+	pr_debug(" %s.cnt  = 0x%lx\n", type->name, type->cnt);
 
 	for_each_memblock_type(type, rgn) {
 		char nid_buf[32] = "";
@@ -1682,7 +1682,7 @@ static void __init_memblock memblock_dump(struct memblock_type *type)
 			snprintf(nid_buf, sizeof(nid_buf), " on node %d",
 				 memblock_get_region_node(rgn));
 #endif
-		pr_info(" %s[%#x]\t[%pa-%pa], %pa bytes%s flags: %#lx\n",
+		pr_debug(" %s[%#x]\t[%pa-%pa], %pa bytes%s flags: %#lx\n",
 			type->name, idx, &base, &end, &size, nid_buf, flags);
 	}
 }
@@ -1712,8 +1712,8 @@ memblock_reserved_memory_within(phys_addr_t start_addr, phys_addr_t end_addr)
 
 void __init_memblock __memblock_dump_all(void)
 {
-	pr_info("MEMBLOCK configuration:\n");
-	pr_info(" memory size = %pa reserved size = %pa\n",
+	pr_debug("MEMBLOCK configuration:\n");
+	pr_debug(" memory size = %pa reserved size = %pa\n",
 		&memblock.memory.total_size,
 		&memblock.reserved.total_size);
 

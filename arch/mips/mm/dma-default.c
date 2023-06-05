@@ -33,7 +33,7 @@ int hw_coherentio = 0;	/* Actual hardware supported DMA coherency setting. */
 static int __init setcoherentio(char *str)
 {
 	coherentio = IO_COHERENCE_ENABLED;
-	pr_info("Hardware DMA cache coherency (command line)\n");
+	pr_debug("Hardware DMA cache coherency (command line)\n");
 	return 0;
 }
 early_param("coherentio", setcoherentio);
@@ -41,7 +41,7 @@ early_param("coherentio", setcoherentio);
 static int __init setnocoherentio(char *str)
 {
 	coherentio = IO_COHERENCE_DISABLED;
-	pr_info("Software DMA cache coherency (command line)\n");
+	pr_debug("Software DMA cache coherency (command line)\n");
 	return 0;
 }
 early_param("nocoherentio", setnocoherentio);

@@ -1054,7 +1054,7 @@ static int nvm_init(struct nvm_dev *dev)
 		goto err;
 	}
 
-	pr_info("nvm: registered %s [%u/%u/%u/%u/%u/%u]\n",
+	pr_debug("nvm: registered %s [%u/%u/%u/%u/%u/%u]\n",
 			dev->name, geo->sec_per_pg, geo->nr_planes,
 			geo->pgs_per_blk, geo->blks_per_lun,
 			geo->nr_luns, geo->nr_chnls);
@@ -1078,7 +1078,7 @@ int nvm_register(struct nvm_dev *dev)
 		return -EINVAL;
 
 	if (dev->ops->max_phys_sect > 256) {
-		pr_info("nvm: max sectors supported is 256.\n");
+		pr_debug("nvm: max sectors supported is 256.\n");
 		return -EINVAL;
 	}
 

@@ -356,18 +356,18 @@ static int i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
 
 	dev->polling_mode = polling_req || client->irq <= 0;
 	if (!dev->polling_mode) {
-		pr_info("Requesting IRQ: %d\n", client->irq);
+		pr_debug("Requesting IRQ: %d\n", client->irq);
 		ret = request_irq(client->irq, most_irq_handler, 0,
 				  client->name, dev);
 		if (ret) {
-			pr_info("IRQ request failed: %d, falling back to polling\n",
+			pr_debug("IRQ request failed: %d, falling back to polling\n",
 				ret);
 			dev->polling_mode = true;
 		}
 	}
 
 	if (dev->polling_mode)
-		pr_info("Using polling at rate: %d times/sec\n", scan_rate);
+		pr_debug("Using polling at rate: %d times/sec\n", scan_rate);
 
 	return 0;
 }

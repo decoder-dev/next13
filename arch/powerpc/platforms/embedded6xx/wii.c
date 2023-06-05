@@ -129,7 +129,6 @@ static void __iomem *wii_ioremap_hw_regs(char *name, char *compatible)
 	struct device_node *np;
 	struct resource res;
 	int error = -ENODEV;
-
 	np = of_find_compatible_node(NULL, NULL, compatible);
 	if (!np) {
 		pr_err("no compatible node found for %s\n", compatible);
@@ -140,13 +139,11 @@ static void __iomem *wii_ioremap_hw_regs(char *name, char *compatible)
 		pr_err("no valid reg found for %s\n", np->name);
 		goto out_put;
 	}
-
 	hw_regs = ioremap(res.start, resource_size(&res));
 	if (hw_regs) {
-		pr_info("%s at 0x%08x mapped to 0x%p\n", name,
-			res.start, hw_regs);
+		pr_info("%s at 0x%pa mapped to 0x%p\n", name,
+			&res.start, hw_regs);
 	}
-
 out_put:
 	of_node_put(np);
 out:

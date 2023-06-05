@@ -345,7 +345,7 @@ struct ppi_if *ppi_create_instance(struct platform_device *pdev,
 	ppi->info = info;
 	ppi->dev = &pdev->dev;
 
-	pr_info("ppi probe success\n");
+	pr_debug("ppi probe success\n");
 	return ppi;
 }
 EXPORT_SYMBOL(ppi_create_instance);

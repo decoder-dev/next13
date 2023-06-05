@@ -698,7 +698,7 @@ static void r5c_disable_writeback_async(struct work_struct *work)
 
 	if (log->r5c_journal_mode == R5C_JOURNAL_MODE_WRITE_THROUGH)
 		return;
-	pr_info("md/raid:%s: Disabling writeback cache for degraded array.\n",
+	pr_debug("md/raid:%s: Disabling writeback cache for degraded array.\n",
 		mdname(mddev));
 
 	/* wait superblock change before suspend */

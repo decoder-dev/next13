@@ -617,7 +617,7 @@ static __init void memory_setup(void)
 
 		/* ROM_FS is XIP, so if we found it, we need to limit memory */
 		if (memory_end > max_mem) {
-			pr_info("Limiting kernel memory to %liMB due to anomaly 05000263\n",
+			pr_debug("Limiting kernel memory to %liMB due to anomaly 05000263\n",
 				(max_mem - CONFIG_PHY_RAM_BASE_ADDRESS) >> 20);
 			memory_end = max_mem;
 		}
@@ -637,7 +637,7 @@ static __init void memory_setup(void)
 		/* Relocate MTD image to the top of memory after the uncached memory area */
 		uclinux_ram_map.phys = memory_mtd_start = memory_end;
 		uclinux_ram_map.size = mtd_size;
-		pr_info("Found mtd parition at 0x%p, (len=0x%lx), moving to 0x%p\n",
+		pr_debug("Found mtd parition at 0x%p, (len=0x%lx), moving to 0x%p\n",
 			_end, mtd_size, (void *)memory_mtd_start);
 		dma_memcpy((void *)uclinux_ram_map.phys, _end, uclinux_ram_map.size);
 	}
@@ -648,7 +648,7 @@ static __init void memory_setup(void)
 	 * doesn't exist, or we don't need to - then dont.
 	 */
 	if (memory_end > max_mem) {
-		pr_info("Limiting kernel memory to %liMB due to anomaly 05000263\n",
+		pr_debug("Limiting kernel memory to %liMB due to anomaly 05000263\n",
 				(max_mem - CONFIG_PHY_RAM_BASE_ADDRESS) >> 20);
 		memory_end = max_mem;
 	}

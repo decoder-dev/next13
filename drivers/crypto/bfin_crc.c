@@ -713,7 +713,7 @@ static int __init bfin_crypto_crc_mod_init(void)
 {
 	int ret;
 
-	pr_info("Blackfin hardware CRC crypto driver\n");
+	pr_debug("Blackfin hardware CRC crypto driver\n");
 
 	INIT_LIST_HEAD(&crc_list.dev_list);
 	spin_lock_init(&crc_list.lock);

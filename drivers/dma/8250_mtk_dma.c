@@ -295,7 +295,7 @@ static void mtk_dma_tx_write(struct dma_chan *chan)
 static void mtk_dma_start_tx(struct mtk_chan *c)
 {
 	if (mtk_dma_chan_read(c, VFF_LEFT_SIZE) == 0U) {
-		pr_info("%s maybe need fix? @L %d\n", __func__, __LINE__);
+		pr_debug("%s maybe need fix? @L %d\n", __func__, __LINE__);
 		mtk_dma_chan_write(c, VFF_INT_EN, VFF_TX_INT_EN_B);
 	} else {
 		reinit_completion(&c->done);
@@ -369,7 +369,7 @@ static void mtk_dma_reset(struct mtk_chan *c)
 	else if (c->cfg.direction == DMA_MEM_TO_DEV)
 		mtk_dma_chan_write(c, VFF_WPT, 0);
 	else
-		pr_info("Unknown direction.\n");
+		pr_debug("Unknown direction.\n");
 
 	if (mtkd->support_bits)
 		mtk_dma_chan_write(c, VFF_4G_SUPPORT, VFF_4G_SUPPORT_CLR_B);
@@ -730,7 +730,7 @@ static int mtk_dma_slave_config(struct dma_chan *chan,
 			}
 		}
 	} else
-		pr_info("Unknown direction!\n");
+		pr_debug("Unknown direction!\n");
 
 	if (mtk_dma_chan_read(c, VFF_EN) != VFF_EN_B) {
 		pr_err("config dir%d dma fail\n", cfg->direction);
@@ -859,7 +859,7 @@ static int mtk_dma_probe(struct platform_device *pdev)
 	if (of_property_read_u32(pdev->dev.of_node, "dma-bits", &addr_bits))
 		addr_bits = VFF_ORI_ADDR_BITS_NUM;
 
-	pr_info("DMA address bits: %d\n", addr_bits);
+	pr_debug("DMA address bits: %d\n", addr_bits);
 
 	mtkd->support_bits = addr_bits;
 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(addr_bits));
@@ -891,7 +891,7 @@ static int mtk_dma_probe(struct platform_device *pdev)
 	if ((pdev->dev.of_node != NULL)	&&
 		(of_property_read_u32(pdev->dev.of_node,
 			"dma-requests",	&mtkd->dma_requests) != 0)) {
-		pr_info("Missing dma-requests property, using %u.\n",
+		pr_debug("Missing dma-requests property, using %u.\n",
 			 MTK_SDMA_REQUESTS);
 	}
 
@@ -970,7 +970,7 @@ static int mtk_dma_resume(struct device *dev)
 	if (!pm_runtime_suspended(dev)) {
 		ret = mtk_dma_clk_enable(mtkd);
 		if (ret) {
-			pr_info("fail to enable clk: %d\n", ret);
+			pr_debug("fail to enable clk: %d\n", ret);
 			return ret;
 		}
 	}
@@ -994,7 +994,7 @@ static int mtk_dma_runtime_resume(struct device *dev)
 
 	ret = mtk_dma_clk_enable(mtkd);
 	if (ret) {
-		pr_info("fail to enable clk: %d\n", ret);
+		pr_debug("fail to enable clk: %d\n", ret);
 		return ret;
 	}
 

@@ -86,7 +86,7 @@ static int open_file_read(struct perf_data_file *file)
 	}
 
 	if (!st.st_size) {
-		pr_info("zero-sized file (%s), nothing to do!\n",
+		pr_debug("zero-sized file (%s), nothing to do!\n",
 			file->path);
 		goto out_close;
 	}

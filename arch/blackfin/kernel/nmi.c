@@ -185,7 +185,7 @@ static int __init init_nmi_wdt(void)
 	ntimer.expires = jiffies + NMI_CHECK_TIMEOUT;
 	add_timer(&ntimer);
 
-	pr_info("nmi_wdt: initialized: timeout=%d sec\n", timeout);
+	pr_debug("nmi_wdt: initialized: timeout=%d sec\n", timeout);
 	return 0;
 }
 device_initcall(init_nmi_wdt);

@@ -827,7 +827,7 @@ static int __init init_hw_perf_events(void)
 
 	/* Not a Meta 2 core, then not supported */
 	if (0x02 > major) {
-		pr_info("no hardware counter support available\n");
+		pr_debug("no hardware counter support available\n");
 		goto out;
 	} else if (0x02 == major) {
 		metag_pmu = &_metag_pmu;
@@ -847,7 +847,7 @@ static int __init init_hw_perf_events(void)
 		metag_pmu->pmu = pmu;
 	}
 
-	pr_info("enabled with %s PMU driver, %d counters available\n",
+	pr_debug("enabled with %s PMU driver, %d counters available\n",
 			metag_pmu->name, metag_pmu->max_events);
 
 	/*

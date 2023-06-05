@@ -330,7 +330,7 @@ static int cm_alloc_msg(struct cm_id_private *cm_id_priv,
 		 (cm_id_priv->alt_av.port))
 		av = &cm_id_priv->alt_av;
 	else {
-		pr_info("%s: not valid CM id\n", __func__);
+		pr_debug("%s: not valid CM id\n", __func__);
 		ret = -ENODEV;
 		spin_unlock_irqrestore(&cm.lock, flags);
 		goto out;
@@ -339,7 +339,7 @@ static int cm_alloc_msg(struct cm_id_private *cm_id_priv,
 	/* Make sure the port haven't released the mad yet */
 	mad_agent = cm_id_priv->av.port->mad_agent;
 	if (!mad_agent) {
-		pr_info("%s: not a valid MAD agent\n", __func__);
+		pr_debug("%s: not a valid MAD agent\n", __func__);
 		ret = -ENODEV;
 		goto out;
 	}
@@ -3235,7 +3235,7 @@ static int cm_apr_handler(struct cm_work *work)
 		return -EINVAL; /* Unmatched reply. */
 
 	work->cm_event.param.apr_rcvd.ap_status = apr_msg->ap_status;
-	work->cm_event.param.apr_rcvd.apr_info = &apr_msg->info;
+	work->cm_event.param.apr_rcvd.apr_debug = &apr_msg->info;
 	work->cm_event.param.apr_rcvd.info_len = apr_msg->info_length;
 	work->cm_event.private_data = &apr_msg->private_data;
 

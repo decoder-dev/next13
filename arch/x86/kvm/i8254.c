@@ -339,7 +339,7 @@ static void create_pit_timer(struct kvm_pit *pit, u32 val, int is_period)
 		s64 min_period = min_timer_period_us * 1000LL;
 
 		if (ps->period < min_period) {
-			pr_info_ratelimited(
+			pr_debug_ratelimited(
 			    "kvm: requested %lld ns "
 			    "i8254 timer period limited to %lld ns\n",
 			    ps->period, min_period);

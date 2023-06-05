@@ -674,7 +674,7 @@ void pm_qos_trace_dbg_dump(int pm_qos_class)
 	list_for_each(l, &c->req_list) {
 		req = list_entry(l, struct pm_qos_request, list_node);
 		if ((req->node).prio != c->default_value)
-			pr_info("[PMQOS] = %d, %s, %d\n",
+			pr_debug("[PMQOS] = %d, %s, %d\n",
 				req->pm_qos_class,
 				req->owner,
 				req->node.prio);

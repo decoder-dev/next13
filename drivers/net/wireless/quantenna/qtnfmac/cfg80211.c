@@ -1042,7 +1042,7 @@ int qtnf_wiphy_register(struct qtnf_hw_info *hw_info, struct qtnf_wmac *mac)
 	if (ret)
 		goto out;
 
-	pr_info("MAC%u: phymode=%#x radar=%#x\n", mac->macid,
+	pr_debug("MAC%u: phymode=%#x radar=%#x\n", mac->macid,
 		mac->macinfo.phymode_cap, mac->macinfo.radar_detect_widths);
 
 	wiphy->frag_threshold = mac->macinfo.frag_thr;

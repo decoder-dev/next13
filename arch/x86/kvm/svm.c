@@ -1196,7 +1196,7 @@ static __init int svm_hardware_setup(void)
 		    !IS_ENABLED(CONFIG_X86_LOCAL_APIC)) {
 			avic = false;
 		} else {
-			pr_info("AVIC enabled\n");
+			pr_debug("AVIC enabled\n");
 
 			amd_iommu_register_ga_log_notifier(&avic_ga_log_notifier);
 		}
@@ -1208,7 +1208,7 @@ static __init int svm_hardware_setup(void)
 		    !IS_ENABLED(CONFIG_X86_64)) {
 			vls = false;
 		} else {
-			pr_info("Virtual VMLOAD VMSAVE supported\n");
+			pr_debug("Virtual VMLOAD VMSAVE supported\n");
 		}
 	}
 

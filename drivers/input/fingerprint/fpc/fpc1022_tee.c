@@ -398,7 +398,7 @@ static const struct attribute_group attribute_group = {
 #ifndef FPC_DRM_INTERFACE_WA
 static void notification_work(struct work_struct *work)
 {
-	pr_info("%s: fpc fp unblank\n", __func__);
+	pr_debug("%s: fpc fp unblank\n", __func__);
 	mtk_drm_early_resume(FP_UNLOCK_REJECTION_TIMEOUT);
 	//mtk_dsi_enable_ext_interface(FP_UNLOCK_REJECTION_TIMEOUT);
 }
@@ -422,7 +422,7 @@ static irqreturn_t fpc1022_irq_handler(int irq, void *handle)
 	sysfs_notify(&fpc1022->dev->kobj, NULL, dev_attr_irq.attr.name);
 
 	if (fpc1022->wait_finger_down && fpc1022->fb_black) {
-		pr_info("%s enter fingerdown & fb_black then schedule_work\n", __func__);
+		pr_debug("%s enter fingerdown & fb_black then schedule_work\n", __func__);
 		fpc1022->wait_finger_down = false;
 #ifndef FPC_DRM_INTERFACE_WA
 		schedule_work(&fpc1022->work);
@@ -448,7 +448,7 @@ static int fpc_fb_notif_callback(struct notifier_block *nb,
 	if (event != DRM_EVENT_BLANK)
 		return 0;
 
-	pr_info("[info] %s value = %d\n", __func__, (int)event);
+	pr_debug("[info] %s value = %d\n", __func__, (int)event);
 
 	if (evdata && evdata->data && event == DRM_EVENT_BLANK) {
 		blank = *(int *)(evdata->data);

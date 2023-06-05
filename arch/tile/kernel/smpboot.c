@@ -218,7 +218,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
 	static int timeout;
 	for (; !cpumask_test_cpu(cpu, &cpu_started); timeout++) {
 		if (timeout >= 50000) {
-			pr_info("skipping unresponsive cpu%d\n", cpu);
+			pr_debug("skipping unresponsive cpu%d\n", cpu);
 			local_irq_enable();
 			return -EIO;
 		}

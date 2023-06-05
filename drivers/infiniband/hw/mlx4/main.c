@@ -1172,7 +1172,7 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
 
 	owning_mm = get_task_mm(owning_process);
 	if (!owning_mm) {
-		pr_info("no mm, disassociate ucontext is pending task termination\n");
+		pr_debug("no mm, disassociate ucontext is pending task termination\n");
 		while (1) {
 			/* make sure that task is dead before returning, it may
 			 * prevent a rare case of module down in parallel to a
@@ -1184,7 +1184,7 @@ static void mlx4_ib_disassociate_ucontext(struct ib_ucontext *ibcontext)
 						      PIDTYPE_PID);
 			if (!owning_process ||
 			    owning_process->state == TASK_DEAD) {
-				pr_info("disassociate ucontext done, task was terminated\n");
+				pr_debug("disassociate ucontext done, task was terminated\n");
 				/* in case task was dead need to release the task struct */
 				if (owning_process)
 					put_task_struct(owning_process);
@@ -1634,7 +1634,7 @@ static int __mlx4_ib_create_default_rules(
 		ret = parse_flow_attr(mdev->dev, 0, &ib_spec,
 				      mlx4_spec);
 		if (ret < 0) {
-			pr_info("invalid parsing\n");
+			pr_debug("invalid parsing\n");
 			return -EINVAL;
 		}
 
@@ -2616,7 +2616,7 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
 	u32 counter_index;
 	struct counter_index *new_counter_index = NULL;
 
-	pr_info_once("%s", mlx4_ib_version);
+	pr_debug_once("%s", mlx4_ib_version);
 
 	num_ports = 0;
 	mlx4_foreach_ib_transport_port(i, dev)
@@ -2843,7 +2843,7 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
 		list_add_tail(&new_counter_index->list,
 			      &ibdev->counters_table[i].counters_list);
 		ibdev->counters_table[i].default_counter = counter_index;
-		pr_info("counter index %d for port %d allocated %d\n",
+		pr_debug("counter index %d for port %d allocated %d\n",
 			counter_index, i + 1, allocated);
 	}
 	if (mlx4_is_bonded(dev))

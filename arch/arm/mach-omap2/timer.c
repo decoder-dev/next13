@@ -366,7 +366,7 @@ static void __init omap2_gp_clockevent_init(int gptimer_id,
 			omap_hwmod_lookup(clockevent_gpt.name);
 	}
 
-	pr_info("OMAP clockevent source: %s at %lu Hz\n", clockevent_gpt.name,
+	pr_debug("OMAP clockevent source: %s at %lu Hz\n", clockevent_gpt.name,
 		clkev.rate);
 }
 
@@ -465,7 +465,7 @@ static void __init omap2_gptimer_clocksource_init(int gptimer_id,
 		pr_err("Could not register clocksource %s\n",
 			clocksource_gpt.name);
 	else
-		pr_info("OMAP clocksource: %s at %lu Hz\n",
+		pr_debug("OMAP clocksource: %s at %lu Hz\n",
 			clocksource_gpt.name, clksrc.rate);
 }
 

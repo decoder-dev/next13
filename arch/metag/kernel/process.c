@@ -135,19 +135,19 @@ void show_regs(struct pt_regs *regs)
 
 	show_regs_print_info(KERN_INFO);
 
-	pr_info(" pt_regs @ %p\n", regs);
-	pr_info(" SaveMask = 0x%04hx\n", regs->ctx.SaveMask);
-	pr_info(" Flags = 0x%04hx (%c%c%c%c)\n", regs->ctx.Flags,
+	pr_debug(" pt_regs @ %p\n", regs);
+	pr_debug(" SaveMask = 0x%04hx\n", regs->ctx.SaveMask);
+	pr_debug(" Flags = 0x%04hx (%c%c%c%c)\n", regs->ctx.Flags,
 		regs->ctx.Flags & FLAG_Z ? 'Z' : 'z',
 		regs->ctx.Flags & FLAG_N ? 'N' : 'n',
 		regs->ctx.Flags & FLAG_O ? 'O' : 'o',
 		regs->ctx.Flags & FLAG_C ? 'C' : 'c');
-	pr_info(" TXRPT = 0x%08x\n", regs->ctx.CurrRPT);
-	pr_info(" PC = 0x%08x\n", regs->ctx.CurrPC);
+	pr_debug(" TXRPT = 0x%08x\n", regs->ctx.CurrRPT);
+	pr_debug(" PC = 0x%08x\n", regs->ctx.CurrPC);
 
 	/* AX regs */
 	for (i = 0; i < 2; i++) {
-		pr_info(" %s = 0x%08x    ",
+		pr_debug(" %s = 0x%08x    ",
 			AX0_names[i],
 			regs->ctx.AX[i].U0);
 		printk(" %s = 0x%08x\n",
@@ -159,19 +159,19 @@ void show_regs(struct pt_regs *regs)
 		pr_warn(" Extended state present - AX2.[01] will be WRONG\n");
 
 	/* Special place with AXx.2 */
-	pr_info(" A0.2  = 0x%08x    ",
+	pr_debug(" A0.2  = 0x%08x    ",
 		regs->ctx.Ext.AX2.U0);
 	printk(" A1.2  = 0x%08x\n",
 		regs->ctx.Ext.AX2.U1);
 
 	/* 'extended' AX regs (nominally, just AXx.3) */
 	for (i = 0; i < (TBICTX_AX_REGS - 3); i++) {
-		pr_info(" A0.%d  = 0x%08x    ", i + 3, regs->ctx.AX3[i].U0);
+		pr_debug(" A0.%d  = 0x%08x    ", i + 3, regs->ctx.AX3[i].U0);
 		printk(" A1.%d  = 0x%08x\n", i + 3, regs->ctx.AX3[i].U1);
 	}
 
 	for (i = 0; i < 8; i++) {
-		pr_info(" %s = 0x%08x    ", DX0_names[i], regs->ctx.DX[i].U0);
+		pr_debug(" %s = 0x%08x    ", DX0_names[i], regs->ctx.DX[i].U0);
 		printk(" %s = 0x%08x\n", DX1_names[i], regs->ctx.DX[i].U1);
 	}
 

@@ -288,10 +288,10 @@ static void dump_packet(unsigned char *data, unsigned long length, char *s)
 
 	static unsigned int count;
 
-	pr_info("dump_packet(data %p, length 0x%lx s %s count 0x%x)\n",
+	pr_debug("dump_packet(data %p, length 0x%lx s %s count 0x%x)\n",
 	       data, length, s, count++);
 
-	pr_info("\n");
+	pr_debug("\n");
 
 	for (i = 0; i < length; i++) {
 		if ((i & 0xf) == 0)
@@ -299,7 +299,7 @@ static void dump_packet(unsigned char *data, unsigned long length, char *s)
 		sprintf(buf + strlen(buf), " %2.2x", data[i]);
 		if ((i & 0xf) == 0xf || i == length - 1) {
 			strcat(buf, "\n");
-			pr_info("%s", buf);
+			pr_debug("%s", buf);
 		}
 	}
 }
@@ -1426,7 +1426,7 @@ static int tile_net_open(struct net_device *dev)
 		priv->network_cpus_credits = credits;
 
 #ifdef TILE_NET_DEBUG
-		pr_info("Using %d network cpus, with %d credits each\n",
+		pr_debug("Using %d network cpus, with %d credits each\n",
 		       priv->network_cpus_count, priv->network_cpus_credits);
 #endif
 
@@ -2345,7 +2345,7 @@ static void tile_net_cleanup(void)
  */
 static int tile_net_init_module(void)
 {
-	pr_info("Tilera Network Driver\n");
+	pr_debug("Tilera Network Driver\n");
 
 	tile_net_devs[0] = tile_net_dev_init("xgbe0");
 	tile_net_devs[1] = tile_net_dev_init("xgbe1");
@@ -2385,7 +2385,7 @@ static int __init network_cpus_setup(char *str)
 		if (cpumask_empty(&network_cpus_map)) {
 			pr_warn("Ignoring network_cpus='%s'\n", str);
 		} else {
-			pr_info("Linux network CPUs: %*pbl\n",
+			pr_debug("Linux network CPUs: %*pbl\n",
 				cpumask_pr_args(&network_cpus_map));
 			network_cpus_used = true;
 		}

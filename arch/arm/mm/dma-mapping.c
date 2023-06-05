@@ -444,7 +444,7 @@ static int __init atomic_pool_init(void)
 		gen_pool_set_algo(atomic_pool,
 				gen_pool_first_fit_order_align,
 				(void *)PAGE_SHIFT);
-		pr_info("DMA: preallocated %zu KiB pool for atomic coherent allocations\n",
+		pr_debug("DMA: preallocated %zu KiB pool for atomic coherent allocations\n",
 		       atomic_pool_size / 1024);
 		return 0;
 	}
@@ -2480,15 +2480,15 @@ int dma_map_sg_within_reserved_iova(struct device *dev, struct scatterlist *sg,
 	/* for debug */
 	/*
 	 * dev_info(dev, "map rsv iova:\n===== dump sg map =====\n");
-	 * pr_info("sg nents %d\n", nents);
+	 * pr_debug("sg nents %d\n", nents);
 	 * for_each_sg(sg, s, nents, i) {
-	 *	pr_info("sg[%d] <mem pg> pabase 0x%x, offset 0x%x, len 0x%x\n",
+	 *	pr_debug("sg[%d] <mem pg> pabase 0x%x, offset 0x%x, len 0x%x\n",
 	 *		i, page_to_phys(sg_page(s)), s->offset, s->length);
-	 *	pr_info("       <iova tbl> iova 0x%x, pa 0x%x\n",
+	 *	pr_debug("       <iova tbl> iova 0x%x, pa 0x%x\n",
 	 *		s->dma_address,
 	 *		iommu_iova_to_phys(mapping->domain, s->dma_address));
 	 * }
-	 * pr_info("===== dump sg map =====\n");
+	 * pr_debug("===== dump sg map =====\n");
 	 */
 
 	return count;

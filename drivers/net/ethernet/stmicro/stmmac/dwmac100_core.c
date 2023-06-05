@@ -180,7 +180,7 @@ struct mac_device_info *dwmac100_setup(void __iomem *ioaddr, int *synopsys_id)
 	if (!mac)
 		return NULL;
 
-	pr_info("\tDWMAC100\n");
+	pr_debug("\tDWMAC100\n");
 
 	mac->pcsr = ioaddr;
 	mac->mac = &dwmac100_ops;

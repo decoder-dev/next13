@@ -112,7 +112,7 @@ static void spin_lock_check_spinning_time(raw_spinlock_t *lock,
 		char lock_name[MAX_LOCK_NAME];
 
 		get_spin_lock_name(lock, lock_name);
-		pr_info("spinning for (%s)(%p) from [%lld.%06lu] to [%lld.%06lu], total %llu ms\n",
+		pr_debug("spinning for (%s)(%p) from [%lld.%06lu] to [%lld.%06lu], total %llu ms\n",
 			lock_name, lock,
 			sec_high(ts), sec_low(ts),
 			sec_high(te), sec_low(te),
@@ -128,7 +128,7 @@ static void spin_lock_check_holding_time(raw_spinlock_t *lock)
 		char aee_str[128];
 
 		get_spin_lock_name(lock, lock_name);
-		pr_info("hold spinlock (%s)(%p) from [%lld.%06lu] to [%lld.%06lu], total %llu ms\n",
+		pr_debug("hold spinlock (%s)(%p) from [%lld.%06lu] to [%lld.%06lu], total %llu ms\n",
 			lock_name, lock,
 			sec_high(lock->lock_t), sec_low(lock->lock_t),
 			sec_high(lock->unlock_t), sec_low(lock->unlock_t),
@@ -137,7 +137,7 @@ static void spin_lock_check_holding_time(raw_spinlock_t *lock)
 		if (is_critical_spinlock(lock) || is_critical_lock_held())
 			return;
 
-		pr_info("========== The call trace of lock owner on CPU%d ==========\n",
+		pr_debug("========== The call trace of lock owner on CPU%d ==========\n",
 			raw_smp_processor_id());
 		dump_stack();
 
@@ -234,12 +234,12 @@ static void spin_bug(raw_spinlock_t *lock, const char *msg)
 	if (!strcmp(msg, "bad magic") || !strcmp(msg, "already unlocked")
 		|| !strcmp(msg, "wrong owner") || !strcmp(msg, "wrong CPU")
 		|| !strcmp(msg, "uninitialized")) {
-		pr_info("%s", aee_str);
-		pr_info("maybe use an un-initial spin_lock or mem corrupt\n");
-		pr_info("maybe already unlocked or wrong owner or wrong CPU\n");
-		pr_info("maybe bad magic %08x, should be %08x\n",
+		pr_debug("%s", aee_str);
+		pr_debug("maybe use an un-initial spin_lock or mem corrupt\n");
+		pr_debug("maybe already unlocked or wrong owner or wrong CPU\n");
+		pr_debug("maybe bad magic %08x, should be %08x\n",
 			lock->magic, SPINLOCK_MAGIC);
-		pr_info(">>>>>>>>>>>>>> Let's KE <<<<<<<<<<<<<<\n");
+		pr_debug(">>>>>>>>>>>>>> Let's KE <<<<<<<<<<<<<<\n");
 		BUG_ON(1);
 	}
 
@@ -303,7 +303,7 @@ static void show_cpu_backtrace(void *info)
 {
 	call_single_data_t *csd;
 
-	pr_info("========== The call trace of lock owner on CPU%d ==========\n",
+	pr_debug("========== The call trace of lock owner on CPU%d ==========\n",
 		raw_smp_processor_id());
 	dump_stack();
 
@@ -388,7 +388,7 @@ static void __spin_lock_debug(raw_spinlock_t *lock)
 			continue;
 
 		get_spin_lock_name(lock, lock_name);
-		pr_info("(%s)(%p) spin time: %llu ms(from %lld.%06lu), raw_lock: 0x%08x, magic: %08x, held by %s/%d on CPU#%d(from %lld.%06lu)\n",
+		pr_debug("(%s)(%p) spin time: %llu ms(from %lld.%06lu), raw_lock: 0x%08x, magic: %08x, held by %s/%d on CPU#%d(from %lld.%06lu)\n",
 			lock_name, lock,
 			msec_high(t2 - t1), sec_high(t1), sec_low(t1),
 			*((unsigned int *)&lock->raw_lock), lock->magic,
@@ -446,7 +446,7 @@ static void __spin_lock_debug(raw_spinlock_t *lock)
 			}
 			smp_call_function_single_async(owner_cpu, csd);
 		} else {
-			pr_info("(%s) recursive deadlock on CPU%d\n",
+			pr_debug("(%s) recursive deadlock on CPU%d\n",
 				lock_name, owner_cpu);
 		}
 	}

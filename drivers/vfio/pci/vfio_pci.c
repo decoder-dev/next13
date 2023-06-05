@@ -347,7 +347,7 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
 	 * is just busy work.
 	 */
 	if (pci_load_and_free_saved_state(pdev, &vdev->pci_saved_state)) {
-		pr_info("%s: Couldn't reload %s saved state\n",
+		pr_debug("%s: Couldn't reload %s saved state\n",
 			__func__, dev_name(&pdev->dev));
 
 		if (!vdev->reset_works)
@@ -1779,7 +1779,7 @@ static void __init vfio_pci_fill_ids(void)
 				vendor, device, subvendor, subdevice,
 				class, class_mask, rc);
 		else
-			pr_info("add [%04x:%04x[%04x:%04x]] class %#08x/%08x\n",
+			pr_debug("add [%04x:%04x[%04x:%04x]] class %#08x/%08x\n",
 				vendor, device, subvendor, subdevice,
 				class, class_mask);
 	}

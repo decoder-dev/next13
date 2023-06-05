@@ -318,7 +318,7 @@ static void __do_user_fault(struct task_struct *tsk, unsigned long addr,
 
 	if (unhandled_signal(tsk, sig) && show_unhandled_signals_ratelimited()) {
 		inf = esr_to_fault_info(esr);
-		pr_info("%s[%d]: unhandled %s (%d) at 0x%08lx, esr 0x%03x",
+		pr_debug("%s[%d]: unhandled %s (%d) at 0x%08lx, esr 0x%03x",
 			tsk->comm, task_pid_nr(tsk), inf->name, sig,
 			addr, esr);
 		print_vma_addr(KERN_CONT ", in ", regs->pc);
@@ -814,7 +814,7 @@ asmlinkage void __exception do_sp_pc_abort(unsigned long addr,
 	}
 
 	if (show_unhandled_signals && unhandled_signal(tsk, SIGBUS))
-		pr_info_ratelimited("%s[%d]: %s exception: pc=%p sp=%p\n",
+		pr_debug_ratelimited("%s[%d]: %s exception: pc=%p sp=%p\n",
 				    tsk->comm, task_pid_nr(tsk),
 				    esr_get_class_string(esr), (void *)regs->pc,
 				    (void *)regs->sp);

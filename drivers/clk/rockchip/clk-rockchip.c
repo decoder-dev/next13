@@ -44,7 +44,7 @@ static void __init rk2928_gate_clk_init(struct device_node *node)
 	}
 
 	if (qty == 0) {
-		pr_info("%s: nothing to do\n", __func__);
+		pr_debug("%s: nothing to do\n", __func__);
 		return;
 	}
 

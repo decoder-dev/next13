@@ -146,7 +146,7 @@ static unsigned char *kexec_bn2cl(void *pg)
 		if ((unsigned char *) (nhdrp + 1) >
 		    ((unsigned char *) pg) + bhdrp->b_size) {
 
-			pr_info("%s: out of bounds\n", __func__);
+			pr_debug("%s: out of bounds\n", __func__);
 			return 0;
 		}
 	}
@@ -157,7 +157,7 @@ static unsigned char *kexec_bn2cl(void *pg)
 	while (*desc != '\0') {
 		desc++;
 		if (((unsigned long)desc & PAGE_MASK) != (unsigned long)pg) {
-			pr_info("%s: ran off end of page\n", __func__);
+			pr_debug("%s: ran off end of page\n", __func__);
 			return 0;
 		}
 	}
@@ -191,13 +191,13 @@ static void kexec_find_and_set_command_line(struct kimage *image)
 	}
 
 	if (command_line != 0) {
-		pr_info("setting new command line to \"%s\"\n", command_line);
+		pr_debug("setting new command line to \"%s\"\n", command_line);
 
 		hverr = hv_set_command_line(
 			(HV_VirtAddr) command_line, strlen(command_line));
 		kunmap_atomic(command_line);
 	} else {
-		pr_info("%s: no command line found; making empty\n", __func__);
+		pr_debug("%s: no command line found; making empty\n", __func__);
 		hverr = hv_set_command_line((HV_VirtAddr) command_line, 0);
 	}
 	if (hverr)

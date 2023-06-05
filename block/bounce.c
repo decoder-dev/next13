@@ -41,7 +41,7 @@ static __init int init_emergency_pool(void)
 
 	page_pool = mempool_create_page_pool(POOL_SIZE, 0);
 	BUG_ON(!page_pool);
-	pr_info("pool size: %d pages\n", POOL_SIZE);
+	pr_debug("pool size: %d pages\n", POOL_SIZE);
 
 	bounce_bio_set = bioset_create(BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
 	BUG_ON(!bounce_bio_set);
@@ -101,7 +101,7 @@ int init_emergency_isa_pool(void)
 				       mempool_free_pages, (void *) 0);
 	BUG_ON(!isa_page_pool);
 
-	pr_info("isa pool size: %d pages\n", ISA_POOL_SIZE);
+	pr_debug("isa pool size: %d pages\n", ISA_POOL_SIZE);
 	return 0;
 }
 

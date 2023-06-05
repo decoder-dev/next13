@@ -275,7 +275,7 @@ static void dump_cqe(struct mlx5_ib_dev *dev, struct mlx5_err_cqe *cqe)
 
 	mlx5_ib_warn(dev, "dump error cqe\n");
 	for (i = 0; i < sizeof(*cqe) / 16; i++, p += 4)
-		pr_info("%08x %08x %08x %08x\n", be32_to_cpu(p[0]),
+		pr_debug("%08x %08x %08x %08x\n", be32_to_cpu(p[0]),
 			be32_to_cpu(p[1]), be32_to_cpu(p[2]),
 			be32_to_cpu(p[3]));
 }
@@ -1289,7 +1289,7 @@ int mlx5_ib_resize_cq(struct ib_cq *ibcq, int entries, struct ib_udata *udata)
 	unsigned long flags;
 
 	if (!MLX5_CAP_GEN(dev->mdev, cq_resize)) {
-		pr_info("Firmware does not support resize CQ\n");
+		pr_debug("Firmware does not support resize CQ\n");
 		return -ENOSYS;
 	}
 

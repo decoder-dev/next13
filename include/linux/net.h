@@ -256,7 +256,7 @@ do {								\
 #define net_warn_ratelimited(fmt, ...)				\
 	net_ratelimited_function(pr_warn, fmt, ##__VA_ARGS__)
 #define net_info_ratelimited(fmt, ...)				\
-	net_ratelimited_function(pr_info, fmt, ##__VA_ARGS__)
+	net_ratelimited_function(pr_debug, fmt, ##__VA_ARGS__)
 #if defined(CONFIG_DYNAMIC_DEBUG)
 #define net_dbg_ratelimited(fmt, ...)					\
 do {									\

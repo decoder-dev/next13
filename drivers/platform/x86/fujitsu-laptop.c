@@ -403,7 +403,7 @@ static int acpi_fujitsu_bl_add(struct acpi_device *device)
 	if (error)
 		return error;
 
-	pr_info("ACPI: %s [%s]\n",
+	pr_debug("ACPI: %s [%s]\n",
 		acpi_device_name(device), acpi_device_bid(device));
 
 	if (get_max_brightness(device) <= 0)
@@ -479,7 +479,7 @@ static const struct key_entry *keymap = keymap_default;
 
 static int fujitsu_laptop_dmi_keymap_override(const struct dmi_system_id *id)
 {
-	pr_info("Identified laptop model '%s'\n", id->ident);
+	pr_debug("Identified laptop model '%s'\n", id->ident);
 	keymap = id->driver_data;
 	return 1;
 }
@@ -796,7 +796,7 @@ static int acpi_fujitsu_laptop_add(struct acpi_device *device)
 	if (error)
 		goto err_free_fifo;
 
-	pr_info("ACPI: %s [%s]\n",
+	pr_debug("ACPI: %s [%s]\n",
 		acpi_device_name(device), acpi_device_bid(device));
 
 	i = 0;
@@ -991,7 +991,7 @@ static int __init fujitsu_init(void)
 	if (ret)
 		goto err_unregister_platform_driver;
 
-	pr_info("driver " FUJITSU_DRIVER_VERSION " successfully loaded\n");
+	pr_debug("driver " FUJITSU_DRIVER_VERSION " successfully loaded\n");
 
 	return 0;
 
@@ -1011,7 +1011,7 @@ static void __exit fujitsu_cleanup(void)
 
 	acpi_bus_unregister_driver(&acpi_fujitsu_bl_driver);
 
-	pr_info("driver unloaded\n");
+	pr_debug("driver unloaded\n");
 }
 
 module_init(fujitsu_init);

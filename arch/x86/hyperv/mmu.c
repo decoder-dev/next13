@@ -291,10 +291,10 @@ void hyperv_setup_mmu_ops(void)
 		return;
 
 	if (!(ms_hyperv.hints & HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED)) {
-		pr_info("Using hypercall for remote TLB flush\n");
+		pr_debug("Using hypercall for remote TLB flush\n");
 		pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others;
 	} else {
-		pr_info("Using ext hypercall for remote TLB flush\n");
+		pr_debug("Using ext hypercall for remote TLB flush\n");
 		pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others_ex;
 	}
 }

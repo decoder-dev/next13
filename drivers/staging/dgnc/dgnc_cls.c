@@ -1140,9 +1140,9 @@ static void cls_vpd(struct dgnc_board *brd)
 
 	for (i = 0; i < 0x40; i++) {
 		brd->vpd[i] = readb(re_map_vpdbase + i);
-		pr_info("%x ", brd->vpd[i]);
+		pr_debug("%x ", brd->vpd[i]);
 	}
-	pr_info("\n");
+	pr_debug("\n");
 
 	iounmap(re_map_vpdbase);
 }

@@ -1336,7 +1336,7 @@ static int send_renew_caps(struct ceph_mds_client *mdsc,
 
 	if (time_after_eq(jiffies, session->s_cap_ttl) &&
 	    time_after_eq(session->s_cap_ttl, session->s_renew_requested))
-		pr_info("mds%d caps stale\n", session->s_mds);
+		pr_debug("mds%d caps stale\n", session->s_mds);
 	session->s_renew_requested = jiffies;
 
 	/* do not try to renew caps until a recovering mds has reconnected
@@ -1392,10 +1392,10 @@ static void renewed_caps(struct ceph_mds_client *mdsc,
 
 	if (was_stale) {
 		if (time_before(jiffies, session->s_cap_ttl)) {
-			pr_info("mds%d caps renewed\n", session->s_mds);
+			pr_debug("mds%d caps renewed\n", session->s_mds);
 			wake = 1;
 		} else {
-			pr_info("mds%d caps still stale\n", session->s_mds);
+			pr_debug("mds%d caps still stale\n", session->s_mds);
 		}
 	}
 	dout("renewed_caps mds%d ttl now %lu, was %s, now %s\n",
@@ -2764,13 +2764,13 @@ static void handle_session(struct ceph_mds_session *session,
 
 	if (session->s_state == CEPH_MDS_SESSION_HUNG) {
 		session->s_state = CEPH_MDS_SESSION_OPEN;
-		pr_info("mds%d came back\n", session->s_mds);
+		pr_debug("mds%d came back\n", session->s_mds);
 	}
 
 	switch (op) {
 	case CEPH_SESSION_OPEN:
 		if (session->s_state == CEPH_MDS_SESSION_RECONNECTING)
-			pr_info("mds%d reconnect success\n", session->s_mds);
+			pr_debug("mds%d reconnect success\n", session->s_mds);
 		session->s_state = CEPH_MDS_SESSION_OPEN;
 		renewed_caps(mdsc, session, 0);
 		wake = 1;
@@ -2785,7 +2785,7 @@ static void handle_session(struct ceph_mds_session *session,
 
 	case CEPH_SESSION_CLOSE:
 		if (session->s_state == CEPH_MDS_SESSION_RECONNECTING)
-			pr_info("mds%d reconnect denied\n", session->s_mds);
+			pr_debug("mds%d reconnect denied\n", session->s_mds);
 		cleanup_session_requests(mdsc, session);
 		remove_session_caps(session);
 		wake = 2; /* for good measure */
@@ -2793,7 +2793,7 @@ static void handle_session(struct ceph_mds_session *session,
 		break;
 
 	case CEPH_SESSION_STALE:
-		pr_info("mds%d caps went stale, renewing\n",
+		pr_debug("mds%d caps went stale, renewing\n",
 			session->s_mds);
 		spin_lock(&session->s_gen_ttl_lock);
 		session->s_cap_gen++;
@@ -2820,7 +2820,7 @@ static void handle_session(struct ceph_mds_session *session,
 
 	case CEPH_SESSION_REJECT:
 		WARN_ON(session->s_state != CEPH_MDS_SESSION_OPENING);
-		pr_info("mds%d rejected session\n", session->s_mds);
+		pr_debug("mds%d rejected session\n", session->s_mds);
 		session->s_state = CEPH_MDS_SESSION_REJECTED;
 		cleanup_session_requests(mdsc, session);
 		remove_session_caps(session);
@@ -3075,7 +3075,7 @@ static void send_mds_reconnect(struct ceph_mds_client *mdsc,
 	struct ceph_pagelist *pagelist;
 	struct ceph_reconnect_state recon_state;
 
-	pr_info("mds%d reconnect start\n", mds);
+	pr_debug("mds%d reconnect start\n", mds);
 
 	pagelist = kmalloc(sizeof(*pagelist), GFP_NOFS);
 	if (!pagelist)
@@ -3292,7 +3292,7 @@ static void check_new_map(struct ceph_mds_client *mdsc,
 		    newstate >= CEPH_MDS_STATE_ACTIVE) {
 			if (oldstate != CEPH_MDS_STATE_CREATING &&
 			    oldstate != CEPH_MDS_STATE_STARTING)
-				pr_info("mds%d recovery completed\n", s->s_mds);
+				pr_debug("mds%d recovery completed\n", s->s_mds);
 			kick_requests(mdsc, i);
 			ceph_kick_flushing_caps(mdsc, s);
 			wake_up_session_caps(s, 1);
@@ -3542,7 +3542,7 @@ static void delayed_work(struct work_struct *work)
 		if (s->s_ttl && time_after(jiffies, s->s_ttl)) {
 			if (s->s_state == CEPH_MDS_SESSION_OPEN) {
 				s->s_state = CEPH_MDS_SESSION_HUNG;
-				pr_info("mds%d hung\n", s->s_mds);
+				pr_debug("mds%d hung\n", s->s_mds);
 			}
 		}
 		if (s->s_state == CEPH_MDS_SESSION_NEW ||

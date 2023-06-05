@@ -218,7 +218,7 @@ static void flush_channel_fifos(struct most_c_obj *c)
 	spin_unlock_irqrestore(&c->fifo_lock, hf_flags);
 
 	if (unlikely((!list_empty(&c->fifo) || !list_empty(&c->halt_fifo))))
-		pr_info("WARN: fifo | trash fifo not empty\n");
+		pr_debug("WARN: fifo | trash fifo not empty\n");
 }
 
 /**
@@ -396,7 +396,7 @@ static ssize_t set_direction_store(struct most_c_obj *c,
 	} else if (!strcmp(buf, "tx\n")) {
 		c->cfg.direction = MOST_CH_TX;
 	} else {
-		pr_info("WARN: invalid attribute settings\n");
+		pr_debug("WARN: invalid attribute settings\n");
 		return -EINVAL;
 	}
 	return count;
@@ -430,7 +430,7 @@ static ssize_t set_datatype_store(struct most_c_obj *c,
 	}
 
 	if (i == ARRAY_SIZE(ch_data_type)) {
-		pr_info("WARN: invalid attribute settings\n");
+		pr_debug("WARN: invalid attribute settings\n");
 		return -EINVAL;
 	}
 	return count;
@@ -1277,7 +1277,7 @@ static int arm_mbo_chain(struct most_c_obj *c, int dir,
 						       &mbo->bus_address,
 						       GFP_KERNEL);
 		if (!mbo->virt_address) {
-			pr_info("WARN: No DMA coherent buffer.\n");
+			pr_debug("WARN: No DMA coherent buffer.\n");
 			retval = i;
 			goto _error1;
 		}
@@ -1327,7 +1327,7 @@ static void most_write_completion(struct mbo *mbo)
 
 	c = mbo->context;
 	if (mbo->status == MBO_E_INVAL)
-		pr_info("WARN: Tx MBO status: invalid\n");
+		pr_debug("WARN: Tx MBO status: invalid\n");
 	if (unlikely(c->is_poisoned || (mbo->status == MBO_E_CLOSE)))
 		trash_mbo(mbo);
 	else
@@ -1511,14 +1511,14 @@ int most_start_channel(struct most_interface *iface, int id,
 		goto out; /* already started by other aim */
 
 	if (!try_module_get(iface->mod)) {
-		pr_info("failed to acquire HDM lock\n");
+		pr_debug("failed to acquire HDM lock\n");
 		mutex_unlock(&c->start_mutex);
 		return -ENOLCK;
 	}
 
 	c->cfg.extra_len = 0;
 	if (c->iface->configure(c->iface, c->channel_id, &c->cfg)) {
-		pr_info("channel configuration failed. Go check settings...\n");
+		pr_debug("channel configuration failed. Go check settings...\n");
 		ret = -EINVAL;
 		goto error;
 	}
@@ -1532,7 +1532,7 @@ int most_start_channel(struct most_interface *iface, int id,
 		num_buffer = arm_mbo_chain(c, c->cfg.direction,
 					   most_write_completion);
 	if (unlikely(!num_buffer)) {
-		pr_info("failed to allocate memory\n");
+		pr_debug("failed to allocate memory\n");
 		ret = -ENOMEM;
 		goto error;
 	}
@@ -1602,7 +1602,7 @@ int most_stop_channel(struct most_interface *iface, int id,
 
 #ifdef CMPL_INTERRUPTIBLE
 	if (wait_for_completion_interruptible(&c->cleanup)) {
-		pr_info("Interrupted while clean up ch %d\n", c->channel_id);
+		pr_debug("Interrupted while clean up ch %d\n", c->channel_id);
 		mutex_unlock(&c->start_mutex);
 		return -EINTR;
 	}
@@ -1635,12 +1635,12 @@ int most_register_aim(struct most_aim *aim)
 	}
 	aim_obj = create_most_aim_obj(aim->name);
 	if (!aim_obj) {
-		pr_info("failed to alloc driver object\n");
+		pr_debug("failed to alloc driver object\n");
 		return -ENOMEM;
 	}
 	aim_obj->driver = aim;
 	aim->context = aim_obj;
-	pr_info("registered new application interfacing module %s\n",
+	pr_debug("registered new application interfacing module %s\n",
 		aim->name);
 	list_add_tail(&aim_obj->list, &aim_list);
 	return 0;
@@ -1664,7 +1664,7 @@ int most_deregister_aim(struct most_aim *aim)
 
 	aim_obj = aim->context;
 	if (!aim_obj) {
-		pr_info("driver not registered.\n");
+		pr_debug("driver not registered.\n");
 		return -EINVAL;
 	}
 	list_for_each_entry_safe(i, i_tmp, &instance_list, list) {
@@ -1680,7 +1680,7 @@ int most_deregister_aim(struct most_aim *aim)
 	}
 	list_del(&aim_obj->list);
 	destroy_most_aim_obj(aim_obj);
-	pr_info("deregistering application interfacing module %s\n", aim->name);
+	pr_debug("deregistering application interfacing module %s\n", aim->name);
 	return 0;
 }
 EXPORT_SYMBOL_GPL(most_deregister_aim);
@@ -1709,14 +1709,14 @@ struct kobject *most_register_interface(struct most_interface *iface)
 
 	id = ida_simple_get(&mdev_id, 0, 0, GFP_KERNEL);
 	if (id < 0) {
-		pr_info("Failed to alloc mdev ID\n");
+		pr_debug("Failed to alloc mdev ID\n");
 		return ERR_PTR(id);
 	}
 	snprintf(name, STRING_SIZE, "mdev%d", id);
 
 	inst = create_most_inst_obj(name);
 	if (!inst) {
-		pr_info("Failed to allocate interface instance\n");
+		pr_debug("Failed to allocate interface instance\n");
 		ida_simple_remove(&mdev_id, id);
 		return ERR_PTR(-ENOMEM);
 	}
@@ -1763,12 +1763,12 @@ struct kobject *most_register_interface(struct most_interface *iface)
 		mutex_init(&c->nq_mutex);
 		list_add_tail(&c->list, &inst->channel_list);
 	}
-	pr_info("registered new MOST device mdev%d (%s)\n",
+	pr_debug("registered new MOST device mdev%d (%s)\n",
 		inst->dev_id, iface->description);
 	return &inst->kobj;
 
 free_instance:
-	pr_info("Failed allocate channel(s)\n");
+	pr_debug("Failed allocate channel(s)\n");
 	list_del(&inst->list);
 	ida_simple_remove(&mdev_id, id);
 	destroy_most_inst_obj(inst);
@@ -1789,10 +1789,10 @@ void most_deregister_interface(struct most_interface *iface)
 	struct most_c_obj *c;
 
 	if (unlikely(!i)) {
-		pr_info("Bad Interface\n");
+		pr_debug("Bad Interface\n");
 		return;
 	}
-	pr_info("deregistering MOST device %s (%s)\n", i->kobj.name,
+	pr_debug("deregistering MOST device %s (%s)\n", i->kobj.name,
 		iface->description);
 
 	list_for_each_entry(c, &i->channel_list, list) {
@@ -1862,27 +1862,27 @@ static int __init most_init(void)
 {
 	int err;
 
-	pr_info("init()\n");
+	pr_debug("init()\n");
 	INIT_LIST_HEAD(&instance_list);
 	INIT_LIST_HEAD(&aim_list);
 	ida_init(&mdev_id);
 
 	err = bus_register(&most_bus);
 	if (err) {
-		pr_info("Cannot register most bus\n");
+		pr_debug("Cannot register most bus\n");
 		return err;
 	}
 
 	most_class = class_create(THIS_MODULE, "most");
 	if (IS_ERR(most_class)) {
-		pr_info("No udev support.\n");
+		pr_debug("No udev support.\n");
 		err = PTR_ERR(most_class);
 		goto exit_bus;
 	}
 
 	err = driver_register(&mostcore);
 	if (err) {
-		pr_info("Cannot register core driver\n");
+		pr_debug("Cannot register core driver\n");
 		goto exit_class;
 	}
 
@@ -1924,7 +1924,7 @@ static void __exit most_exit(void)
 	struct most_inst_obj *i, *i_tmp;
 	struct most_aim_obj *d, *d_tmp;
 
-	pr_info("exit core module\n");
+	pr_debug("exit core module\n");
 	list_for_each_entry_safe(d, d_tmp, &aim_list, list) {
 		destroy_most_aim_obj(d);
 	}

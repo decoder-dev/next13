@@ -16,7 +16,7 @@ static int __base_pr(const char *format, ...)
 }
 
 libapi_print_fn_t __pr_warning = __base_pr;
-libapi_print_fn_t __pr_info    = __base_pr;
+libapi_print_fn_t __pr_debug    = __base_pr;
 libapi_print_fn_t __pr_debug;
 
 void libapi_set_print(libapi_print_fn_t warn,
@@ -24,6 +24,6 @@ void libapi_set_print(libapi_print_fn_t warn,
 		      libapi_print_fn_t debug)
 {
 	__pr_warning = warn;
-	__pr_info    = info;
+	__pr_debug    = info;
 	__pr_debug   = debug;
 }

@@ -48,10 +48,10 @@
 
 #if DEBUG_PCI_CFG
 #define TRACE_CFG_WR(size, val, bus, dev, func, offset) \
-	pr_info("CFG WR %d-byte VAL %#x to bus %d dev %d func %d addr %u\n", \
+	pr_debug("CFG WR %d-byte VAL %#x to bus %d dev %d func %d addr %u\n", \
 		size, val, bus, dev, func, offset & 0xFFF);
 #define TRACE_CFG_RD(size, val, bus, dev, func, offset) \
-	pr_info("CFG RD %d-byte VAL %#x from bus %d dev %d func %d addr %u\n", \
+	pr_debug("CFG RD %d-byte VAL %#x from bus %d dev %d func %d addr %u\n", \
 		size, val, bus, dev, func, offset & 0xFFF);
 #else
 #define TRACE_CFG_WR(...)
@@ -414,11 +414,11 @@ int __init tile_pci_init(void)
 	int i, j;
 
 	if (!pci_probe) {
-		pr_info("PCI: disabled by boot argument\n");
+		pr_debug("PCI: disabled by boot argument\n");
 		return 0;
 	}
 
-	pr_info("PCI: Searching for controllers...\n");
+	pr_debug("PCI: Searching for controllers...\n");
 
 	if (num_trio_shims == 0 || sim_is_simulator())
 		return 0;
@@ -710,7 +710,7 @@ int __init pcibios_init(void)
 					 reg_offset);
 		if (!port_status.dl_up) {
 			if (rc_delay[trio_index][mac]) {
-				pr_info("Delaying PCIe RC TRIO init %d sec on MAC %d on TRIO %d\n",
+				pr_debug("Delaying PCIe RC TRIO init %d sec on MAC %d on TRIO %d\n",
 					rc_delay[trio_index][mac], mac,
 					trio_index);
 				msleep(rc_delay[trio_index][mac] * 1000);
@@ -721,12 +721,12 @@ int __init pcibios_init(void)
 				       mac, trio_index);
 		}
 
-		pr_info("PCI: Found PCI controller #%d on TRIO %d MAC %d\n",
+		pr_debug("PCI: Found PCI controller #%d on TRIO %d MAC %d\n",
 			i, trio_index, controller->mac);
 
 		/* Delay the bus probe if needed. */
 		if (rc_delay[trio_index][mac]) {
-			pr_info("Delaying PCIe RC bus enumerating %d sec on MAC %d on TRIO %d\n",
+			pr_debug("Delaying PCIe RC bus enumerating %d sec on MAC %d on TRIO %d\n",
 				rc_delay[trio_index][mac], mac, trio_index);
 			msleep(rc_delay[trio_index][mac] * 1000);
 		} else {
@@ -743,9 +743,9 @@ int __init pcibios_init(void)
 					 reg_offset);
 		if (!port_status.dl_up) {
 			if (pcie_ports[trio_index].ports[mac].removable) {
-				pr_info("PCI: link is down, MAC %d on TRIO %d\n",
+				pr_debug("PCI: link is down, MAC %d on TRIO %d\n",
 					mac, trio_index);
-				pr_info("This is expected if no PCIe card is connected to this link\n");
+				pr_debug("This is expected if no PCIe card is connected to this link\n");
 			} else
 				pr_err("PCI: link is down, MAC %d on TRIO %d\n",
 				       mac, trio_index);

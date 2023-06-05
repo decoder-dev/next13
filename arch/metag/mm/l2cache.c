@@ -46,7 +46,7 @@ static int __init meta_l2c_setup(void)
 	 * the log.
 	 */
 	if (!meta_l2c_is_present()) {
-		pr_info("L2 Cache: Not present\n");
+		pr_debug("L2 Cache: Not present\n");
 		return 0;
 	}
 
@@ -68,26 +68,26 @@ static int __init meta_l2c_setup(void)
 	 * by the bootloader.
 	 */
 	if (l2cache_init) {
-		pr_info("L2 Cache: Enabling... ");
+		pr_debug("L2 Cache: Enabling... ");
 		if (meta_l2c_enable())
 			pr_cont("already enabled\n");
 		else
 			pr_cont("done\n");
 	} else {
-		pr_info("L2 Cache: Not enabling\n");
+		pr_debug("L2 Cache: Not enabling\n");
 	}
 
 	/*
 	 * Enable L2 cache prefetch.
 	 */
 	if (l2cache_init_pf) {
-		pr_info("L2 Cache: Enabling prefetch... ");
+		pr_debug("L2 Cache: Enabling prefetch... ");
 		if (meta_l2c_pf_enable(1))
 			pr_cont("already enabled\n");
 		else
 			pr_cont("done\n");
 	} else {
-		pr_info("L2 Cache: Not enabling prefetch\n");
+		pr_debug("L2 Cache: Not enabling prefetch\n");
 	}
 
 	return 0;

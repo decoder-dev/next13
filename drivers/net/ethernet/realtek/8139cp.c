@@ -1890,7 +1890,7 @@ static int cp_init_one (struct pci_dev *pdev, const struct pci_device_id *ent)
 	resource_size_t pciaddr;
 	unsigned int addr_len, i, pci_using_dac;
 
-	pr_info_once("%s", version);
+	pr_debug_once("%s", version);
 
 	if (pdev->vendor == PCI_VENDOR_ID_REALTEK &&
 	    pdev->device == PCI_DEVICE_ID_REALTEK_8139 && pdev->revision < 0x20) {

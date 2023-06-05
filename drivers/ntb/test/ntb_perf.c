@@ -673,18 +673,18 @@ static ssize_t debugfs_run_write(struct file *filp, const char __user *ubuf,
 
 	if (perf->perf_threads > MAX_THREADS) {
 		perf->perf_threads = MAX_THREADS;
-		pr_info("Reset total threads to: %u\n", MAX_THREADS);
+		pr_debug("Reset total threads to: %u\n", MAX_THREADS);
 	}
 
 	/* no greater than 1M */
 	if (seg_order > MAX_SEG_ORDER) {
 		seg_order = MAX_SEG_ORDER;
-		pr_info("Fix seg_order to %u\n", seg_order);
+		pr_debug("Fix seg_order to %u\n", seg_order);
 	}
 
 	if (run_order < seg_order) {
 		run_order = seg_order;
-		pr_info("Fix run_order to %u\n", run_order);
+		pr_debug("Fix run_order to %u\n", run_order);
 	}
 
 	node = on_node ? dev_to_node(&perf->ntb->pdev->dev)

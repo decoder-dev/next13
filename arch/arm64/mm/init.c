@@ -131,7 +131,7 @@ static void __init reserve_crashkernel(void)
 	}
 	memblock_reserve(crash_base, crash_size);
 
-	pr_info("crashkernel reserved: 0x%016llx - 0x%016llx (%lld MB)\n",
+	pr_debug("crashkernel reserved: 0x%016llx - 0x%016llx (%lld MB)\n",
 		crash_base, crash_base + crash_size, crash_size >> 20);
 
 	crashk_res.start = crash_base;
@@ -210,7 +210,7 @@ static void __init reserve_elfcorehdr(void)
 
 	memblock_reserve(elfcorehdr_addr, elfcorehdr_size);
 
-	pr_info("Reserving %lldKB of memory at 0x%llx for elfcorehdr\n",
+	pr_debug("Reserving %lldKB of memory at 0x%llx for elfcorehdr\n",
 		elfcorehdr_size >> 10, elfcorehdr_addr);
 }
 #else

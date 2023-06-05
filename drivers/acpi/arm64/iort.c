@@ -980,7 +980,7 @@ static void  __init arm_smmu_v3_set_proximity(struct device *dev,
 	smmu = (struct acpi_iort_smmu_v3 *)node->node_data;
 	if (smmu->flags & ACPI_IORT_SMMU_V3_PXM_VALID) {
 		set_dev_node(dev, acpi_map_pxm_to_node(smmu->pxm));
-		pr_info("SMMU-v3[%llx] Mapped to Proximity domain %d\n",
+		pr_debug("SMMU-v3[%llx] Mapped to Proximity domain %d\n",
 			smmu->base_address,
 			smmu->pxm);
 	}

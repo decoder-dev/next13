@@ -122,7 +122,7 @@ int secspi_session_open(u32 spinum)
 	mutex_lock(&secspi_lock);
 
 
-	pr_info("%s() start\n", __func__);
+	pr_debug("%s() start\n", __func__);
 	do {
 		/* sessions reach max numbers ? */
 
@@ -180,7 +180,7 @@ int secspi_session_open(u32 spinum)
 		return -ENXIO;
 	}
 
-	pr_info("%s() Done. Success! ret=%d, ref=%d\n", __func__, mc_ret,
+	pr_debug("%s() Done. Success! ret=%d, ref=%d\n", __func__, mc_ret,
 				secspi_session_ref);
 	return 0;
 }
@@ -238,7 +238,7 @@ static int secspi_session_close(void)
 		return -ENXIO;
 	}
 
-	pr_info("%s() Done. Success! ret=%d, ref=%d\n", __func__, mc_ret,
+	pr_debug("%s() Done. Success! ret=%d, ref=%d\n", __func__, mc_ret,
 			secspi_session_ref);
 	return 0;
 
@@ -262,7 +262,7 @@ int secspi_execute(u32 cmd, tciSpiMessage_t *param)
 {
 	enum mc_result mc_ret;
 
-	pr_info("%s() start.\n", __func__);
+	pr_debug("%s() start.\n", __func__);
 	mutex_lock(&secspi_lock);
 
 	if (secspi_tci == NULL) {
@@ -312,7 +312,7 @@ exit:
 		return -ENOSPC;
 	}
 
-	pr_info("%s() Done. Success. ret:%d\n", __func__, mc_ret);
+	pr_debug("%s() Done. Success. ret:%d\n", __func__, mc_ret);
 	return 0;
 }
 
@@ -321,7 +321,7 @@ void spi_detach_irq_tee(u32 spinum)
 {
 	secspi_session_open(spinum);
 	secspi_execute(2, NULL);
-	pr_info("%s() Done.\n", __func__);
+	pr_debug("%s() Done.\n", __func__);
 }
 #endif
 
@@ -353,7 +353,7 @@ static int spi_setup_xfer(struct device *dev, struct spi_transfer *xfer,
 	u32 cnt, i;
 
 	xfer->speed_hz = speed;
-	pr_info("%s()  flag:%d speed:%d\n", __func__, flag, xfer->speed_hz);
+	pr_debug("%s()  flag:%d speed:%d\n", __func__, flag, xfer->speed_hz);
 
 	/* Instead of using kzalloc, if using below
 	 * dma_alloc_coherent to allocate tx_dma/rx_dma, remember:
@@ -395,7 +395,7 @@ static int spi_recv_check(struct spi_device *spi, struct spi_message *msg)
 			return -1;
 		}
 
-		pr_info("%s xfer->len:%d chip_config->tx_mlsb:%d rx_mlsb:%d\n",
+		pr_debug("%s xfer->len:%d chip_config->tx_mlsb:%d rx_mlsb:%d\n",
 				__func__, xfer->len, chip_config->tx_mlsb,
 				chip_config->rx_mlsb);
 		for (i = 0; i < xfer->len; i++) {
@@ -419,7 +419,7 @@ static int spi_recv_check(struct spi_device *spi, struct spi_message *msg)
 		}
 	}
 
-	pr_info("%s() Done. error %d,actual xfer len:%d\n", __func__, err,
+	pr_debug("%s() Done. error %d,actual xfer len:%d\n", __func__, err,
 		msg->actual_length);
 
 	return err;
@@ -443,7 +443,7 @@ static ssize_t spi_store(struct device *dev, struct device_attribute *attr,
 #endif
 
 	spi = container_of(dev, struct spi_device, dev);
-	pr_info("%s() SPIDEV name is:%s\n", __func__, spi->modalias);
+	pr_debug("%s() SPIDEV name is:%s\n", __func__, spi->modalias);
 
 	chip_config = (struct mtk_chip_config *) spi->controller_data;
 
@@ -464,37 +464,37 @@ static ssize_t spi_store(struct device *dev, struct device_attribute *attr,
 /* #ifdef CONFIG_TRUSTONIC_TEE_SUPPORT */
 	if (!strncmp(buf, "send", 4)) {
 		if (sscanf(buf + 4, "%d", &spinum) == 1) {
-			pr_info("%s() start to access TL SPI driver.\n",
+			pr_debug("%s() start to access TL SPI driver.\n",
 				__func__);
 			secspi_session_open(spinum);
 			secspi_enable_clk(spi);
 			secspi_execute(1, NULL);
 			secspi_session_close();
-			pr_info("%s() secspi_execute 1 finished!\n", __func__);
+			pr_debug("%s() secspi_execute 1 finished!\n", __func__);
 		}
 	} else if (!strncmp(buf, "config", 6)) {
 		if (sscanf(buf + 6, "%d", &spinum) == 1) {
-			pr_info("start to access TL SPI driver.\n");
+			pr_debug("start to access TL SPI driver.\n");
 			secspi_session_open(spinum);
 			secspi_execute(2, NULL);
 			secspi_session_close();
-			pr_info("secspi_execute 2 finished!!!\n");
+			pr_debug("secspi_execute 2 finished!!!\n");
 		}
 	} else if (!strncmp(buf, "debug", 5)) {
 		if (sscanf(buf + 5, "%d", &spinum) == 1) {
-			pr_info("start to access TL SPI driver.\n");
+			pr_debug("start to access TL SPI driver.\n");
 			secspi_session_open(spinum);
 			secspi_execute(3, NULL);
 			secspi_session_close();
-			pr_info("secspi_execute 3 finished!!!\n");
+			pr_debug("secspi_execute 3 finished!!!\n");
 		}
 	} else if (!strncmp(buf, "test", 4)) {
 		if (sscanf(buf + 4, "%d", &spinum) == 1) {
-			pr_info("start to access TL SPI driver.\n");
+			pr_debug("start to access TL SPI driver.\n");
 			secspi_session_open(spinum);
 			secspi_execute(4, NULL);
 			secspi_session_close();
-			pr_info("secspi_execute 4 finished!!!\n");
+			pr_debug("secspi_execute 4 finished!!!\n");
 		}
 	}
 #endif
@@ -508,136 +508,136 @@ set:
 	mdata = spi_master_get_devdata(spi->master);
 	mt_spi_enable_master_clk(spi);
 	if (!strncmp(buf, "setuptime=", 10))
-		pr_info("%s() setuptime cannot be set by cmd.\n", __func__);
+		pr_debug("%s() setuptime cannot be set by cmd.\n", __func__);
 	else if (!strncmp(buf, "holdtime=", 9))
-		pr_info("%s() holdtime cannot be set by cmd.\n", __func__);
+		pr_debug("%s() holdtime cannot be set by cmd.\n", __func__);
 	else if (!strncmp(buf, "high_time=", 10))
-		pr_info("%s() high_time cannot be set by cmd.\n", __func__);
+		pr_debug("%s() high_time cannot be set by cmd.\n", __func__);
 	else if (!strncmp(buf, "low_time=", 9))
-		pr_info("%s() low_time cannot be set by cmd.\n", __func__);
+		pr_debug("%s() low_time cannot be set by cmd.\n", __func__);
 	else if (!strncmp(buf, "tckdly=", 7)) {
 		if (sscanf(buf+7, "%d", &tckdly) == 1) {
-			pr_info("%s() set tckdly=%d to SPI_CFG1_REG.\n",
+			pr_debug("%s() set tckdly=%d to SPI_CFG1_REG.\n",
 				__func__, tckdly);
 			reg_val = readl(mdata->base + SPI_CFG1_REG);
 			reg_val &= 0x1FFFFFFF;
 			reg_val |= (tckdly << SPI_CFG1_GET_TICK_DLY_OFFSET);
 			writel(reg_val, mdata->base + SPI_CFG1_REG);
 			reg_val = readl(mdata->base + SPI_CFG1_REG);
-			pr_info("%s() now SPI_CFG1_REG=0x%x.\n", __func__,
+			pr_debug("%s() now SPI_CFG1_REG=0x%x.\n", __func__,
 				reg_val);
 		}
 	} else if (!strncmp(buf, "cs_idletime=", 12)) {
 		if (sscanf(buf+12, "%d", &cs_idletime) == 1) {
-			pr_info("%s() set cs_idletime=%d to SPI_CFG1_REG\n",
+			pr_debug("%s() set cs_idletime=%d to SPI_CFG1_REG\n",
 				__func__, cs_idletime);
 			reg_val = readl(mdata->base + SPI_CFG1_REG);
 			reg_val &= 0xFFFFFF00;
 			reg_val |= (cs_idletime << SPI_CFG1_CS_IDLE_OFFSET);
 			writel(reg_val, mdata->base + SPI_CFG1_REG);
 			reg_val = readl(mdata->base + SPI_CFG1_REG);
-			pr_info("%s() now SPI_CFG1_REG=0x%x.\n", __func__,
+			pr_debug("%s() now SPI_CFG1_REG=0x%x.\n", __func__,
 				reg_val);
 		}
 	} else if (!strncmp(buf, "cpol=", 5)) {
 		if (sscanf(buf+5, "%d", &cpol) == 1) {
-			pr_info("%s() Set cpol=%d to spi->mode.\n", __func__,
+			pr_debug("%s() Set cpol=%d to spi->mode.\n", __func__,
 				cpol);
 			spi->mode &= 0xFD;
 			spi->mode |= cpol<<1;
-			pr_info("%s() mow spi->mode:0x%.4x\n", __func__,
+			pr_debug("%s() mow spi->mode:0x%.4x\n", __func__,
 				spi->mode);
 		}
 	} else if (!strncmp(buf, "cpha=", 5)) {
 		if (sscanf(buf+5, "%d", &cpha) == 1) {
-			pr_info("%s() Set cpha=%d to spi->mode.\n", __func__,
+			pr_debug("%s() Set cpha=%d to spi->mode.\n", __func__,
 				cpha);
 			spi->mode &= 0xFE;
 			spi->mode |= cpha;
-			pr_info("%s() mow spi->mode:0x%.4x\n", __func__,
+			pr_debug("%s() mow spi->mode:0x%.4x\n", __func__,
 				spi->mode);
 		}
 	} else if (!strncmp(buf, "tx_mlsb=", 8)) {
 		if (sscanf(buf+8, "%d", &tx_mlsb) == 1) {
-			pr_info("%s() Set tx_mlsb=%d to chip_config\n",
+			pr_debug("%s() Set tx_mlsb=%d to chip_config\n",
 				__func__, tx_mlsb);
 			chip_config->tx_mlsb = tx_mlsb;
 		}
 	} else if (!strncmp(buf, "rx_mlsb=", 8)) {
 		if (sscanf(buf+8, "%d", &rx_mlsb) == 1) {
-			pr_info("%s() Set rx_mlsb=%d to chip_config\n",
+			pr_debug("%s() Set rx_mlsb=%d to chip_config\n",
 				__func__, rx_mlsb);
 			chip_config->rx_mlsb = rx_mlsb;
 		}
 	} else if (!strncmp(buf, "tx_endian=", 10))
-		pr_info("%s() tx_endian cannot be set.See __LTTTLE_ENDIAN\n",
+		pr_debug("%s() tx_endian cannot be set.See __LTTTLE_ENDIAN\n",
 			__func__);
 	else if (!strncmp(buf, "rx_endian=", 10))
-		pr_info("%s() rx_endian cannot be set.See __LTTTLE_ENDIAN\n",
+		pr_debug("%s() rx_endian cannot be set.See __LTTTLE_ENDIAN\n",
 			__func__);
 	else if (!strncmp(buf, "pause=", 6))
-		pr_info("%s() pause cannot be set due to sw auto select\n",
+		pr_debug("%s() pause cannot be set due to sw auto select\n",
 			__func__);
 	else if (!strncmp(buf, "deassert=", 9))
-		pr_info("%s() deassert cannot be set, sw default disable\n",
+		pr_debug("%s() deassert cannot be set, sw default disable\n",
 			__func__);
 	else if (!strncmp(buf, "sample_sel=", 11)) {
 		if (sscanf(buf + 11, "%d", &sample_sel) == 1) {
-			pr_info("%s() Set sample_sel=%d to chip_config\n",
+			pr_debug("%s() Set sample_sel=%d to chip_config\n",
 				__func__, sample_sel);
 			chip_config->sample_sel = sample_sel;
 		}
 	} else if (!strncmp(buf, "pad_sel=", 8)) {
 		if (sscanf(buf + 8, "%d", &pad_sel) == 1) {
-			pr_info("%s() Set pad select=%d to mdata->pad_sel.\n",
+			pr_debug("%s() Set pad select=%d to mdata->pad_sel.\n",
 				__func__, pad_sel);
 			mdata->pad_sel[spi->chip_select] = pad_sel;
 		}
 	} else if (!strncmp(buf, "speed=", 6)) {
 		if (sscanf(buf + 6, "%d", &speed) == 1)
-			pr_info("%s() Set speed=%d as global parameter.\n",
+			pr_debug("%s() Set speed=%d as global parameter.\n",
 				__func__, speed);
 	} else if (!strncmp(buf, "dump_all=", 9)) {
 		if (sscanf(buf + 9, "%d", &dump_all) == 1) {
-			pr_info("%s() dump all register.\n", __func__);
-			pr_info("||* spi_dump_reg *******************||\n");
-			pr_info("cfg0:0x%.8x\n",
+			pr_debug("%s() dump all register.\n", __func__);
+			pr_debug("||* spi_dump_reg *******************||\n");
+			pr_debug("cfg0:0x%.8x\n",
 				readl(mdata->base + SPI_CFG0_REG));
-			pr_info("cfg1:0x%.8x\n",
+			pr_debug("cfg1:0x%.8x\n",
 				readl(mdata->base + SPI_CFG1_REG));
-			pr_info("tx_s:0x%.8x\n",
+			pr_debug("tx_s:0x%.8x\n",
 				readl(mdata->base + SPI_TX_SRC_REG));
-			pr_info("rx_d:0x%.8x\n",
+			pr_debug("rx_d:0x%.8x\n",
 				readl(mdata->base + SPI_RX_DST_REG));
-			pr_info("tx_data:0x%.8x\n",
+			pr_debug("tx_data:0x%.8x\n",
 				readl(mdata->base + SPI_TX_DATA_REG));
-			pr_info("rx_data:0x%.8x\n",
+			pr_debug("rx_data:0x%.8x\n",
 				readl(mdata->base + SPI_RX_DATA_REG));
-			pr_info("cmd :0x%.8x\n",
+			pr_debug("cmd :0x%.8x\n",
 				readl(mdata->base + SPI_CMD_REG));
-			pr_info("status0:0x%.8x\n",
+			pr_debug("status0:0x%.8x\n",
 				readl(mdata->base + SPI_STATUS0_REG));
-			pr_info("status1:0x%.8x\n",
+			pr_debug("status1:0x%.8x\n",
 				readl(mdata->base + SPI_STATUS1_REG));
-			pr_info("pad_sel:0x%.8x\n",
+			pr_debug("pad_sel:0x%.8x\n",
 				readl(mdata->base + SPI_PAD_SEL_REG));
-			pr_info("cfg2:0x%.8x\n",
+			pr_debug("cfg2:0x%.8x\n",
 				readl(mdata->base + SPI_CFG2_REG));
-			pr_info("tx_s64:0x%.8x\n",
+			pr_debug("tx_s64:0x%.8x\n",
 				readl(mdata->base + SPI_TX_SRC_REG_64));
-			pr_info("rx_d64:0x%.8x\n",
+			pr_debug("rx_d64:0x%.8x\n",
 				readl(mdata->base + SPI_RX_DST_REG_64));
-			pr_info("||*****************************************||\n");
+			pr_debug("||*****************************************||\n");
 		}
 	} else if (!strncmp(buf, "dump=", 5)) {
 		if (sscanf(buf + 5, "%d", &dump) == 1) {
-			pr_info("%s() dump TX FIFO.\n", __func__);
+			pr_debug("%s() dump TX FIFO.\n", __func__);
 			for (index = 1; index <= 8; index++)
-				pr_info("%d tx_data:0x%.8x\n",
+				pr_debug("%d tx_data:0x%.8x\n",
 				index, readl(mdata->base + SPI_TX_DATA_REG));
-			pr_info("%s() dump RX FIFO.\n", __func__);
+			pr_debug("%s() dump RX FIFO.\n", __func__);
 			for (index = 1; index <= 8; index++)
-				pr_info("%d rx_data:0x%.8x\n",
+				pr_debug("%d rx_data:0x%.8x\n",
 				index, readl(mdata->base + SPI_RX_DATA_REG));
 		}
 	} else {
@@ -683,12 +683,12 @@ spi_msg_store(struct device *dev, struct device_attribute *attr,
 
 	buf += 6;
 	if (!strncmp(buf, "len=", 4) && 1 == sscanf(buf + 4, "%d", &len)) {
-		pr_info("%s() start transfer,dataLen=%d.-----------------\n",
+		pr_debug("%s() start transfer,dataLen=%d.-----------------\n",
 				__func__, len);
 		transfer.len = len;
 		transfer.tx_buf = kzalloc(len, GFP_KERNEL);
 		transfer.rx_buf = kzalloc(len, GFP_KERNEL);
-		pr_info("%s() transfer.tx_buf:%p, transfer.rx_buf:%p\n",
+		pr_debug("%s() transfer.tx_buf:%p, transfer.rx_buf:%p\n",
 				__func__, transfer.tx_buf, transfer.rx_buf);
 
 		spi_setup_xfer(&spi->dev, &transfer, len, 1);
@@ -707,7 +707,7 @@ spi_msg_store(struct device *dev, struct device_attribute *attr,
 				goto out;
 			}
 		}
-		pr_info("%s() spi transfer Done.-----------------\n",
+		pr_debug("%s() spi transfer Done.-----------------\n",
 				__func__);
 	}
 
@@ -754,14 +754,14 @@ static void spi_remove_attribute(struct device *dev)
 static int spi_test_remove(struct spi_device *spi)
 {
 
-	pr_info("%s().\n", __func__);
+	pr_debug("%s().\n", __func__);
 	spi_remove_attribute(&spi->dev);
 	return 0;
 }
 
 static int spi_test_probe(struct spi_device *spi)
 {
-	pr_info("%s() enter.\n", __func__);
+	pr_debug("%s() enter.\n", __func__);
 	spi_test = spi;
 	spi->mode = SPI_MODE_3;
 	spi->bits_per_word = 8;
@@ -794,13 +794,13 @@ static struct spi_driver spi_test_driver = {
 
 static int __init spi_dev_init(void)
 {
-	pr_info("%s().\n", __func__);
+	pr_debug("%s().\n", __func__);
 	return spi_register_driver(&spi_test_driver);
 }
 
 static void __exit spi_test_exit(void)
 {
-	pr_info("%s().\n", __func__);
+	pr_debug("%s().\n", __func__);
 	spi_unregister_driver(&spi_test_driver);
 }
 

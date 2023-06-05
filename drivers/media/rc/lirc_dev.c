@@ -598,7 +598,7 @@ static int __init lirc_dev_init(void)
 		return retval;
 	}
 
-	pr_info("IR Remote Control driver registered, major %d\n",
+	pr_debug("IR Remote Control driver registered, major %d\n",
 						MAJOR(lirc_base_dev));
 
 	return 0;
@@ -608,7 +608,7 @@ static void __exit lirc_dev_exit(void)
 {
 	class_destroy(lirc_class);
 	unregister_chrdev_region(lirc_base_dev, MAX_IRCTL_DEVICES);
-	pr_info("module unloaded\n");
+	pr_debug("module unloaded\n");
 }
 
 module_init(lirc_dev_init);

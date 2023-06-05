@@ -240,9 +240,9 @@ void cfs_print_to_console(struct ptldebug_header *hdr, int mask,
 	}
 
 	if (mask & D_CONSOLE) {
-		pr_info("%s%s: %.*s", ptype, prefix, len, buf);
+		pr_debug("%s%s: %.*s", ptype, prefix, len, buf);
 	} else {
-		pr_info("%s%s: %d:%d:(%s:%d:%s()) %.*s", ptype, prefix,
+		pr_debug("%s%s: %d:%d:(%s:%d:%s()) %.*s", ptype, prefix,
 			hdr->ph_pid, hdr->ph_extern_pid, file,
 			hdr->ph_line_num, fn, len, buf);
 	}

@@ -248,7 +248,7 @@ int __init sbni_probe(int unit)
 		free_netdev(dev);
 		return err;
 	}
-	pr_info_once("%s", version);
+	pr_debug_once("%s", version);
 	return 0;
 }
 

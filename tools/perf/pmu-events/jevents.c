@@ -233,7 +233,7 @@ static char *get_topic(void)
 		tp_old = tp;
 		n = asprintf(&tp, "%s%s", tp ?: "", topic_array[i]);
 		if (n < 0) {
-			pr_info("%s: asprintf() error %s\n", prog);
+			pr_debug("%s: asprintf() error %s\n", prog);
 			return NULL;
 		}
 		free(tp_old);
@@ -264,7 +264,7 @@ static int add_topic(int level, char *bname)
 
 	topic = strdup(bname);
 	if (!topic) {
-		pr_info("%s: strdup() error %s for file %s\n", prog,
+		pr_debug("%s: strdup() error %s for file %s\n", prog,
 				strerror(errno), bname);
 		return -ENOMEM;
 	}
@@ -542,7 +542,7 @@ static char *file_name_to_table_name(char *fname)
 	 */
 	n = asprintf(&tblname, "pme_%s", basename(fname));
 	if (n < 0) {
-		pr_info("%s: asprintf() error %s for file %s\n", prog,
+		pr_debug("%s: asprintf() error %s for file %s\n", prog,
 				strerror(errno), fname);
 		return NULL;
 	}
@@ -597,7 +597,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
 	int line_num;
 	char *tblname;
 
-	pr_info("%s: Processing mapfile %s\n", prog, fpath);
+	pr_debug("%s: Processing mapfile %s\n", prog, fpath);
 
 	line = malloc(n);
 	if (!line)
@@ -605,7 +605,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
 
 	mapfp = fopen(fpath, "r");
 	if (!mapfp) {
-		pr_info("%s: Error %s opening %s\n", prog, strerror(errno),
+		pr_debug("%s: Error %s opening %s\n", prog, strerror(errno),
 				fpath);
 		return -1;
 	}
@@ -631,7 +631,7 @@ static int process_mapfile(FILE *outfp, char *fpath)
 
 		if (line[strlen(line)-1] != '\n') {
 			/* TODO Deal with lines longer than 16K */
-			pr_info("%s: Mapfile %s: line %d too long, aborting\n",
+			pr_debug("%s: Mapfile %s: line %d too long, aborting\n",
 					prog, fpath, line_num);
 			return -1;
 		}
@@ -675,7 +675,7 @@ static void create_empty_mapping(const char *output_file)
 {
 	FILE *outfp;
 
-	pr_info("%s: Creating empty pmu_events_map[] table\n", prog);
+	pr_debug("%s: Creating empty pmu_events_map[] table\n", prog);
 
 	/* Truncate file to clear any partial writes to it */
 	outfp = fopen(output_file, "w");
@@ -736,7 +736,7 @@ static int process_one_file(const char *fpath, const struct stat *sb,
 		 */
 		tblname = file_name_to_table_name(bname);
 		if (!tblname) {
-			pr_info("%s: Error determining table name for %s\n", prog,
+			pr_debug("%s: Error determining table name for %s\n", prog,
 				bname);
 			return -1;
 		}
@@ -755,7 +755,7 @@ static int process_one_file(const char *fpath, const struct stat *sb,
 	if (level == 1 && is_file) {
 		if (!strncmp(bname, "mapfile.csv", 11)) {
 			if (mapfile) {
-				pr_info("%s: Many mapfiles? Using %s, ignoring %s\n",
+				pr_debug("%s: Many mapfiles? Using %s, ignoring %s\n",
 						prog, mapfile, fpath);
 			} else {
 				mapfile = strdup(fpath);
@@ -763,7 +763,7 @@ static int process_one_file(const char *fpath, const struct stat *sb,
 			return 0;
 		}
 
-		pr_info("%s: Ignoring file %s\n", prog, fpath);
+		pr_debug("%s: Ignoring file %s\n", prog, fpath);
 		return 0;
 	}
 
@@ -775,7 +775,7 @@ static int process_one_file(const char *fpath, const struct stat *sb,
 		char *suffix = bname + strlen(bname) - 5;
 
 		if (strncmp(suffix, ".json", 5)) {
-			pr_info("%s: Ignoring file without .json suffix %s\n", prog,
+			pr_debug("%s: Ignoring file without .json suffix %s\n", prog,
 				fpath);
 			return 0;
 		}
@@ -861,7 +861,7 @@ int main(int argc, char *argv[])
 
 	/* If architecture does not have any event lists, bail out */
 	if (stat(ldirname, &stbuf) < 0) {
-		pr_info("%s: Arch %s has no PMU event lists\n", prog, arch);
+		pr_debug("%s: Arch %s has no PMU event lists\n", prog, arch);
 		goto empty_map;
 	}
 
@@ -882,7 +882,7 @@ int main(int argc, char *argv[])
 	mapfile = NULL;
 	rc = nftw(ldirname, process_one_file, maxfds, 0);
 	if (rc && verbose) {
-		pr_info("%s: Error walking file tree %s\n", prog, ldirname);
+		pr_debug("%s: Error walking file tree %s\n", prog, ldirname);
 		goto empty_map;
 	} else if (rc < 0) {
 		/* Make build fail */
@@ -895,12 +895,12 @@ int main(int argc, char *argv[])
 		print_events_table_suffix(eventsfp);
 
 	if (!mapfile) {
-		pr_info("%s: No CPU->JSON mapping?\n", prog);
+		pr_debug("%s: No CPU->JSON mapping?\n", prog);
 		goto empty_map;
 	}
 
 	if (process_mapfile(eventsfp, mapfile)) {
-		pr_info("%s: Error processing mapfile %s\n", prog, mapfile);
+		pr_debug("%s: Error processing mapfile %s\n", prog, mapfile);
 		/* Make build fail */
 		return 1;
 	}

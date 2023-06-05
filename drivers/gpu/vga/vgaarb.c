@@ -1468,7 +1468,7 @@ static int __init vga_arb_device_init(void)
 			vgaarb_info(dev, "no bridge control possible\n");
 	}
 
-	pr_info("loaded\n");
+	pr_debug("loaded\n");
 	return rc;
 }
 subsys_initcall(vga_arb_device_init);

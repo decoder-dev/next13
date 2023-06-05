@@ -253,7 +253,7 @@ static int xen_wdt_probe(struct platform_device *dev)
 	case -EINVAL:
 		if (!timeout) {
 			timeout = WATCHDOG_TIMEOUT;
-			pr_info("timeout value invalid, using %d\n", timeout);
+			pr_debug("timeout value invalid, using %d\n", timeout);
 		}
 
 		ret = misc_register(&xen_wdt_miscdev);
@@ -263,17 +263,17 @@ static int xen_wdt_probe(struct platform_device *dev)
 			break;
 		}
 
-		pr_info("initialized (timeout=%ds, nowayout=%d)\n",
+		pr_debug("initialized (timeout=%ds, nowayout=%d)\n",
 			timeout, nowayout);
 		break;
 
 	case -ENOSYS:
-		pr_info("not supported\n");
+		pr_debug("not supported\n");
 		ret = -ENODEV;
 		break;
 
 	default:
-		pr_info("bogus return value %d\n", ret);
+		pr_debug("bogus return value %d\n", ret);
 		break;
 	}
 
@@ -331,7 +331,7 @@ static int __init xen_wdt_init_module(void)
 	if (!xen_domain())
 		return -ENODEV;
 
-	pr_info("Xen WatchDog Timer Driver v%s\n", DRV_VERSION);
+	pr_debug("Xen WatchDog Timer Driver v%s\n", DRV_VERSION);
 
 	err = platform_driver_register(&xen_wdt_driver);
 	if (err)
@@ -351,7 +351,7 @@ static void __exit xen_wdt_cleanup_module(void)
 {
 	platform_device_unregister(platform_device);
 	platform_driver_unregister(&xen_wdt_driver);
-	pr_info("module unloaded\n");
+	pr_debug("module unloaded\n");
 }
 
 module_init(xen_wdt_init_module);

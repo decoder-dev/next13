@@ -12,6 +12,8 @@
 #include <linux/module.h>
 
 #define DM_MSG_PREFIX "bow"
+
+#undef SECTOR_SIZE
 #define SECTOR_SIZE 512
 
 struct log_entry {
@@ -753,8 +755,7 @@ static int dm_bow_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	}
 
 	bc->workqueue = alloc_workqueue("dm-bow",
-					WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM
-					| WQ_UNBOUND, num_online_cpus());
+					WQ_MEM_RECLAIM | WQ_UNBOUND, num_online_cpus());
 	if (!bc->workqueue) {
 		ti->error = "Cannot allocate workqueue";
 		ret = -ENOMEM;

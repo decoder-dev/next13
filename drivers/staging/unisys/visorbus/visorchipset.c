@@ -1837,7 +1837,7 @@ static int __init init_unisys(void)
 	if (result)
 		return -ENODEV;
 
-	pr_info("Unisys Visorchipset Driver Loaded.\n");
+	pr_debug("Unisys Visorchipset Driver Loaded.\n");
 	return 0;
 };
 

@@ -59,7 +59,7 @@ static void usbotg_alarm_start_timer(struct usbotg_boost *info)
 
 	ktime = ktime_set(info->endtime.tv_sec, info->endtime.tv_nsec);
 
-	pr_info("%s: alarm timer start\n", __func__);
+	pr_debug("%s: alarm timer start\n", __func__);
 	alarm_start(&info->otg_timer, ktime);
 }
 
@@ -81,7 +81,7 @@ static void usbotg_boost_kick_work(struct work_struct *work)
 	struct usbotg_boost *usb_boost_manager =
 		container_of(work, struct usbotg_boost, kick_work);
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	charger_dev_kick_wdt(usb_boost_manager->primary_charger);
 
@@ -173,12 +173,12 @@ static int usbotg_boost_probe(struct platform_device *pdev)
 	info->pdev = pdev;
 	info->primary_charger = get_charger_by_name("primary_chg");
 	if (!info->primary_charger) {
-		pr_info("%s: get primary charger device failed\n", __func__);
+		pr_debug("%s: get primary charger device failed\n", __func__);
 		return -ENODEV;
 	}
 	info->secondary_charger = get_charger_by_name("secondary_chg");
 	if (!info->secondary_charger) {
-		pr_info("%s: get secondary charger device failed\n", __func__);
+		pr_debug("%s: get secondary charger device failed\n", __func__);
 		return -ENODEV;
 	}
 

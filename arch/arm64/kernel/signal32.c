@@ -345,7 +345,7 @@ asmlinkage int compat_sys_sigreturn(struct pt_regs *regs)
 
 badframe:
 	if (show_unhandled_signals)
-		pr_info_ratelimited("%s[%d]: bad frame in %s: pc=%08llx sp=%08llx\n",
+		pr_debug_ratelimited("%s[%d]: bad frame in %s: pc=%08llx sp=%08llx\n",
 				    current->comm, task_pid_nr(current), __func__,
 				    regs->pc, regs->compat_sp);
 	force_sig(SIGSEGV, current);
@@ -382,7 +382,7 @@ asmlinkage int compat_sys_rt_sigreturn(struct pt_regs *regs)
 
 badframe:
 	if (show_unhandled_signals)
-		pr_info_ratelimited("%s[%d]: bad frame in %s: pc=%08llx sp=%08llx\n",
+		pr_debug_ratelimited("%s[%d]: bad frame in %s: pc=%08llx sp=%08llx\n",
 				    current->comm, task_pid_nr(current), __func__,
 				    regs->pc, regs->compat_sp);
 	force_sig(SIGSEGV, current);

@@ -31,7 +31,7 @@ static struct pm_qos_request vcore_pm_qos;
 void Charger_Detect_Init(void)
 {
 	if (mtu3_cable_mode == CABLE_MODE_FORCEON) {
-		pr_info("%s-, SKIP\n", __func__);
+		pr_debug("%s-, SKIP\n", __func__);
 		return;
 	}
 
@@ -42,7 +42,7 @@ void Charger_Detect_Init(void)
 void Charger_Detect_Release(void)
 {
 	if (mtu3_cable_mode == CABLE_MODE_FORCEON) {
-		pr_info("%s-, SKIP\n", __func__);
+		pr_debug("%s-, SKIP\n", __func__);
 		return;
 	}
 
@@ -55,7 +55,7 @@ void usb_dpdm_pulldown(bool enable)
 {
 #ifdef CONFIG_MTK_TYPEC_WATER_DETECT
 	if (mtk_phy) {
-		pr_info("%s: pulldown=%d\n", __func__, enable);
+		pr_debug("%s: pulldown=%d\n", __func__, enable);
 		usb_mtkphy_dpdm_pulldown(mtk_phy, enable);
 	}
 #endif

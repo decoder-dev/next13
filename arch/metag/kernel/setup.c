@@ -190,15 +190,15 @@ void __init dump_machine_table(void)
 	struct machine_desc *p;
 	const char **compat;
 
-	pr_info("Available machine support:\n\tNAME\t\tCOMPATIBLE LIST\n");
+	pr_debug("Available machine support:\n\tNAME\t\tCOMPATIBLE LIST\n");
 	for_each_machine_desc(p) {
-		pr_info("\t%s\t[", p->name);
+		pr_debug("\t%s\t[", p->name);
 		for (compat = p->dt_compat; compat && *compat; ++compat)
 			printk(" '%s'", *compat);
 		printk(" ]\n");
 	}
 
-	pr_info("\nPlease check your kernel config and/or bootloader.\n");
+	pr_debug("\nPlease check your kernel config and/or bootloader.\n");
 
 	hard_processor_halt(HALT_PANIC);
 }

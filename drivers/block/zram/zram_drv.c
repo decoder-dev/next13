@@ -471,7 +471,7 @@ static ssize_t backing_dev_store(struct device *dev,
 
 	down_write(&zram->init_lock);
 	if (init_done(zram)) {
-		pr_info("Can't setup backing device for initialized device\n");
+		pr_debug("Can't setup backing device for initialized device\n");
 		err = -EBUSY;
 		goto out;
 	}
@@ -527,7 +527,7 @@ static ssize_t backing_dev_store(struct device *dev,
 	zram->nr_pages = nr_pages;
 	up_write(&zram->init_lock);
 
-	pr_info("setup backing device %s\n", file_name);
+	pr_debug("setup backing device %s\n", file_name);
 	kfree(file_name);
 
 	return len;
@@ -1010,7 +1010,7 @@ static ssize_t comp_algorithm_store(struct device *dev,
 	down_write(&zram->init_lock);
 	if (init_done(zram)) {
 		up_write(&zram->init_lock);
-		pr_info("Can't change algorithm for initialized device\n");
+		pr_debug("Can't change algorithm for initialized device\n");
 		return -EBUSY;
 	}
 
@@ -1727,7 +1727,7 @@ static ssize_t disksize_store(struct device *dev,
 
 	down_write(&zram->init_lock);
 	if (init_done(zram)) {
-		pr_info("Cannot change disksize for initialized device\n");
+		pr_debug("Cannot change disksize for initialized device\n");
 		err = -EBUSY;
 		goto out_unlock;
 	}
@@ -1973,7 +1973,7 @@ static int zram_add(void)
 	if (!zram_devices)
 		zram_devices = zram;
 
-	pr_info("Added device: %s\n", zram->disk->disk_name);
+	pr_debug("Added device: %s\n", zram->disk->disk_name);
 	return device_id;
 
 out_free_queue:
@@ -2010,7 +2010,7 @@ static int zram_remove(struct zram *zram)
 	zram_reset_device(zram);
 	bdput(bdev);
 
-	pr_info("Removed device: %s\n", zram->disk->disk_name);
+	pr_debug("Removed device: %s\n", zram->disk->disk_name);
 
 	del_gendisk(zram->disk);
 	blk_cleanup_queue(zram->disk->queue);

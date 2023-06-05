@@ -130,7 +130,7 @@ static int __init setup_maxmem(char *str)
 		return -EINVAL;
 
 	maxmem_pfn = (maxmem >> HPAGE_SHIFT) << (HPAGE_SHIFT - PAGE_SHIFT);
-	pr_info("Forcing RAM used to no more than %dMB\n",
+	pr_debug("Forcing RAM used to no more than %dMB\n",
 		maxmem_pfn >> (20 - PAGE_SHIFT));
 	return 0;
 }
@@ -149,7 +149,7 @@ static int __init setup_maxnodemem(char *str)
 	maxnodemem = memparse(endp+1, NULL);
 	maxnodemem_pfn[node] = (maxnodemem >> HPAGE_SHIFT) <<
 		(HPAGE_SHIFT - PAGE_SHIFT);
-	pr_info("Forcing RAM used on node %ld to no more than %dMB\n",
+	pr_debug("Forcing RAM used on node %ld to no more than %dMB\n",
 		node, maxnodemem_pfn[node] >> (20 - PAGE_SHIFT));
 	return 0;
 }
@@ -219,7 +219,7 @@ static int __init setup_isolnodes(char *str)
 	if (str == NULL || nodelist_parse(str, isolnodes) != 0)
 		return -EINVAL;
 
-	pr_info("Set isolnodes value to '%*pbl'\n",
+	pr_debug("Set isolnodes value to '%*pbl'\n",
 		nodemask_pr_args(&isolnodes));
 	return 0;
 }
@@ -232,7 +232,7 @@ static int __init setup_pci_reserve(char* str)
 	    pci_reserve_mb > 3 * 1024)
 		return -EINVAL;
 
-	pr_info("Reserving %dMB for PCIE root complex mappings\n",
+	pr_debug("Reserving %dMB for PCIE root complex mappings\n",
 		pci_reserve_mb);
 	return 0;
 }
@@ -1314,7 +1314,7 @@ early_param("disabled_cpus", disabled_cpus);
 void __init print_disabled_cpus(void)
 {
 	if (!cpumask_empty(&disabled_map))
-		pr_info("CPUs not available for Linux: %*pbl\n",
+		pr_debug("CPUs not available for Linux: %*pbl\n",
 			cpumask_pr_args(&disabled_map));
 }
 

@@ -1060,7 +1060,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *fp)
 		bpf_jit_build_epilogue(code_base, &cgctx);
 
 		if (bpf_jit_enable > 1)
-			pr_info("Pass %d: shrink = %d, seen = 0x%x\n", pass,
+			pr_debug("Pass %d: shrink = %d, seen = 0x%x\n", pass,
 				proglen - (cgctx.idx * 4), cgctx.seen);
 	}
 

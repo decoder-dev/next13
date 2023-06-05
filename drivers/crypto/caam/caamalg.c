@@ -3501,7 +3501,7 @@ static int __init caam_algapi_init(void)
 	}
 
 	if (registered)
-		pr_info("caam algorithms registered in /proc/crypto\n");
+		pr_debug("caam algorithms registered in /proc/crypto\n");
 
 	return err;
 }

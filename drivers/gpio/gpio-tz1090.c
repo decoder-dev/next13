@@ -364,7 +364,7 @@ static int gpio_set_irq_wake(struct irq_data *data, unsigned int on)
 	struct tz1090_gpio_bank *bank = irqd_to_gpio_bank(data);
 
 #ifdef CONFIG_PM_DEBUG
-	pr_info("irq_wake irq%d state:%d\n", data->irq, on);
+	pr_debug("irq_wake irq%d state:%d\n", data->irq, on);
 #endif
 
 	/* wake on gpio block interrupt */

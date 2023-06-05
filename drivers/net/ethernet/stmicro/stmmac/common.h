@@ -641,7 +641,7 @@ static inline u32 stmmac_get_synopsys_id(u32 hwid)
 		u32 uid = ((hwid & 0x0000ff00) >> 8);
 		u32 synid = (hwid & 0x000000ff);
 
-		pr_info("stmmac - user ID: 0x%x, Synopsys ID: 0x%x\n",
+		pr_debug("stmmac - user ID: 0x%x, Synopsys ID: 0x%x\n",
 			uid, synid);
 
 		return synid;

@@ -1258,7 +1258,7 @@ static int ov5693_init(struct v4l2_subdev *sd)
 	struct i2c_client *client = v4l2_get_subdevdata(sd);
 	int ret;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	mutex_lock(&dev->input_lock);
 	dev->vcm_update = false;
 
@@ -1446,7 +1446,7 @@ static int ov5693_s_power(struct v4l2_subdev *sd, int on)
 {
 	int ret;
 
-	pr_info("%s: on %d\n", __func__, on);
+	pr_debug("%s: on %d\n", __func__, on);
 	if (on == 0)
 		return power_down(sd);
 	else {

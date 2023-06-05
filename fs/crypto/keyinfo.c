@@ -252,7 +252,7 @@ allocate_skcipher_for_mode(struct fscrypt_mode *mode, const u8 *raw_key,
 		 * race here, but it doesn't really matter.
 		 */
 		mode->logged_impl_name = true;
-		pr_info("fscrypt: %s using implementation \"%s\"\n",
+		pr_debug("fscrypt: %s using implementation \"%s\"\n",
 			mode->friendly_name,
 			crypto_skcipher_alg(tfm)->base.cra_driver_name);
 	}
